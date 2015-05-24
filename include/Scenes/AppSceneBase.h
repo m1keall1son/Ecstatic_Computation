@@ -26,6 +26,7 @@ public:
     virtual void preDraw() = 0;
     virtual void draw() = 0;
     virtual void postDraw() = 0;
+    virtual void shutDown( ec::EventDataRef ) = 0;
     
     virtual ~AppSceneBase();
     

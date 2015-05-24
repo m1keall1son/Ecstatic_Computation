@@ -19,6 +19,7 @@ using ComponentFactoryRef = std::shared_ptr<class ComponentFactory>;
 using FrustumCullComponentRef = std::shared_ptr< class FrustumCullComponent >;
 using DebugComponentRef = std::shared_ptr< class DebugComponent >;
 using KinectComponentRef = std::shared_ptr< class KinectComponent >;
+using BitComponentRef = std::shared_ptr<class BitComponent>;
 
 
 ///CAMERAS

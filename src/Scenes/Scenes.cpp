@@ -59,8 +59,13 @@ IntroScene::IntroScene( const std::string& name ):AppSceneBase(name)
 {
     //initialize stuff
     CI_LOG_V("Intro scene constructed");
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &IntroScene::shutDown), ec::ShutDownEvent::TYPE);
 }
 
+void IntroScene::shutDown(ec::EventDataRef)
+{
+    CI_LOG_V( "intro_scene handle shutdown");
+}
 
 void IntroScene::update()
 {

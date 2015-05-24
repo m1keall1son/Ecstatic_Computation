@@ -25,15 +25,39 @@ LightComponentRef LightComponent::create( ec::Actor* context )
     return LightComponentRef( new LightComponent(context) );
 }
 
-LightComponent::LightComponent( ec::Actor * context ): ec::ComponentBase( context ), mNeedsUpdate(true), mLight( nullptr ), mId( ec::getHash(context->getName()+"_light_component"))
+LightComponent::LightComponent( ec::Actor * context ): ec::ComponentBase( context ), mNeedsUpdate(true), mLight( nullptr ), mId( ec::getHash(context->getName()+"_light_component")),mShuttingDown(false)
 {
-    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::update), UpdateEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
 
 }
 
 LightComponent::~LightComponent()
+{
+    if(!mShuttingDown)unregisterHandlers();
+}
+
+void LightComponent::handleShutDown( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle shutdown");
+    mShuttingDown = true;
+
+}
+
+void LightComponent::handleSceneChange( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle scene change");
+    if(mContext->isPersistent())registerHandlers();
+}
+
+void LightComponent::registerHandlers()
+{
+    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::update), UpdateEvent::TYPE);
+}
+void LightComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &LightComponent::update), UpdateEvent::TYPE);

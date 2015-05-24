@@ -38,7 +38,13 @@ protected:
 
     FrustumCullComponent( ec::Actor * context );
 
+    void handleShutDown( ec::EventDataRef );
+    void handleSceneChange( ec::EventDataRef );
+
+    void registerHandlers();
+    void unregisterHandlers();
+
     ec::ComponentUId mId;
     bool mIsVisible;
-
+    bool mShuttingDown;
 };

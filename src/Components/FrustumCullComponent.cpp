@@ -21,15 +21,36 @@ FrustumCullComponentRef FrustumCullComponent::create(ec::Actor *context)
     return FrustumCullComponentRef( new FrustumCullComponent( context ) );
 }
 
-FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_frustum_cull_component" ) )
+FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_frustum_cull_component" ) ),mShuttingDown(false)
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-
-    auto scene = ec::Controller::get()->scene().lock();
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::cull), CullEvent::TYPE);
+    registerHandlers();
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 
 FrustumCullComponent::~FrustumCullComponent()
+{
+    if(!mShuttingDown)unregisterHandlers();
+}
+
+void FrustumCullComponent::handleShutDown( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle shutdown");
+    mShuttingDown = true;
+}
+void FrustumCullComponent::handleSceneChange( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle scene change");
+    if(mContext->isPersistent())registerHandlers();
+}
+
+void FrustumCullComponent::registerHandlers()
+{
+    auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::cull), CullEvent::TYPE);
+}
+void FrustumCullComponent::unregisterHandlers()
 {
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::cull), CullEvent::TYPE);

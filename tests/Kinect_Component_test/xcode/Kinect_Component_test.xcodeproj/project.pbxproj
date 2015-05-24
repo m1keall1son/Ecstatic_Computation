@@ -37,6 +37,11 @@
 		4FBEC3FD1B115C1F00C59BA4 /* util.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3FB1B115C1F00C59BA4 /* util.glsl */; };
 		4FBEC3FF1B115F3000C59BA4 /* lighting_util.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3FE1B115F3000C59BA4 /* lighting_util.glsl */; };
 		4FBEC4011B11628700C59BA4 /* kinect_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC4001B11628700C59BA4 /* kinect_shadow.frag */; };
+		4FBEC4041B1257AB00C59BA4 /* BitComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FBEC4031B1257AB00C59BA4 /* BitComponent.cpp */; };
+		4FBEC4061B12599500C59BA4 /* bit.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC4051B12599500C59BA4 /* bit.vert */; };
+		4FBEC4081B12599D00C59BA4 /* bit.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC4071B12599D00C59BA4 /* bit.frag */; };
+		4FBEC40A1B1259A700C59BA4 /* bit_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC4091B1259A700C59BA4 /* bit_shadow.vert */; };
+		4FBEC40C1B1259B000C59BA4 /* bit_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC40B1B1259B000C59BA4 /* bit_shadow.frag */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		54427083246D4B7687B80CAD /* EventManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2060C9AD78D43A99FB9D2C2 /* EventManager.cpp */; };
@@ -118,6 +123,12 @@
 		4FBEC3FB1B115C1F00C59BA4 /* util.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = util.glsl; sourceTree = "<group>"; };
 		4FBEC3FE1B115F3000C59BA4 /* lighting_util.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lighting_util.glsl; sourceTree = "<group>"; };
 		4FBEC4001B11628700C59BA4 /* kinect_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = kinect_shadow.frag; sourceTree = "<group>"; };
+		4FBEC4021B12579500C59BA4 /* BitComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BitComponent.h; path = ../../../include/Components/BitComponent.h; sourceTree = "<group>"; };
+		4FBEC4031B1257AB00C59BA4 /* BitComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BitComponent.cpp; path = ../../../src/Components/BitComponent.cpp; sourceTree = "<group>"; };
+		4FBEC4051B12599500C59BA4 /* bit.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = bit.vert; sourceTree = "<group>"; };
+		4FBEC4071B12599D00C59BA4 /* bit.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = bit.frag; sourceTree = "<group>"; };
+		4FBEC4091B1259A700C59BA4 /* bit_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = bit_shadow.vert; sourceTree = "<group>"; };
+		4FBEC40B1B1259B000C59BA4 /* bit_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = bit_shadow.frag; sourceTree = "<group>"; };
 		50B599BA67B14DB1B6D42154 /* Scene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = ../blocks/Ecstatic/include/Scene/Scene.h; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
@@ -422,6 +433,10 @@
 				4FBEC3F41B115A5200C59BA4 /* kinect_shadow.geom */,
 				4FBEC3F61B115A6200C59BA4 /* kinect_shadow.vert */,
 				4FBEC4001B11628700C59BA4 /* kinect_shadow.frag */,
+				4FBEC4051B12599500C59BA4 /* bit.vert */,
+				4FBEC4071B12599D00C59BA4 /* bit.frag */,
+				4FBEC4091B1259A700C59BA4 /* bit_shadow.vert */,
+				4FBEC40B1B1259B000C59BA4 /* bit_shadow.frag */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -437,6 +452,7 @@
 				7D39AAFE10B344DA8117EE07 /* LightComponent.h */,
 				1D140E2D38C240D1A5CE5158 /* RoomComponent.h */,
 				4FBEC3ED1B1158BE00C59BA4 /* KinectComponent.h */,
+				4FBEC4021B12579500C59BA4 /* BitComponent.h */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -561,6 +577,7 @@
 				57D832B8EF2640A7B81272E8 /* LightComponent.cpp */,
 				4D2C0C4649FE426E8544DFF7 /* RoomComponent.cpp */,
 				4FBEC3EE1B1158F300C59BA4 /* KinectComponent.cpp */,
+				4FBEC4031B1257AB00C59BA4 /* BitComponent.cpp */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -679,7 +696,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FBEC4011B11628700C59BA4 /* kinect_shadow.frag in Resources */,
+				4FBEC4081B12599D00C59BA4 /* bit.frag in Resources */,
+				4FBEC40C1B1259B000C59BA4 /* bit_shadow.frag in Resources */,
+				4FBEC40A1B1259A700C59BA4 /* bit_shadow.vert in Resources */,
 				4FBEC3FD1B115C1F00C59BA4 /* util.glsl in Resources */,
+				4FBEC4061B12599500C59BA4 /* bit.vert in Resources */,
 				4FBEC3FF1B115F3000C59BA4 /* lighting_util.glsl in Resources */,
 				B4B39034E7B04425A683736E /* CinderApp.icns in Resources */,
 				4FBEC3F31B115A3D00C59BA4 /* kinect_lighting.frag in Resources */,
@@ -708,6 +729,7 @@
 				598712FD452B4E57977E9FFA /* Actor.cpp in Sources */,
 				E7E2E1718AEE406E86FDF34F /* ActorFactory.cpp in Sources */,
 				B0315FC8DE264A7AB4F1E421 /* ActorManager.cpp in Sources */,
+				4FBEC4041B1257AB00C59BA4 /* BitComponent.cpp in Sources */,
 				44CD1FFC2B2A4981B03FE63B /* FactoryBase.cpp in Sources */,
 				0432C1604DCE4E89B2E2EADA /* ComponentBase.cpp in Sources */,
 				9E8656A6F38543E5A14CF5EE /* ComponentFactory.cpp in Sources */,

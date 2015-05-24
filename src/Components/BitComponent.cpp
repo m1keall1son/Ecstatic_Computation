@@ -1,12 +1,12 @@
 //
-//  GeomTeapotComponentComponent.cpp
-//  System_test
+//  BitComponent.cpp
+//  Kinect_Component_test
 //
-//  Created by Mike Allison on 5/23/15.
+//  Created by Mike Allison on 5/24/15.
 //
 //
 
-#include "GeomTeapotComponent.h"
+#include "BitComponent.h"
 #include "DebugComponent.h"
 #include "Actor.h"
 #include "Events.h"
@@ -18,83 +18,84 @@
 using namespace ci;
 using namespace ci::app;
 
-GeomTeapotComponentRef GeomTeapotComponent::create( ec::Actor* context )
+ec::ComponentType BitComponent::TYPE = 0x019;
+
+BitComponentRef BitComponent::create( ec::Actor* context )
 {
-    return GeomTeapotComponentRef( new GeomTeapotComponent(context) );
+    return BitComponentRef( new BitComponent(context) );
 }
 
-void GeomTeapotComponent::handleShutDown( ec::EventDataRef )
+void BitComponent::handleShutDown( ec::EventDataRef )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" handle shutdown");
     mShuttingDown = true;
     
 }
-void GeomTeapotComponent::handleSceneChange( ec::EventDataRef )
+void BitComponent::handleSceneChange( ec::EventDataRef )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" handle scene change");
     if(mContext->isPersistent())registerHandlers();
 }
 
-void GeomTeapotComponent::registerHandlers()
+void BitComponent::registerHandlers()
 {
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::drawShadow), DrawShadowEvent::TYPE);
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::update), UpdateEvent::TYPE);
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
 }
-void GeomTeapotComponent::unregisterHandlers()
+void BitComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::drawShadow), DrawShadowEvent::TYPE);
-    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::update), UpdateEvent::TYPE);
-    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
 }
 
-void GeomTeapotComponent::update(ec::EventDataRef event )
+void BitComponent::update(ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" update");
-
+    
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     transform->setRotation( glm::toQuat( ci::rotate( (float)getElapsedSeconds(), vec3(1.) ) ) );
 }
 
-bool GeomTeapotComponent::initialize( const ci::JsonTree &tree )
+bool BitComponent::initialize( const ci::JsonTree &tree )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
     return true;
 }
 
-void GeomTeapotComponent::drawShadow( ec::EventDataRef event )
+void BitComponent::drawShadow( ec::EventDataRef event )
 {
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawShadow");
     
     gl::ScopedFaceCulling pushFace(true,GL_BACK);
-
+    
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-    mTeapotShadow->draw();
-    
+   // mTeapotShadow->draw();
+   
 }
 
-void GeomTeapotComponent::draw( ec::EventDataRef event )
+void BitComponent::draw( ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
-
+    
     gl::ScopedFaceCulling pushFace(true,GL_BACK);
     
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-    mTeapot->draw();
+    //mTeapot->draw();
     
 }
 
-ec::ComponentType GeomTeapotComponent::TYPE = 0x011;
 
-bool GeomTeapotComponent::postInit()
+bool BitComponent::postInit()
 {
     
     auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
@@ -103,16 +104,16 @@ bool GeomTeapotComponent::postInit()
     
     glsl->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     glsl->uniform("uShadowMap", 3);
-
+    
     auto aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     
-    auto trimesh = TriMesh( ci::geom::Teapot() );
+    auto trimesh = TriMesh( ci::geom::Sphere().subdivisions(32) );
     
     aab_debug = trimesh.calcBoundingBox();
     
-    mTeapot = ci::gl::Batch::create( trimesh , glsl );
+    mBit = ci::gl::Batch::create( trimesh , glsl );
     
-    mTeapotShadow = ci::gl::Batch::create( ci::geom::Teapot(), gl::getStockShader( gl::ShaderDef() ) );
+    mBitShadow = ci::gl::Batch::create( ci::geom::Teapot(), gl::getStockShader( gl::ShaderDef() ) );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
@@ -120,42 +121,42 @@ bool GeomTeapotComponent::postInit()
     return true;
 }
 
-GeomTeapotComponent::GeomTeapotComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "geom_teapot_component" ) ),mShuttingDown(false)
+BitComponent::BitComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_bit_component" ) ),mShuttingDown(false)
 {
-
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-
+    
 }
 
-GeomTeapotComponent::~GeomTeapotComponent()
+BitComponent::~BitComponent()
 {
     if(!mShuttingDown)unregisterHandlers();
 }
 
-const ec::ComponentNameType GeomTeapotComponent::getName() const
+const ec::ComponentNameType BitComponent::getName() const
 {
-    return "geom_teapot_component";
+    return "bit_component";
 }
 
-const ec::ComponentUId GeomTeapotComponent::getId() const
+const ec::ComponentUId BitComponent::getId() const
 {
     return mId;
 }
 
-const ec::ComponentType GeomTeapotComponent::getType() const
+const ec::ComponentType BitComponent::getType() const
 {
     return TYPE;
 }
 
-ci::JsonTree GeomTeapotComponent::serialize()
+ci::JsonTree BitComponent::serialize()
 {
     auto save = ci::JsonTree();
     save.addChild( ci::JsonTree( "name", getName() ) );
     save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "geom_teapot_component" ) );
+    save.addChild( ci::JsonTree( "type", "bit_component" ) );
     
     return save;
     

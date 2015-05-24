@@ -8,6 +8,8 @@ in F_DATA{
     vec2 TexCoord0;
 }frag;
 
+uniform sampler2D uColorTexture;
+
 out vec4 FragColor;
 
 void main()
@@ -16,7 +18,7 @@ void main()
     const float kPi = 3.14159265;
     const vec3  kMaterialDiffuseColor = vec3( 1 );
     const vec3  kMaterialSpecularColor = vec3( 0.25 );
-    const float kMaterialShininess = 200.0;
+    const float kMaterialShininess = 20.0;
     const float kAtmosphericScattering = 0.025;
     
     // Initialize ambient, diffuse and specular colors.
@@ -26,6 +28,14 @@ void main()
     
     // Calculate normal and eye vector.
     vec3 N = normalize( frag.Normal );
+    
+    vec3 kinect_color = texture( uColorTexture, frag.TexCoord0+vec2(-.03,-.04) ).rgb;
+    
+    if(!gl_FrontFacing){
+        kinect_color = vec3(1.);
+        N = -N;
+    }
+    
     vec3 E = normalize( -frag.Position.xyz );
     
     // Hemispherical ambient lighting.
@@ -97,7 +107,7 @@ void main()
         // Calculate diffuse color (clamp it to the light's range).
         float lambert = max( 0.0, dot( N, L ) );
         float range = mix( 1.0, step( dist, lights.uLight[i].range ), !isDirectional );
-        diffuse += shadow * range * colorAttenuation * distAttenuation * angularAttenuation * lambert * kMaterialDiffuseColor;
+        diffuse += shadow * range * colorAttenuation * distAttenuation * angularAttenuation * lambert * kinect_color;//kMaterialDiffuseColor;
         
         // Calculate light Scattering.
         if( !isDirectional )

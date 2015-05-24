@@ -33,6 +33,7 @@ public:
     void preDraw() override;
     void draw() override;
     void postDraw() override;
+    void shutDown( ec::EventDataRef )override;
     
 private:
     

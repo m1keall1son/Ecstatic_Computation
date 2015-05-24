@@ -27,20 +27,44 @@ DebugComponentRef DebugComponent::create(ec::Actor *context)
     return DebugComponentRef( new DebugComponent( context ) );
 }
 
-DebugComponent::DebugComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_debug_component" ) )
+DebugComponent::DebugComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_debug_component" ) ),mShuttingDown(false)
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
 
-    ///TODO: need to grab out all the geometry from context and create an aa_bounding_box
-    auto scene = ec::Controller::get()->scene().lock();
-    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &DebugComponent::draw), DrawDebugEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleShutDown ), ec::ShutDownEvent::TYPE );
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleSceneChange ), ec::SceneChangeEvent::TYPE );
 }
 
 DebugComponent::~DebugComponent()
 {
+    if(!mShuttingDown)unregisterHandlers();
+}
+
+void DebugComponent::handleSceneChange( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle scene change");
+    if(mContext->isPersistent())registerHandlers();
+}
+
+void DebugComponent::registerHandlers()
+{
+    ///TODO: need to grab out all the geometry from context and create an aa_bounding_box
+    auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &DebugComponent::draw), DrawDebugEvent::TYPE);
+}
+void DebugComponent::unregisterHandlers()
+{
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &DebugComponent::draw), DrawDebugEvent::TYPE);
+
 }
+
+void DebugComponent::handleShutDown( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle shutdown");
+    mShuttingDown = true;
+}
+
 
 bool DebugComponent::initialize( const ci::JsonTree &tree )
 {

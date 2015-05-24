@@ -40,8 +40,13 @@ private:
 
     RoomComponent( ec::Actor* context );
     
-    void registerListeners();
+    void handleShutDown( ec::EventDataRef );
+    void handleSceneChange( ec::EventDataRef );
     
+    void registerListeners();
+    void unregisterListeners();
+    
+    bool mShuttingDown;
     ci::gl::BatchRef mRoom;
     ci::gl::BatchRef mRoomShadow;
     float mRoomSize;

@@ -43,10 +43,20 @@ private:
     
     void reloadGlsl( ec::EventDataRef );
     
+    void handleShutDown( ec::EventDataRef );
+    void handleSceneChange( ec::EventDataRef );
+    
+    void registerListeners();
+    void unregisterListeners();
+    
+    bool mShuttingDown;
     ec::ComponentUId mId;
     ci::KinectRef mKinect;
     
+    ci::vec2 mThresholds;
+    
     ci::gl::Texture2dRef mKinectDepthTexture;
+    ci::gl::Texture2dRef mKinectColorTexture;
     ci::gl::GlslProgRef mKinectRender, mKinectShadowRender;
     ci::gl::BatchRef mKinectMesh;
     

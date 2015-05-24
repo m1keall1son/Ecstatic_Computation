@@ -42,6 +42,13 @@ protected:
     
     LightComponent( ec::Actor* context );
     
+    void handleShutDown( ec::EventDataRef );
+    void handleSceneChange( ec::EventDataRef );
+    
+    void registerHandlers();
+    void unregisterHandlers();
+    
+    bool         mShuttingDown;
     ci::LightRef mLight;
     bool mNeedsUpdate;
     ec::ComponentUId mId;

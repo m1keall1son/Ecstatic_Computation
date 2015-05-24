@@ -38,7 +38,14 @@ protected:
 
     DebugComponent( ec::Actor * context );
 
+    void handleShutDown( ec::EventDataRef );
+    void handleSceneChange( ec::EventDataRef );
+
+    void registerHandlers();
+    void unregisterHandlers();
+
     ec::ComponentUId mId;
     ci::AxisAlignedBox3f mObjectBoundingBox;
-    
+    bool mShuttingDown;
+
 };

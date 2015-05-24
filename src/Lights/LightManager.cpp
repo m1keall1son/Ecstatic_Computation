@@ -42,13 +42,13 @@ std::string LightManager::parseLightTypeToString( const ci::Light::Type &type )
     else return "directional";
 }
 
-LightManager::LightManager()
+LightManager::LightManager():mShuttingDown(false)
 {
     
     mLightUboLocation = 0;
     
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightManager::handleLightRegistration), ec::ReturnActorCreatedEvent::TYPE);
-    
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightManager::handleShutDown), ec::ShutDownEvent::TYPE);
     Lights lights;
     lights.numLights = 0;
     lights.upDirection = vec4(0,1,0,0);
@@ -59,7 +59,16 @@ LightManager::LightManager()
 
 LightManager::~LightManager()
 {
-    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightManager::handleLightRegistration), ec::ReturnActorCreatedEvent::TYPE);
+    if(!mShuttingDown){
+        ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightManager::handleLightRegistration), ec::ReturnActorCreatedEvent::TYPE);
+        ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightManager::handleShutDown), ec::ShutDownEvent::TYPE);
+    }
+}
+
+void LightManager::handleShutDown(ec::EventDataRef)
+{
+    CI_LOG_V( "light_manager handle shutdown");
+    mShuttingDown = true;
 }
 
 void LightManager::initShadowMap(const ci::JsonTree &init)

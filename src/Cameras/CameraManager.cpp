@@ -34,14 +34,25 @@ const ci::CameraPersp& CameraManager::getCamera( const CameraType& cam_type )
     return mDefaultCamera;
 }
 
-CameraManager::CameraManager()
+CameraManager::CameraManager():mShuttingDown(false)
 {
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &CameraManager::handleCameraRegistration), ec::ReturnActorCreatedEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &CameraManager::handleShutDown), ec::ShutDownEvent::TYPE);
+}
+
+void CameraManager::handleShutDown(ec::EventDataRef)
+{
+    CI_LOG_V( "camera_manager handle shutdown");
+    mShuttingDown = true;
 }
 
 CameraManager::~CameraManager()
 {
-    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &CameraManager::handleCameraRegistration), ec::ReturnActorCreatedEvent::TYPE);
+    //TODO: how to shutdown properly
+    if(!mShuttingDown){
+        ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &CameraManager::handleCameraRegistration), ec::ReturnActorCreatedEvent::TYPE);
+        ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &CameraManager::handleShutDown), ec::ShutDownEvent::TYPE);
+    }
 }
 
 void CameraManager::handleCameraRegistration( ec::EventDataRef event )

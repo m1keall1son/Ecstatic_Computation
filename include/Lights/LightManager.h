@@ -44,12 +44,14 @@ private:
     LightManager();
     
     void handleLightRegistration( ec::EventDataRef );
+    void handleShutDown( ec::EventDataRef );
     
     std::vector< ec::ActorUId > mLights;
     ci::gl::UboRef              mLightUbo;
     int                         mLightUboLocation;
     ShadowMapRef                mShadowMap;
-
+    bool                        mShuttingDown;
+    
     friend class AppSceneBase;
     
 };

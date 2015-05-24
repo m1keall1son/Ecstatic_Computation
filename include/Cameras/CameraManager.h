@@ -28,9 +28,11 @@ private:
     CameraManager();
     
     void handleCameraRegistration( ec::EventDataRef );
+    void handleShutDown( ec::EventDataRef );
     
-    std::map< CameraType, ec::ActorUId > mCameras;
-    ci::CameraPersp mDefaultCamera;
+    std::map< CameraType, ec::ActorUId >    mCameras;
+    ci::CameraPersp                         mDefaultCamera;
+    bool                                    mShuttingDown;
     
     friend class AppSceneBase;
     

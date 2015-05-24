@@ -31,21 +31,47 @@ KinectComponentRef KinectComponent::create(ec::Actor *context)
     return KinectComponentRef( new KinectComponent( context ) );
 }
 
-KinectComponent::KinectComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_kinect_component" ) )
+KinectComponent::KinectComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_kinect_component" ) ),mShuttingDown(false)
 {
     ///TODO: need to grab out all the geometry from context and create an aa_bounding_box
-    auto scene = ec::Controller::get()->scene().lock();
-    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
-    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawShadow), DrawShadowEvent::TYPE);
-    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::draw), DrawToMainBufferEvent::TYPE);
+
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     
-    mKinect = ci::Kinect::create();
+    registerListeners();
+    
+    auto params = Kinect::FreenectParams();
+    params.mDepthRegister = false;
+    mKinect = ci::Kinect::create( Kinect::Device( params ) );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
 }
 
 KinectComponent::~KinectComponent()
+{
+    if(!mShuttingDown)unregisterListeners();
+}
+
+void KinectComponent::handleShutDown( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle shut down");
+    mShuttingDown = true;    
+}
+void KinectComponent::handleSceneChange( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle scene change");
+    if(mContext->isPersistent())registerListeners();
+}
+
+void KinectComponent::registerListeners()
+{
+    auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawShadow), DrawShadowEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::draw), DrawToMainBufferEvent::TYPE);
+}
+void KinectComponent::unregisterListeners()
 {
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
@@ -76,9 +102,12 @@ void KinectComponent::reloadGlsl(ec::EventDataRef)
     mKinectRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     
     mKinectRender->uniform( "uDepthTexture", 4 );
-    
+    mKinectRender->uniform( "uColorTexture", 5 );
+    mKinectRender->uniform( "uThresholds", mThresholds );
+
     ///TODO: give shadow map a permanent location
     mKinectRender->uniform( "uShadowMap", 3 );
+    
     mKinectRender->uniform( "uRef_pix_size", mKinect->getZeroPlanePixelSize() );
     mKinectRender->uniform( "uRef_distance", mKinect->getZeroPlaneDistance() );
     mKinectRender->uniform( "uConst_shift", mKinect->getRegistrationConstShift() );
@@ -86,6 +115,7 @@ void KinectComponent::reloadGlsl(ec::EventDataRef)
     mKinectRender->uniform( "uTriangleCutoff", .2f);
     
     mKinectShadowRender->uniform( "uDepthTexture", 4 );
+    mKinectShadowRender->uniform( "uThresholds", mThresholds );
     mKinectShadowRender->uniform( "uRef_pix_size", mKinect->getZeroPlanePixelSize() );
     mKinectShadowRender->uniform( "uRef_distance", mKinect->getZeroPlaneDistance() );
     mKinectShadowRender->uniform( "uConst_shift", mKinect->getRegistrationConstShift() );
@@ -98,6 +128,8 @@ void KinectComponent::reloadGlsl(ec::EventDataRef)
 
 bool KinectComponent::postInit()
 {
+    
+    mKinectColorTexture	= gl::Texture::create( mKinect->getWidth(), mKinect->getHeight(), gl::Texture::Format().internalFormat(GL_RGB).minFilter(GL_LINEAR).magFilter(GL_LINEAR) );
     
     mKinectDepthTexture	= gl::Texture::create( mKinect->getWidth(), mKinect->getHeight(), gl::Texture::Format().internalFormat(GL_R16UI).dataType(GL_UNSIGNED_SHORT).minFilter(GL_NEAREST).magFilter(GL_NEAREST) );
     
@@ -116,6 +148,10 @@ void KinectComponent::update(ec::EventDataRef)
 
     if(mKinect->checkNewDepthFrame())
         mKinectDepthTexture->update(  Channel16u( mKinect->getDepthImage() ) );
+    
+    if(mKinect->checkNewVideoFrame()){
+        mKinectColorTexture->update( Surface8u( mKinect->getVideoImage() ) );
+    }
     
 }
 
@@ -137,13 +173,14 @@ void KinectComponent::draw(ec::EventDataRef)
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
     
     gl::ScopedTextureBind kinect( mKinectDepthTexture, 4 );
-    
+    gl::ScopedTextureBind kinect_color( mKinectColorTexture, 5 );
+
     mKinectMesh->replaceGlslProg(mKinectRender);
 
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-    mKinectMesh->draw();
+    mKinectMesh->draw();    
 }
 
 bool KinectComponent::initialize( const ci::JsonTree &tree )

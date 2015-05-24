@@ -111,6 +111,35 @@ bool RoomComponent::postInit()
     return true;
 }
 
+
+
+RoomComponent::RoomComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_room_component" ) ),mShuttingDown(false)
+{
+    registerListeners();
+    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
+    
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    //TODO this should be in initilialize with ryan's code
+}
+
+RoomComponent::~RoomComponent()
+{
+    if(!mShuttingDown)unregisterListeners();
+}
+
+void RoomComponent::handleShutDown( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle shutdown");
+    mShuttingDown = true;
+}
+
+void RoomComponent::handleSceneChange( ec::EventDataRef )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" handle scene change");
+    if(mContext->isPersistent())registerListeners();
+}
+
 void RoomComponent::registerListeners()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
@@ -118,15 +147,7 @@ void RoomComponent::registerListeners()
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::draw), DrawToMainBufferEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::update), UpdateEvent::TYPE);
 }
-
-RoomComponent::RoomComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_room_component" ) )
-{
-    registerListeners();
-    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-    //TODO this should be in initilialize with ryan's code
-}
-
-RoomComponent::~RoomComponent()
+void RoomComponent::unregisterListeners()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::update), UpdateEvent::TYPE);

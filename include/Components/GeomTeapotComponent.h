@@ -39,7 +39,15 @@ public:
 private:
 
     GeomTeapotComponent( ec::Actor* context );
+    
+    void handleShutDown( ec::EventDataRef );
+    void handleSceneChange( ec::EventDataRef );
+    
+    void registerHandlers();
+    void unregisterHandlers();
+    
     ci::gl::BatchRef mTeapot, mTeapotShadow;
     ec::ComponentUId mId;
+    bool             mShuttingDown;
 
 };

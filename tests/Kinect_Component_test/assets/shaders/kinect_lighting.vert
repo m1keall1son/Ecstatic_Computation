@@ -30,16 +30,16 @@ void main(){
     neighbor_rt.xyz  = depth_mm_to_world( tc_rt.x*640., (1.-tc_rt.y)*480., raw_to_mm( float(nr_rawdepth) ) );
     
     vec3 neighbor_down = vec3(0.);
-    vec2 tc_dn = vec2(ciTexCoord0.x + inc.x, ciTexCoord0.y);
+    vec2 tc_dn = vec2(ciTexCoord0.x, ciTexCoord0.y + inc.y );
     uint nd_rawdepth   = texture( uDepthTexture, tc_dn ).r;
     neighbor_down.xyz    = depth_mm_to_world( tc_dn.x*640., (1.-tc_dn.y)*480., raw_to_mm( float(nd_rawdepth) ) );
     
     vec3 d1 = neighbor_rt - pos.xyz;
     vec3 d2 = neighbor_down - pos.xyz;
-    vec3 norm = normalize( cross( d1, d2 ) );
+    vec3 norm = normalize( cross( d2, d1 ) );
 
     vNormal = ciNormalMatrix * norm;
-    vPosition = ciModelView * vPosition;
+    vPosition = ciModelView * pos;
     
     gl_Position = ciModelViewProjection * pos;
 }
