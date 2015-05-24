@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="Ecstatic_Computation"
+	id="org.libcinder.ecstatic_computation"
+	author="Mike Allison"
+	version="0.0.1"
+	>
+	<supports os="macosx" />
+	
+	<includePath>include</includePath>
+    
+    <headerPattern>include/*.h</headerPattern>
+    <headerPattern>include/Events/*.h</headerPattern>
+    <headerPattern>include/Components/*.h</headerPattern>
+    <headerPattern>include/Scenes/*.h</headerPattern>
+    <headerPattern>include/Lights/*.h</headerPattern>
+    <headerPattern>include/Cameras/*.h</headerPattern>
+    <sourcePattern>src/*.cpp</sourcePattern>
+	<sourcePattern>src/Events/*.cpp</sourcePattern>
+    <sourcePattern>src/Components/*.cpp</sourcePattern>
+    <sourcePattern>src/Lights/*.cpp</sourcePattern>
+    <sourcePattern>src/Scenes/*.cpp</sourcePattern>
+    <sourcePattern>src/Cameras/*.cpp</sourcePattern>
+    
+    <asset>assets/shaders/lighting.vert</asset>
+    <asset>assets/shaders/lighting.frag</asset>
+    <asset>assets/configs/config.json</asset>
+
+    <platform os="macosx">
+    <requires>org.libcinder.ecstatic</requires>
+    <requires>freenect.libcinder.org</requires>
+    </platform>
+    
+</block>
+</cinder>

@@ -1,0 +1,208 @@
+{
+    "scenes": [
+               {
+               "name": "intro",
+               "shadow_map": {
+               "size": 1024
+               },
+               "actors": [
+                          {
+                          "name": "test_actor",
+                          "type": "actor",
+                          "type_qualifier": "static",
+                          "create_on_scene_init": true,
+                          "persistent": true,
+                          "active": true,
+                          "components": [
+                                         {
+                                         "type": "geom_teapot_component"
+                                         },
+                                         {
+                                         "type": "transform_component",
+                                         "translation": [
+                                                         0,
+                                                         0,
+                                                         0
+                                                         ]
+                                         },
+                                         {
+                                         "type": "frustum_cull_component"
+                                         },
+                                         {
+                                         "type": "debug_component"
+                                         }
+                                         ]
+                          },
+                          {
+                          "name": "main_camera",
+                          "type": "camera",
+                          "type_qualifier": "main",
+                          "create_on_scene_init": true,
+                          "persistent": true,
+                          "active": true,
+                          "components": [
+                                         {
+                                         "type": "camera_component",
+                                         "fov": 60,
+                                         "aspect": "window",
+                                         "near": 0.1,
+                                         "far": 1000
+                                         },
+                                         {
+                                         "type": "transform_component",
+                                         "translation": [
+                                                         0,
+                                                         0,
+                                                         5
+                                                         ]
+                                         }
+                                         ]
+                          },
+                          {
+                          "name": "room",
+                          "type": "actor",
+                          "type_qualifier": "static",
+                          "create_on_scene_init": true,
+                          "persistent": true,
+                          "active": true,
+                          "components": [
+                                         {
+                                         "type": "room_component",
+                                         "size": 15
+                                         },
+                                         {
+                                         "type": "transform_component",
+                                         "translation": [
+                                                         0,
+                                                         0,
+                                                         0
+                                                         ]
+                                         },
+                                         {
+                                         "type": "frustum_cull_component"
+                                         },
+                                         {
+                                         "type": "debug_component"
+                                         }
+                                         ]
+                          },
+                          {
+                          "name": "shadow_light",
+                          "type": "light",
+                          "type_qualifier": "static",
+                          "create_on_scene_init": true,
+                          "persistent": true,
+                          "active": true,
+                          "components": [
+                                         {
+                                         "type": "light_component",
+                                         "light": {
+                                         "color": [
+                                                   1.0,
+                                                   1.0,
+                                                   1.0
+                                                   ],
+                                         "direction": [
+                                                   0.0,
+                                                   -1.0,
+                                                   0.0
+                                                   ],
+                                         "mapping": [
+                                                     0.0,
+                                                     0.0,
+                                                     1024.0,
+                                                     1024.0
+                                                     ],
+                                         "intensity": 1.5,
+                                         "visible": true,
+                                         "temperature": 1000.0,
+                                         "type": "spot",
+                                         "point_at": [
+                                                      0.0,
+                                                      0.0,
+                                                      0.0
+                                                      ],
+                                         "position": [
+                                                      3.0,
+                                                      3.0,
+                                                      0.0
+                                                      ],
+                                         "range" : 100.0,
+                                         "attenuation": [
+                                                         0.0,
+                                                         0.01
+                                                         ],
+                                         "enable_shadows": true,
+                                         "spot_angle": 75.0,
+                                         "spot_ratio": 1.,
+                                         "hotspot_angle": 75.0,
+                                         "hotspot_ratio": 0.0
+                                         }
+                                         },
+                                         {
+                                         "type": "debug_component"
+                                         }
+                                         ]
+                          },
+                          {
+                          "name": "point_test",
+                          "type": "light",
+                          "type_qualifier": "static",
+                          "create_on_scene_init": true,
+                          "persistent": true,
+                          "active": true,
+                          "components": [
+                                         {
+                                         "type": "light_component",
+                                         "light": {
+                                         "color": [
+                                                   1.0,
+                                                   1.0,
+                                                   1.0
+                                                   ],
+                                         "direction": [
+                                                       0.0,
+                                                       -1.0,
+                                                       0.0
+                                                       ],
+                                         "mapping": [
+                                                     0.0,
+                                                     0.0,
+                                                     1024.0,
+                                                     1024.0
+                                                     ],
+                                         "intensity": 1.5,
+                                         "visible": true,
+                                         "temperature": 300.0,
+                                         "type": "point",
+                                         "point_at": [
+                                                      0.0,
+                                                      0.0,
+                                                      0.0
+                                                      ],
+                                         "position": [
+                                                      -3.0,
+                                                      3.0,
+                                                      0.0
+                                                      ],
+                                         "range" : 100.0,
+                                         "attenuation": [
+                                                         0.0,
+                                                         0.01
+                                                         ],
+                                         "enable_shadows": false,
+                                         "spot_angle": 75.0,
+                                         "spot_ratio": 1.,
+                                         "hotspot_angle": 75.0,
+                                         "hotspot_ratio": 0.0
+                                         }
+                                         },
+                                         {
+                                         "type": "debug_component"
+                                         }
+                                         ]
+                          }
+                          ]
+               }
+               ]
+}
