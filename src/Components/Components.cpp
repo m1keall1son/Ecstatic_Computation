@@ -14,6 +14,7 @@
 #include "DebugComponent.h"
 #include "FrustumCullComponent.h"
 #include "GeomTeapotComponent.h"
+#include "KinectComponent.h"
 #include "RoomComponent.h"
 #include "cinder/Log.h"
 #include "Actor.h"
@@ -58,6 +59,14 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
         auto c = LightComponent::create(context);
         c->initialize(init);
         return c;
+        
+    }
+    else if (type == "kinect_component")
+    {
+        CI_LOG_V("parsed kinect_component");
+        auto kinect = KinectComponent::create(context);
+        kinect->initialize(init);
+        return kinect;
         
     }
     else if (type == "geom_teapot_component")

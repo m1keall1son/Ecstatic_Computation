@@ -7,6 +7,27 @@
                },
                "actors": [
                           {
+                          "name": "kinect",
+                          "type": "actor",
+                          "type_qualifier": "static",
+                          "create_on_scene_init": true,
+                          "persistent": true,
+                          "active": true,
+                          "components": [
+                                         {
+                                         "type": "kinect_component"
+                                         },
+                                         {
+                                         "type": "transform_component",
+                                         "translation": [
+                                                         0.0,
+                                                         0.0,
+                                                         5.0
+                                                         ]
+                                         }
+                                         ]
+                          },
+                          {
                           "name": "test_actor",
                           "type": "actor",
                           "type_qualifier": "static",

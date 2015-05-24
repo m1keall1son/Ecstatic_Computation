@@ -43,7 +43,7 @@ void RoomComponent::update(ec::EventDataRef event )
 
 void RoomComponent::drawShadow(ec::EventDataRef)
 {
-    gl::cullFace(GL_FRONT);
+    gl::ScopedFaceCulling pushFace(true,GL_FRONT);
 
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawShadow");
     gl::ScopedModelMatrix model;
@@ -57,7 +57,7 @@ void RoomComponent::draw(ec::EventDataRef event )
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
 
-    gl::cullFace(GL_FRONT);
+    gl::ScopedFaceCulling pushFace(true,GL_FRONT);
     
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
@@ -69,6 +69,8 @@ void RoomComponent::draw(ec::EventDataRef event )
 
 bool RoomComponent::initialize(const ci::JsonTree &tree)
 {
+    CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    
     try {
         
         auto size = tree["size"].getValue<float>();
@@ -85,7 +87,7 @@ bool RoomComponent::initialize(const ci::JsonTree &tree)
 bool RoomComponent::postInit()
 {
     
-    auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")) );
+    auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
     
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     
@@ -103,7 +105,7 @@ bool RoomComponent::postInit()
     
     mRoomShadow = gl::Batch::create( trimesh, gl::getStockShader(gl::ShaderDef()) );
 
-    CI_LOG_V("room_component Post init complete");
+    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
     ///this could reflect errors...
     return true;
@@ -120,7 +122,7 @@ void RoomComponent::registerListeners()
 RoomComponent::RoomComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_room_component" ) )
 {
     registerListeners();
-    CI_LOG_V("room_component constructed");
+    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     //TODO this should be in initilialize with ryan's code
 }
 

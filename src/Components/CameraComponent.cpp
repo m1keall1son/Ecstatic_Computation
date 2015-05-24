@@ -30,7 +30,7 @@ CameraComponent::CameraComponent( ec::Actor* context ) : ec::ComponentBase( cont
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::update), UpdateEvent::TYPE);
 
-    CI_LOG_V("camera_component constructed");
+    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
 }
 
 CameraComponent::~CameraComponent()
@@ -63,7 +63,7 @@ bool CameraComponent::initialize( const ci::JsonTree &tree )
     mUI.setCurrentCam(mCamera);
     mUI.connect(ci::app::getWindow());
     
-    CI_LOG_V("camera_component initialized");
+    CI_LOG_V( mContext->getName() + " : "+getName()+" initialized");
     
     return true;
 }

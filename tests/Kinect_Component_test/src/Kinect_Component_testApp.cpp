@@ -29,7 +29,6 @@ void Kinect_Component_testApp::setup()
     //init system
     ec::Controller::get()->initialize( JsonTree( loadAsset("configs/config.json") ) );
     
-    gl::enableFaceCulling();
     gl::enableDepthRead();
     gl::enableDepthWrite();
     

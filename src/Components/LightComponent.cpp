@@ -29,7 +29,8 @@ LightComponent::LightComponent( ec::Actor * context ): ec::ComponentBase( contex
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::update), UpdateEvent::TYPE);
-    
+    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
+
 }
 
 LightComponent::~LightComponent()
@@ -45,6 +46,8 @@ bool LightComponent::postInit()
     auto aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     auto trimesh = TriMesh( geom::Cube() );
     aab_debug = trimesh.calcBoundingBox();
+    
+    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
     return true;
 }
@@ -494,6 +497,8 @@ static void serializeCapsuleLight( const ci::CapsuleLightRef& light, ci::JsonTre
 
 bool LightComponent::initialize( const ci::JsonTree &tree )
 {
+    CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    
     try{
         auto light = tree["light"];
         auto l_type = light["type"].getValue();

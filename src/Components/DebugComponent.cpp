@@ -29,6 +29,8 @@ DebugComponentRef DebugComponent::create(ec::Actor *context)
 
 DebugComponent::DebugComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_debug_component" ) )
 {
+    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
+
     ///TODO: need to grab out all the geometry from context and create an aa_bounding_box
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &DebugComponent::draw), DrawDebugEvent::TYPE);
@@ -42,6 +44,7 @@ DebugComponent::~DebugComponent()
 
 bool DebugComponent::initialize( const ci::JsonTree &tree )
 {
+    CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
     
     try {
         auto min = tree["aa_bounding_box_min"].getChildren();

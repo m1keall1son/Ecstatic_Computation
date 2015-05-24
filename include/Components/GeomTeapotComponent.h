@@ -21,7 +21,7 @@ public:
     
     static GeomTeapotComponentRef create( ec::Actor* context );
     
-    bool                          initialize( const ci::JsonTree &tree )override{ return true; }
+    bool                          initialize( const ci::JsonTree &tree )override;
     ci::JsonTree                  serialize()override;
     const ec::ComponentNameType   getName() const override;
     const ec::ComponentUId        getId() const override;

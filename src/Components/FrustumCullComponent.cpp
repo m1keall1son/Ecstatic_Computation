@@ -23,6 +23,8 @@ FrustumCullComponentRef FrustumCullComponent::create(ec::Actor *context)
 
 FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_frustum_cull_component" ) )
 {
+    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
+
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::cull), CullEvent::TYPE);
 }

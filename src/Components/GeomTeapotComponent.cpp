@@ -32,12 +32,18 @@ void GeomTeapotComponent::update(ec::EventDataRef event )
     transform->setRotation( glm::toQuat( ci::rotate( (float)getElapsedSeconds(), vec3(1.) ) ) );
 }
 
+bool GeomTeapotComponent::initialize( const ci::JsonTree &tree )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    return true;
+}
+
 void GeomTeapotComponent::drawShadow( ec::EventDataRef event )
 {
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawShadow");
     
-    gl::cullFace(GL_BACK);
+    gl::ScopedFaceCulling pushFace(true,GL_BACK);
 
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
@@ -50,7 +56,7 @@ void GeomTeapotComponent::draw( ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
 
-    gl::cullFace(GL_BACK);
+    gl::ScopedFaceCulling pushFace(true,GL_BACK);
     
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
@@ -64,7 +70,7 @@ ec::ComponentType GeomTeapotComponent::TYPE = 0x011;
 bool GeomTeapotComponent::postInit()
 {
     
-    auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")) );
+    auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
     
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     
@@ -81,7 +87,7 @@ bool GeomTeapotComponent::postInit()
     
     mTeapotShadow = ci::gl::Batch::create( ci::geom::Teapot(), gl::getStockShader( gl::ShaderDef() ) );
     
-    CI_LOG_V("geom_teapot Post init complete");
+    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
     ///this could reflect errors...
     return true;
@@ -89,12 +95,14 @@ bool GeomTeapotComponent::postInit()
 
 GeomTeapotComponent::GeomTeapotComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "geom_teapot_component" ) )
 {
-    CI_LOG_V("geom_teapot constructed");
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::draw), DrawToMainBufferEvent::TYPE);
+    
+    CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
+
 }
 
 GeomTeapotComponent::~GeomTeapotComponent()
