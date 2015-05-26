@@ -12,7 +12,6 @@
 #include "Common.h"
 #include "ComponentBase.h"
 #include "TransformComponent.h"
-#include "cinder/MayaCamUI.h"
 
 class CameraComponent : public ec::ComponentBase {
     
@@ -31,7 +30,7 @@ public:
     
     void update( ec::EventDataRef );
     
-    inline const ci::CameraPersp& getCamera(){ return mUI.getCamera(); }
+    inline const ci::CameraPersp& getCamera(){ return mCamera; }
 
     ~CameraComponent();
 
@@ -45,7 +44,6 @@ private:
 
     CameraComponent( ec::Actor * context );
     ci::CameraPersp mCamera;
-    ci::MayaCamUI mUI;
     ec::ComponentUId mId;
     bool mShuttingDown;
 

@@ -31,6 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "AppCommon.h"
 
+//Light class written by Paul Houx https://github.com/paulhoux
+
 namespace cinder {
 
 class DirectionalLight;

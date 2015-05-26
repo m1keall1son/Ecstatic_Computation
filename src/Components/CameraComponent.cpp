@@ -83,9 +83,6 @@ bool CameraComponent::initialize( const ci::JsonTree &tree )
         mCamera.setPerspective(60, getWindowAspectRatio(), .1, 1000);
     }
     
-    mUI.setCurrentCam(mCamera);
-    mUI.connect(ci::app::getWindow());
-    
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialized");
     
     return true;
@@ -95,9 +92,8 @@ ci::JsonTree CameraComponent::serialize()
 {
     auto save = ci::JsonTree();
     
-    save.addChild( ci::JsonTree( "name", getName() ) );
-    save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "camera_component" ) );
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
     save.addChild( ci::JsonTree( "fov", mCamera.getFov() ) );
     save.addChild( ci::JsonTree( "near", mCamera.getNearClip() ) );
     save.addChild( ci::JsonTree( "far", mCamera.getFarClip() ) );
@@ -128,7 +124,8 @@ void CameraComponent::update(ec::EventDataRef event)
     //TODO: transform must have target (pointer to another actor location), lookat, view direction,
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     auto t = transform->getTranslation();
-    mCamera.lookAt( t, vec3(0) );
+    mCamera.setEyePoint( t );
+    mCamera.setOrientation(transform->getRotation());
     // mCamera.setViewDirection( glm::eulerAngles( getRotation() ) );
 }
 

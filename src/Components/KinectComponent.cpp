@@ -67,6 +67,7 @@ void KinectComponent::handleSceneChange( ec::EventDataRef )
 void KinectComponent::registerListeners()
 {
     auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::draw), DrawToMainBufferEvent::TYPE);
@@ -74,12 +75,13 @@ void KinectComponent::registerListeners()
 void KinectComponent::unregisterListeners()
 {
     auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::draw), DrawToMainBufferEvent::TYPE);
 }
 
-void KinectComponent::reloadGlsl(ec::EventDataRef)
+void KinectComponent::handleReloadGlslProg(ec::EventDataRef)
 {
     try {
         mKinectShadowRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/kinect_shadow.vert")).fragment(loadAsset("shaders/kinect_shadow.frag")).geometry(loadAsset("shaders/kinect_shadow.geom")).preprocess(true) );
@@ -133,7 +135,7 @@ bool KinectComponent::postInit()
     
     mKinectDepthTexture	= gl::Texture::create( mKinect->getWidth(), mKinect->getHeight(), gl::Texture::Format().internalFormat(GL_R16UI).dataType(GL_UNSIGNED_SHORT).minFilter(GL_NEAREST).magFilter(GL_NEAREST) );
     
-    reloadGlsl(ec::EventDataRef());
+    handleReloadGlslProg(ec::EventDataRef());
     
     mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)), mKinectRender );
     
@@ -157,6 +159,7 @@ void KinectComponent::update(ec::EventDataRef)
 
 void KinectComponent::drawShadow(ec::EventDataRef)
 {
+   
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawShadow");
         
     gl::ScopedTextureBind kinect( mKinectDepthTexture, 4 );
@@ -218,6 +221,8 @@ bool KinectComponent::initialize( const ci::JsonTree &tree )
 ci::JsonTree KinectComponent::serialize()
 {
     auto save = ci::JsonTree();
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
 //    save.addChild( ci::JsonTree( "name", getName() ) );
 //    save.addChild( ci::JsonTree( "id", getId() ) );
 //    save.addChild( ci::JsonTree( "type", "debug_component" ) );

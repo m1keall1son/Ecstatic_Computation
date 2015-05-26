@@ -18,6 +18,7 @@
 #include "FrustumCullComponent.h"
 #include "Events.h"
 #include "LightComponent.h"
+#include "CameraComponent.h"
 #include "Light.h"
 
 ec::ComponentType DebugComponent::TYPE = 0x016;
@@ -30,7 +31,7 @@ DebugComponentRef DebugComponent::create(ec::Actor *context)
 DebugComponent::DebugComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_debug_component" ) ),mShuttingDown(false)
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-
+    registerHandlers();
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleShutDown ), ec::ShutDownEvent::TYPE );
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleSceneChange ), ec::SceneChangeEvent::TYPE );
 }
@@ -100,9 +101,8 @@ bool DebugComponent::initialize( const ci::JsonTree &tree )
 ci::JsonTree DebugComponent::serialize()
 {
     auto save = ci::JsonTree();
-    save.addChild( ci::JsonTree( "name", getName() ) );
-    save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "debug_component" ) );
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
     
     auto min = ci::JsonTree::makeArray( "aa_bounding_box_min" );
     for( int i = 0; i<3; i++ ){
@@ -147,13 +147,25 @@ void DebugComponent::draw( ec::EventDataRef )
         }else{
             ci::gl::color(1., 0., 0.);
         }
+    }else{
+        ci::gl::color(1., 1., 1.);
     }
     
     if( mContext->hasComponent(ec::TransformComponent::TYPE) )
     {
+        
         auto transform = mContext->getComponent<ec::TransformComponent>().lock();
         ci::gl::multModelMatrix( transform->getModelMatrix() );
-        ci::gl::drawStrokedCube(mObjectBoundingBox);
+        
+        if( mContext->hasComponent(CameraComponent::TYPE) ){
+
+            auto & camera = mContext->getComponent<CameraComponent>().lock()->getCamera();
+            ci::gl::drawFrustum( camera );
+            
+        }else{
+       
+            ci::gl::drawStrokedCube(mObjectBoundingBox);
+        }
 
     }else if( mContext->hasComponent(LightComponent::TYPE) ){
         auto light = mContext->getComponent<LightComponent>().lock()->getLight();

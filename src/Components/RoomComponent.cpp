@@ -43,9 +43,14 @@ void RoomComponent::update(ec::EventDataRef event )
 
 void RoomComponent::drawShadow(ec::EventDataRef)
 {
-    gl::ScopedFaceCulling pushFace(true,GL_FRONT);
-
+    
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawShadow");
+    
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
+    gl::ScopedFaceCulling pushFace(true,GL_FRONT);
+    
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
@@ -57,6 +62,9 @@ void RoomComponent::draw(ec::EventDataRef event )
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
 
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
     gl::ScopedFaceCulling pushFace(true,GL_FRONT);
     
     gl::ScopedModelMatrix model;
@@ -99,7 +107,7 @@ bool RoomComponent::postInit()
     mRoom = ci::gl::Batch::create( ci::geom::Cube().size( vec3( mRoomSize )) >> geom::AttribFn<vec3, vec3>( geom::NORMAL, geom::NORMAL, flipNormals ), glsl );
     
     ///get bounding box;
-    auto aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     auto trimesh = TriMesh( geom::Cube().size( vec3( mRoomSize ) ));
     aab_debug = trimesh.calcBoundingBox();
     
@@ -173,9 +181,8 @@ const ec::ComponentType RoomComponent::getType() const
 ci::JsonTree RoomComponent::serialize()
 {
     auto save = ci::JsonTree();
-    save.addChild( ci::JsonTree( "name", getName() ) );
-    save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "room_component" ) );
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
     save.addChild( ci::JsonTree( "size", mRoomSize ) );
 
     return save;

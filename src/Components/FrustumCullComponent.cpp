@@ -21,7 +21,7 @@ FrustumCullComponentRef FrustumCullComponent::create(ec::Actor *context)
     return FrustumCullComponentRef( new FrustumCullComponent( context ) );
 }
 
-FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_frustum_cull_component" ) ),mShuttingDown(false)
+FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_frustum_cull_component" ) ),mShuttingDown(false), mIsVisible(false)
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     registerHandlers();
@@ -68,9 +68,9 @@ void FrustumCullComponent::cull( ec::EventDataRef )
             ci::Frustumf visibleWorld( scene->cameras()->getCamera(CameraManager::CameraType::MAIN_CAMERA) );
             ci::AxisAlignedBox3f worldBoundingBox;
             auto transform = mContext->getComponent<ec::TransformComponent>().lock();
-            auto boundingbox = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+            auto & boundingbox = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
             worldBoundingBox = boundingbox.transformed( transform->getModelMatrix() );
-            mIsVisible = !visibleWorld.intersects( worldBoundingBox );
+            mIsVisible = visibleWorld.intersects( worldBoundingBox );
         }
         else
             CI_LOG_E("no scene");
@@ -80,9 +80,8 @@ void FrustumCullComponent::cull( ec::EventDataRef )
 ci::JsonTree FrustumCullComponent::serialize()
 {
     auto save = ci::JsonTree();
-    save.addChild( ci::JsonTree( "name", getName() ) );
-    save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "frustum_cull_component" ) );
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
     save.addChild( ci::JsonTree( "current_visibility", mIsVisible ) );
     return save;
 }

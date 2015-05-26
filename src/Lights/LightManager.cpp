@@ -122,7 +122,7 @@ void LightManager::update() {
     
     if( updateAll ){
         
-        auto viewMat = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() )->cameras()->getCamera( CameraManager::MAIN_CAMERA ).getViewMatrix();
+        auto viewMat = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() )->cameras()->getActiveCamera().getViewMatrix();
         
         Lights lights;
         lights.numLights = activeLights.size();

@@ -7,6 +7,8 @@
 #include "Controller.h"
 #include "Scenes.h"
 #include "Components.h"
+#include "Scene.h"
+#include "Events.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -44,8 +46,23 @@ void Kinect_Component_testApp::mouseDown( MouseEvent event )
 
 void Kinect_Component_testApp::keyUp( KeyEvent event )
 {
-    mDebug = !mDebug;
-    mController->enableDebug( mDebug );
+    
+    if(event.getChar() == KeyEvent::KEY_d){
+        mDebug = !mDebug;
+        mController->enableDebug( mDebug );
+        if(mDebug)
+            mController->scene().lock()->manager()->queueEvent( SwitchCameraEvent::create( CameraManager::CameraType::DEBUG_CAMERA ) );
+        else
+            mController->scene().lock()->manager()->queueEvent( SwitchCameraEvent::create( CameraManager::CameraType::MAIN_CAMERA ) );
+    }
+    else if( event.getChar() == KeyEvent::KEY_r ){
+        mController->scene().lock()->manager()->queueEvent( ReloadGlslProgEvent::create() );
+        
+    }
+    else if( event.getChar() == KeyEvent::KEY_s ){
+        mController->scene().lock()->manager()->queueEvent( SaveSceneEvent::create() );
+    }
+    
 }
 
 void Kinect_Component_testApp::update()

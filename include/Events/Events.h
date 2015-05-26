@@ -10,7 +10,27 @@
 
 #include "BaseEventData.h"
 #include "AppCommon.h"
+#include "CameraManager.h"
+
+class ReloadGlslProgEvent : public ec::EventData {
+public:
     
+    static ec::EventType TYPE;
+    
+    static ReloadGlslProgEventRef create();
+    
+    ~ReloadGlslProgEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+private:
+    ReloadGlslProgEvent();
+};
+
 class DrawDebugEvent : public ec::EventData {
     public:
     
@@ -108,3 +128,45 @@ private:
     DrawShadowEvent();
 };
 
+
+class SaveSceneEvent : public ec::EventData {
+public:
+    
+    static ec::EventType TYPE;
+    
+    static SaveSceneEventRef create();
+    
+    ~SaveSceneEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+private:
+    SaveSceneEvent();
+};
+
+
+class SwitchCameraEvent : public ec::EventData {
+public:
+    
+    static ec::EventType TYPE;
+    
+    static SwitchCameraEventRef create( const CameraManager::CameraType &type );
+    
+    ~SwitchCameraEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+    inline CameraManager::CameraType& getType(){ return mType; }
+    
+private:
+    SwitchCameraEvent( const CameraManager::CameraType &type  );
+    CameraManager::CameraType mType;
+};

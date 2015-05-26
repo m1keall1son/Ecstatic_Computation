@@ -14,6 +14,7 @@
 #include "AppSceneBase.h"
 #include "Controller.h"
 #include "TransformComponent.h"
+#include "FrustumCullComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -41,6 +42,7 @@ void BitComponent::registerHandlers()
 {
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
@@ -48,6 +50,7 @@ void BitComponent::registerHandlers()
 void BitComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
@@ -56,9 +59,9 @@ void BitComponent::unregisterHandlers()
 void BitComponent::update(ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" update");
-    
-    auto transform = mContext->getComponent<ec::TransformComponent>().lock();
-    transform->setRotation( glm::toQuat( ci::rotate( (float)getElapsedSeconds(), vec3(1.) ) ) );
+//    
+//    auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+//    transform->setRotation( glm::toQuat( ci::rotate( (float)getElapsedSeconds(), vec3(1.) ) ) );
 }
 
 bool BitComponent::initialize( const ci::JsonTree &tree )
@@ -72,12 +75,15 @@ void BitComponent::drawShadow( ec::EventDataRef event )
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawShadow");
     
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
     gl::ScopedFaceCulling pushFace(true,GL_BACK);
     
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-   // mTeapotShadow->draw();
+    mBitShadow->draw();
    
 }
 
@@ -85,12 +91,37 @@ void BitComponent::draw( ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
     
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
     gl::ScopedFaceCulling pushFace(true,GL_BACK);
     
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-    //mTeapot->draw();
+    mBit->draw();
+    
+}
+
+void BitComponent::handleGlslProgReload(ec::EventDataRef)
+{
+    try {
+        mBitRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/bit.vert")).geometry(loadAsset("shaders/bit.geom")).fragment(loadAsset("shaders/bit.frag")).preprocess(true) );
+       
+    } catch (const ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(std::string("Bit render error: ") + e.what());
+    }
+    
+    try{
+        mBitShadowRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/bit_shadow.vert")).fragment(loadAsset("shaders/bit_shadow.frag")).preprocess(true) );
+    } catch (const ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(std::string("Bit shadow render error: ") + e.what());
+    }
+    
+    if(mBit)
+        mBit->replaceGlslProg(mBitRender);
+    if(mBitShadow)
+        mBitShadow->replaceGlslProg(mBitShadowRender);
     
 }
 
@@ -98,22 +129,22 @@ void BitComponent::draw( ec::EventDataRef event )
 bool BitComponent::postInit()
 {
     
-    auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
+    handleGlslProgReload(ec::EventDataRef());
     
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     
-    glsl->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
-    glsl->uniform("uShadowMap", 3);
+    mBitRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
+    mBitRender->uniform("uShadowMap", 3);
     
-    auto aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    
-    auto trimesh = TriMesh( ci::geom::Sphere().subdivisions(32) );
-    
+    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+    auto trimesh = TriMesh( ci::geom::Icosphere().subdivisions(3) );
     aab_debug = trimesh.calcBoundingBox();
     
-    mBit = ci::gl::Batch::create( trimesh , glsl );
+    trimesh.recalculateTangents();
+    trimesh.recalculateBitangents();
     
-    mBitShadow = ci::gl::Batch::create( ci::geom::Teapot(), gl::getStockShader( gl::ShaderDef() ) );
+    mBit = ci::gl::Batch::create( trimesh , mBitRender );
+    mBitShadow = ci::gl::Batch::create( trimesh, mBitShadowRender );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
@@ -154,9 +185,8 @@ const ec::ComponentType BitComponent::getType() const
 ci::JsonTree BitComponent::serialize()
 {
     auto save = ci::JsonTree();
-    save.addChild( ci::JsonTree( "name", getName() ) );
-    save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "bit_component" ) );
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
     
     return save;
     

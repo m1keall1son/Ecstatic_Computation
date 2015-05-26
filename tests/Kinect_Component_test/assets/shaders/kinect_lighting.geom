@@ -14,7 +14,6 @@ out F_DATA{
 }frag;
 
 uniform float uTriangleCutoff;
-//uniform mat3 ciNormalMatrix;
 
 void main(){
     
@@ -24,11 +23,6 @@ void main(){
        length( gl_in[1].gl_Position - gl_in[2].gl_Position ) > uTriangleCutoff
        ){
     }else{
-        
-//        vec3 d1 = vPosition[1].xyz - vPosition[0].xyz;
-//        vec3 d2 = vPosition[2].xyz - vPosition[0].xyz;
-//        
-//        vec3 nrm = ciNormalMatrix * normalize( cross( d1, d2 ) );
         
         for(int i=0;i<gl_in.length();i++){
             

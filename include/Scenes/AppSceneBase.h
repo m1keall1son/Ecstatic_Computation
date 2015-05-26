@@ -34,6 +34,8 @@ protected:
     
     AppSceneBase( const std::string& name );
     
+    void handleSaveScene( ec::EventDataRef );
+    
     LightManagerRef mLights;
     CameraManagerRef mCameras;
     

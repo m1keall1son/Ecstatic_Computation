@@ -41,7 +41,7 @@ private:
     
     KinectComponent( ec::Actor * context );
     
-    void reloadGlsl( ec::EventDataRef );
+    void handleReloadGlslProg( ec::EventDataRef );
     
     void handleShutDown( ec::EventDataRef );
     void handleSceneChange( ec::EventDataRef );

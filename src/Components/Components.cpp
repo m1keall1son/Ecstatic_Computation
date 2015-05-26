@@ -13,6 +13,7 @@
 #include "LightComponent.h"
 #include "DebugComponent.h"
 #include "FrustumCullComponent.h"
+#include "BitComponent.h"
 #include "GeomTeapotComponent.h"
 #include "KinectComponent.h"
 #include "RoomComponent.h"
@@ -59,6 +60,14 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
         auto c = LightComponent::create(context);
         c->initialize(init);
         return c;
+        
+    }
+    else if (type == "bit_component")
+    {
+        CI_LOG_V("parsed bit_component");
+        auto bit = BitComponent::create(context);
+        bit->initialize(init);
+        return bit;
         
     }
     else if (type == "kinect_component")

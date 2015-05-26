@@ -45,3 +45,6 @@ using UpdateEventRef = std::shared_ptr<class UpdateEvent>;
 using DrawToMainBufferEventRef = std::shared_ptr<class DrawToMainBufferEvent>;
 using DrawDebugEventRef = std::shared_ptr<class DrawDebugEvent>;
 using DrawShadowEventRef = std::shared_ptr<class DrawShadowEvent>;
+using ReloadGlslProgEventRef = std::shared_ptr< class ReloadGlslProgEvent >;
+using SaveSceneEventRef = std::shared_ptr< class SaveSceneEvent >;
+using SwitchCameraEventRef = std::shared_ptr<class SwitchCameraEvent>;

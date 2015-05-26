@@ -14,6 +14,7 @@
 #include "AppSceneBase.h"
 #include "Controller.h"
 #include "TransformComponent.h"
+#include "FrustumCullComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -70,6 +71,9 @@ void GeomTeapotComponent::drawShadow( ec::EventDataRef event )
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawShadow");
     
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
     gl::ScopedFaceCulling pushFace(true,GL_BACK);
 
     gl::ScopedModelMatrix model;
@@ -83,6 +87,9 @@ void GeomTeapotComponent::draw( ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
 
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
     gl::ScopedFaceCulling pushFace(true,GL_BACK);
     
     gl::ScopedModelMatrix model;
@@ -104,7 +111,7 @@ bool GeomTeapotComponent::postInit()
     glsl->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     glsl->uniform("uShadowMap", 3);
 
-    auto aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     
     auto trimesh = TriMesh( ci::geom::Teapot() );
     
@@ -153,9 +160,8 @@ const ec::ComponentType GeomTeapotComponent::getType() const
 ci::JsonTree GeomTeapotComponent::serialize()
 {
     auto save = ci::JsonTree();
-    save.addChild( ci::JsonTree( "name", getName() ) );
-    save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "geom_teapot_component" ) );
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
     
     return save;
     

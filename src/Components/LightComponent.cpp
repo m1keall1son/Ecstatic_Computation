@@ -67,7 +67,7 @@ bool LightComponent::postInit()
 {
     
     ///get bounding box;
-    auto aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     auto trimesh = TriMesh( geom::Cube() );
     aab_debug = trimesh.calcBoundingBox();
     
@@ -148,7 +148,7 @@ static void serializeLightBase( const ci::LightRef& base, ci::JsonTree& save )
     }
     save.addChild(color);
     auto mapping = ci::JsonTree::makeArray( "mapping" );
-    for( int i = 0; i<3; i++ ){
+    for( int i = 0; i<4; i++ ){
         mapping.addChild( JsonTree( "", base->getMapping()[i] ) );
     }
     save.addChild(mapping);
@@ -247,6 +247,21 @@ static void initPointLight( const ci::PointLightRef& light, const ci::JsonTree& 
     } catch ( const ci::JsonTree::ExcChildNotFound &ex	) {
         CI_LOG_W("didn't find position, setting default vec2(0,0.01)");
         light->setAttenuation(vec2(0,0.01));
+    }
+    
+    
+    try {
+        auto dir = init["point_at"].getChildren();
+        auto end = dir.end();
+        ci::vec3 final;
+        int i = 0;
+        for( auto it = dir.begin(); it != end; ++it ) {
+            final[i++] = (*it).getValue<float>();
+        }
+        light->pointAt( final );
+        
+    } catch ( const ci::JsonTree::ExcChildNotFound &ex	) {
+        CI_LOG_W("didn't find point_at, using direction");
     }
     
     try {
@@ -547,13 +562,12 @@ bool LightComponent::initialize( const ci::JsonTree &tree )
 ci::JsonTree LightComponent::serialize()
 {
     auto save = ci::JsonTree();
-    save.addChild( ci::JsonTree( "name", getName() ) );
-    save.addChild( ci::JsonTree( "id", getId() ) );
-    save.addChild( ci::JsonTree( "type", "light_component" ) );
+    save.addChild( ci::JsonTree( "type", getName() ) );
+    save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
     
     auto light = ci::JsonTree::makeObject("light");
     
-    switch (getType()) {
+    switch (mLight->getType()) {
         case Light::Type::Directional: serializeDirectionalLight( std::dynamic_pointer_cast<DirectionalLight>(mLight), light ); break;
         case Light::Type::Point: serializePointLight( std::dynamic_pointer_cast<PointLight>(mLight), light ); break;
         case Light::Type::Spot: serializeSpotLight( std::dynamic_pointer_cast<SpotLight>(mLight), light ); break;

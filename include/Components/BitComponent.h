@@ -44,10 +44,13 @@ private:
     void handleShutDown( ec::EventDataRef );
     void handleSceneChange( ec::EventDataRef );
     
+    void handleGlslProgReload( ec::EventDataRef );
+    
     void registerHandlers();
     void unregisterHandlers();
     
     ci::gl::BatchRef mBit, mBitShadow;
+    ci::gl::GlslProgRef mBitShadowRender, mBitRender;
     ec::ComponentUId mId;
     bool             mShuttingDown;
     

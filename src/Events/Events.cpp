@@ -9,6 +9,27 @@
 #include "Events.h"
 #include "Common.h"
 
+//RELOAD GLSL PROGS -------------------------------------------------------------/
+
+ec::EventType ReloadGlslProgEvent::TYPE = ec::getHash("reload_glslprogs");
+
+ReloadGlslProgEventRef ReloadGlslProgEvent::create()
+{
+    return ReloadGlslProgEventRef( new ReloadGlslProgEvent() );
+}
+
+ReloadGlslProgEvent::ReloadGlslProgEvent() : ec::EventData( cinder::app::getElapsedSeconds() ){}
+
+const char* ReloadGlslProgEvent::getName() const
+{
+    return "reload_glslprogs";
+}
+
+ec::EventType ReloadGlslProgEvent::getEventType() const
+{
+    return ReloadGlslProgEvent::TYPE;
+}
+
 
 //DRAW DEBUG -------------------------------------------------------------/
 
@@ -114,4 +135,47 @@ const char* DrawShadowEvent::getName() const
 ec::EventType DrawShadowEvent::getEventType() const
 {
     return DrawShadowEvent::TYPE;
+}
+
+//SAVE SCENE -------------------------------------------------------------/
+
+ec::EventType SaveSceneEvent::TYPE = ec::getHash("save_scene_event");
+
+SaveSceneEventRef SaveSceneEvent::create()
+{
+    return SaveSceneEventRef( new SaveSceneEvent() );
+}
+
+SaveSceneEvent::SaveSceneEvent() : ec::EventData( cinder::app::getElapsedSeconds() ){}
+
+const char* SaveSceneEvent::getName() const
+{
+    return "save_scene_event";
+}
+
+ec::EventType SaveSceneEvent::getEventType() const
+{
+    return SaveSceneEvent::TYPE;
+}
+
+
+//SWITCH CAMERA -------------------------------------------------------------/
+
+ec::EventType SwitchCameraEvent::TYPE = ec::getHash("switch_camera_event");
+
+SwitchCameraEventRef SwitchCameraEvent::create( const CameraManager::CameraType& type )
+{
+    return SwitchCameraEventRef( new SwitchCameraEvent(type) );
+}
+
+SwitchCameraEvent::SwitchCameraEvent(const CameraManager::CameraType& type) : ec::EventData( cinder::app::getElapsedSeconds() ), mType(type){}
+
+const char* SwitchCameraEvent::getName() const
+{
+    return "switch_camera_event";
+}
+
+ec::EventType SwitchCameraEvent::getEventType() const
+{
+    return SwitchCameraEvent::TYPE;
 }

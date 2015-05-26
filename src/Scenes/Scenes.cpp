@@ -132,7 +132,8 @@ void IntroScene::draw()
     
     {
         gl::ScopedMatrices pushMatrix;
-        gl::setMatrices( mCameras->getCamera( CameraManager::CameraType::MAIN_CAMERA ) );
+        
+        gl::setMatrices(mCameras->getActiveCamera());
         
         gl::ScopedTextureBind shadowMap( mLights->getShadowMap()->getTexture(), 3 );
     
