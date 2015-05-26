@@ -21,7 +21,7 @@ FrustumCullComponentRef FrustumCullComponent::create(ec::Actor *context)
     return FrustumCullComponentRef( new FrustumCullComponent( context ) );
 }
 
-FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_frustum_cull_component" ) ),mShuttingDown(false), mIsVisible(false)
+FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_frustum_cull_component" ) ),mShuttingDown(false), mIsVisible(false), mEnableCull(true)
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     registerHandlers();
@@ -58,22 +58,24 @@ void FrustumCullComponent::unregisterHandlers()
 
 void FrustumCullComponent::cull( ec::EventDataRef )
 {
- 
+    
     CI_LOG_V( mContext->getName() + " : "+getName()+" cull");
     
-    if( mContext->isActive() ){
-        
-        auto scene = std::dynamic_pointer_cast<AppSceneBase>(ec::Controller::get()->scene().lock());
-        if(scene){
-            ci::Frustumf visibleWorld( scene->cameras()->getCamera(CameraManager::CameraType::MAIN_CAMERA) );
-            ci::AxisAlignedBox3f worldBoundingBox;
-            auto transform = mContext->getComponent<ec::TransformComponent>().lock();
-            auto & boundingbox = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-            worldBoundingBox = boundingbox.transformed( transform->getModelMatrix() );
-            mIsVisible = visibleWorld.intersects( worldBoundingBox );
+    if( mEnableCull ){
+        if( mContext->isActive() ){
+            
+            auto scene = std::dynamic_pointer_cast<AppSceneBase>(ec::Controller::get()->scene().lock());
+            if(scene){
+                ci::Frustumf visibleWorld( scene->cameras()->getCamera(CameraManager::CameraType::MAIN_CAMERA) );
+                ci::AxisAlignedBox3f worldBoundingBox;
+                auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+                auto & boundingbox = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+                worldBoundingBox = boundingbox.transformed( transform->getModelMatrix() );
+                mIsVisible = visibleWorld.intersects( worldBoundingBox );
+            }
+            else
+                CI_LOG_E("no scene");
         }
-        else
-            CI_LOG_E("no scene");
     }
 }
 
@@ -97,4 +99,14 @@ const ec::ComponentUId FrustumCullComponent::getId() const
 const ec::ComponentType FrustumCullComponent::getType() const
 {
     return TYPE;
+}
+
+void FrustumCullComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
+{
+    
+    gui->addSeparator();
+    gui->addText(getName());
+    auto updateFn = [&]{ mEnableCull = mIsVisible; };
+    gui->addParam("visible", &mIsVisible).updateFn(updateFn);
+    
 }

@@ -48,3 +48,4 @@ using DrawShadowEventRef = std::shared_ptr<class DrawShadowEvent>;
 using ReloadGlslProgEventRef = std::shared_ptr< class ReloadGlslProgEvent >;
 using SaveSceneEventRef = std::shared_ptr< class SaveSceneEvent >;
 using SwitchCameraEventRef = std::shared_ptr<class SwitchCameraEvent>;
+using LoadGUIEventRef = std::shared_ptr<class LoadGUIEvent>;

@@ -192,4 +192,8 @@ ci::JsonTree BitComponent::serialize()
     
 }
 
-
+void BitComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
+{
+    gui->addSeparator();
+    gui->addText(getName());
+}

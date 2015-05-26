@@ -1,0 +1,33 @@
+{
+   "active" : true,
+   "components" : [
+      {
+         "id" : 3.4022020487226516e+18,
+         "light" : {
+            "attenuation" : [ 0, 0.0099999997764825821 ],
+            "color" : [ 0.39215689897537231, 0.64313727617263794, 1 ],
+            "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
+            "enable_shadows" : false,
+            "intensity" : 0.15000000596046448,
+            "mapping" : [ 0, 0, 1024, 1024 ],
+            "position" : [ 3, 3, 0 ],
+            "range" : 25.248762130737305,
+            "type" : "point",
+            "visible" : true
+         },
+         "type" : "light_component"
+      },
+      {
+         "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
+         "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
+         "id" : 4.9603631667621427e+18,
+         "type" : "debug_component"
+      }
+   ],
+   "create_on_scene_init" : true,
+   "id" : -7.3502663837835633e+18,
+   "name" : "shadow_light",
+   "persistent" : true,
+   "type" : "light",
+   "type_qualifier" : "static"
+}

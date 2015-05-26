@@ -167,4 +167,10 @@ ci::JsonTree GeomTeapotComponent::serialize()
     
 }
 
+void GeomTeapotComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
+{
+    gui->addSeparator();
+    gui->addText(getName());
+}
+
 

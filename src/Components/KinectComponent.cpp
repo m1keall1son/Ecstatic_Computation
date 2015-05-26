@@ -254,3 +254,9 @@ const ec::ComponentType KinectComponent::getType() const
 {
     return TYPE;
 }
+
+void KinectComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
+{
+    gui->addSeparator();
+    gui->addText(getName());
+}

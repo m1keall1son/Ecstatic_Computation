@@ -12,7 +12,9 @@
 #include "Events.h"
 #include "cinder/Log.h"
 #include "Actor.h"
-
+#include "SystemEvents.h"
+#include "cinder/params/Params.h"
+#include "GUIManager.h"
 
 AppSceneBase::~AppSceneBase()
 {
@@ -23,6 +25,7 @@ AppSceneBase::AppSceneBase( const std::string& name ):ec::Scene(name)
 {
     mLights = LightManagerRef( new LightManager );
     mCameras = CameraManagerRef( new CameraManager );
+        
     mSceneManager->addListener(fastdelegate::MakeDelegate(this, &AppSceneBase::handleSaveScene), SaveSceneEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::handleSwitchCamera), SwitchCameraEvent::TYPE);
 
@@ -44,6 +47,24 @@ void AppSceneBase::update()
 {
     mLights->update();
     ec::Scene::update();
+}
+
+void AppSceneBase::initGUI(const ec::GUIManagerRef &gui_manager)
+{
+    
+    //add any special thing to gui for scene?
+    auto scene_params = ci::params::InterfaceGl::create(ci::app::getWindow(), "Scene: "+getName() + " GUI", ci::vec2(100,100));
+    auto saveFn = [&]{ mSceneManager->triggerEvent(SaveSceneEvent::create()); };
+    scene_params->addButton("Save", saveFn);
+    
+    gui_manager->instertGUI(getId(), scene_params);
+    
+    //tell everyone else to load up
+    for( auto & actor : mActors ){
+        if(auto actor_strong = actor.second.lock()){
+            gui_manager->instertGUI(actor_strong->getId(), actor_strong->initGUI());
+        }
+    }
 }
 
 void AppSceneBase::handleSaveScene(ec::EventDataRef)
@@ -71,7 +92,13 @@ void AppSceneBase::handleSaveScene(ec::EventDataRef)
     
     save.addChild(actors);
     save.serialize();
-    save.write( ci::app::getAssetDirectories()[0] / "saved_scenes" / ci::fs::path(getName()+"_saved_config.json"), ci::JsonTree::WriteOptions().indented() );
+    
+    std::vector<std::string> allowed_extensions( 1, "json" );
+    
+    auto save_path = ci::app::getSaveFilePath( ci::app::getAssetDirectories()[0], allowed_extensions );
+    
+    if(save_path != "")
+        save.write( save_path, ci::JsonTree::WriteOptions().indented());
     
 }
 

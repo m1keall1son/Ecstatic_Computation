@@ -22,6 +22,8 @@ public:
     
     const ci::CameraPersp& getCamera( const CameraType& cam_type );
     const ci::CameraPersp& getActiveCamera();
+    
+    inline ec::IdType getId(){ return mId; }
 
     ~CameraManager();
     
@@ -39,6 +41,7 @@ private:
     bool                                    mShuttingDown;
     bool                                    mCameraSet;
     CameraType                              mCurrentCamera;
+    ec::IdType                              mId;
     
     friend class AppSceneBase;
     

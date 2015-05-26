@@ -187,3 +187,12 @@ void DebugComponent::draw( ec::EventDataRef )
 
     
 }
+
+void DebugComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
+{
+    
+    gui->addSeparator();
+    gui->addText(getName());
+    
+    
+}

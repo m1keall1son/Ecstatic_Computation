@@ -23,7 +23,7 @@ public:
     void draw() override;
     void cleanup()override;
     bool mDebug = false;
-    
+    bool mGUI = false;
     ec::ControllerRef mController;
     
 };
@@ -62,7 +62,10 @@ void Kinect_Component_testApp::keyUp( KeyEvent event )
     else if( event.getChar() == KeyEvent::KEY_s ){
         mController->scene().lock()->manager()->queueEvent( SaveSceneEvent::create() );
     }
-    
+    else if( event.getChar() == KeyEvent::KEY_g ){
+        mGUI = !mGUI;
+        mController->enableGUI( mGUI );
+    }
 }
 
 void Kinect_Component_testApp::update()

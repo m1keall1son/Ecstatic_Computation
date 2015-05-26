@@ -172,6 +172,7 @@ public:
 
 	//! Returns the intensity of the light.
 	float getIntensity() const { return mIntensity; }
+
 	//! Adjust the intensity of the spotlight, directly affecting its effective range based on the current distance attenuation parameters.
 	void setIntensity( float intensity ) { mIntensity = intensity; }
 
@@ -231,6 +232,8 @@ protected:
 	float      mIntensity;
 	int        mFlags;
 	bool       mVisible;
+    
+    friend LightComponent;
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -259,6 +262,9 @@ private:
 
 private:
 	vec3       mDirection;
+
+    friend LightComponent;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -329,7 +335,7 @@ public:
 	void setShadowIndex( uint8_t index ) { mShadowIndex = index; }
 
 	//! Enables or disables shadow casting for this light.
-	void enableShadows( bool enabled = true ) { if( enabled ) mFlags |= Data::ShadowEnabled; else mFlags &= ~Data::ShadowEnabled; }
+    void enableShadows( bool enabled = true ) { if( enabled ) mFlags |= Data::ShadowEnabled; else mFlags &= ~Data::ShadowEnabled; mHasShadows = enabled; }
 	//! Enables or disables the modulation texture for this light.
 	void enableModulation( bool enabled = true ) { if( enabled ) mFlags |= Data::ModulationEnabled; else mFlags &= ~Data::ModulationEnabled; }
 
@@ -337,7 +343,7 @@ protected:
 	PointLight()
 		: PointLight( Point ) {}
 	PointLight( Type type )
-		: Light( type ), mPosition( 0 ), mRange( 100 ), mAttenuation( 0 ), mIsPointingAt( false ), mModulationIndex( 0 ), mShadowIndex( 0 ), mIsDirty( true ) {}
+		: Light( type ), mPosition( 0 ), mRange( 100 ), mAttenuation( 0 ), mIsPointingAt( false ), mModulationIndex( 0 ), mShadowIndex( 0 ), mIsDirty( true ),mHasShadows(false) {}
 
 private:
 	void updateMatrices() const;
@@ -349,6 +355,7 @@ protected:
 	vec2       mAttenuation;
 	vec3       mPointAt;
 	bool       mIsPointingAt;
+    bool       mHasShadows;
 
 	uint8_t    mModulationIndex;
 	uint8_t    mShadowIndex;
@@ -356,6 +363,9 @@ protected:
 	mutable bool       mIsDirty;
 	mutable mat4       mViewMatrix[6];
 	mutable mat4       mProjectionMatrix;
+
+    friend LightComponent;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -395,6 +405,9 @@ private:
 private:
 	float mLength;
 	vec3  mAxis;
+
+    friend LightComponent;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -525,7 +538,7 @@ public:
 	void setModulationIndex( uint8_t index ) { mModulationIndex = index; }
 
 	//! Enables or disables shadow casting for this light.
-	void enableShadows( bool enabled = true ) { if( enabled ) mFlags |= Data::ShadowEnabled; else mFlags &= ~Data::ShadowEnabled; }
+    void enableShadows( bool enabled = true ) { if( enabled ) mFlags |= Data::ShadowEnabled; else mFlags &= ~Data::ShadowEnabled; mHasShadows = enabled; }
 	//! Enables or disables the modulation texture for this light.
 	void enableModulation( bool enabled = true ) { if( enabled ) mFlags |= Data::ModulationEnabled; else mFlags &= ~Data::ModulationEnabled; }
 
@@ -534,7 +547,7 @@ protected:
 		: SpotLight( Spot ) {}
 	SpotLight( Type type )
 		: Light( type ), mPosition( 0 ), mDirection( 0, -1, 0 ), mRange( 100 ), mSpotRatio( 1 ), mHotspotRatio( 1 )
-		, mAttenuation( 0 ), mPointAt( 0 ), mIsPointingAt( false ), mModulationIndex( 0 ), mShadowIndex( 0 ), mIsDirty( true )
+		, mAttenuation( 0 ), mPointAt( 0 ), mIsPointingAt( false ), mModulationIndex( 0 ), mShadowIndex( 0 ), mIsDirty( true ), mHasShadows(false)
 	{
 	}
 
@@ -550,6 +563,7 @@ protected:
 	vec2       mAttenuation;
 	vec3       mPointAt;
 	bool       mIsPointingAt;
+    bool       mHasShadows;
 
 	uint8_t    mModulationIndex;
 	uint8_t    mShadowIndex;
@@ -560,6 +574,9 @@ protected:
 	mutable mat4       mViewMatrix;;
 	mutable mat4       mProjectionMatrix;
 	mutable mat4       mShadowMatrix;
+
+    friend LightComponent;
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -652,6 +669,8 @@ private:
 private:
 	float mLength;
 	vec3  mAxis;
+
+    friend LightComponent;
 
 };
 

@@ -35,7 +35,8 @@ protected:
     AppSceneBase( const std::string& name );
     
     void handleSaveScene( ec::EventDataRef );
-    
+    void initGUI( const ec::GUIManagerRef &gui_manager )override;
+        
     LightManagerRef mLights;
     CameraManagerRef mCameras;
     

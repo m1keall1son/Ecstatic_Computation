@@ -24,6 +24,7 @@
 		44CD1FFC2B2A4981B03FE63B /* FactoryBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11637E36E6484346B3E25C11 /* FactoryBase.cpp */; };
 		48107E18C4914AD39B7BFC57 /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 190A1928D5F94E56BF23EC8D /* Controller.cpp */; };
 		4B7AE683437F49349A63D2EC /* cameras.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C6664D1A607445397CC49CA /* cameras.c */; };
+		4F7F74A51B14B3AE001E4B82 /* GUIManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7F74A41B14B3AE001E4B82 /* GUIManager.cpp */; };
 		4FBEC3EA1B11544900C59BA4 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3E61B11544900C59BA4 /* config.json */; };
 		4FBEC3EB1B11544900C59BA4 /* lighting.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3E81B11544900C59BA4 /* lighting.frag */; };
 		4FBEC3EC1B11544900C59BA4 /* lighting.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3E91B11544900C59BA4 /* lighting.vert */; };
@@ -109,6 +110,8 @@
 		4A89D04AEB254A4CA9CEDDD7 /* Events.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = Events.cpp; path = ../../../src/Events/Events.cpp; sourceTree = "<group>"; };
 		4D01996442F74DDE9CE9524E /* Controller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Controller.h; path = ../blocks/Ecstatic/include/System/Controller.h; sourceTree = "<group>"; };
 		4D2C0C4649FE426E8544DFF7 /* RoomComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = RoomComponent.cpp; path = ../../../src/Components/RoomComponent.cpp; sourceTree = "<group>"; };
+		4F7F74A21B14B38A001E4B82 /* GUIManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GUIManager.h; path = ../blocks/Ecstatic/include/GUI/GUIManager.h; sourceTree = "<group>"; };
+		4F7F74A41B14B3AE001E4B82 /* GUIManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GUIManager.cpp; path = ../blocks/Ecstatic/src/GUI/GUIManager.cpp; sourceTree = "<group>"; };
 		4F9C382C655F4021805E2F19 /* Components.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Components.h; path = ../../../include/Components/Components.h; sourceTree = "<group>"; };
 		4FBEC3E61B11544900C59BA4 /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
 		4FBEC3E81B11544900C59BA4 /* lighting.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = lighting.frag; sourceTree = "<group>"; };
@@ -403,6 +406,21 @@
 			name = include;
 			sourceTree = "<group>";
 		};
+		4F7F74A11B14B36F001E4B82 /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+				4F7F74A21B14B38A001E4B82 /* GUIManager.h */,
+			);
+			name = GUI;
+			sourceTree = "<group>";
+		};
+		4F7F74A31B14B399001E4B82 /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = GUI;
+			sourceTree = "<group>";
+		};
 		4FBEC3E41B11544900C59BA4 /* assets */ = {
 			isa = PBXGroup;
 			children = (
@@ -498,6 +516,7 @@
 		791D1A3C057B4F8F87BB2363 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				4F7F74A11B14B36F001E4B82 /* GUI */,
 				8F458FB3CA9B4D6788AA8AF8 /* Event */,
 				B7E201CE82A24B91987B55F7 /* Actor */,
 				403AC5D6D5CE46B18C303A7E /* Components */,
@@ -626,6 +645,8 @@
 		D8A78818E9CB4820B72353EA /* src */ = {
 			isa = PBXGroup;
 			children = (
+				4F7F74A31B14B399001E4B82 /* GUI */,
+				4F7F74A41B14B3AE001E4B82 /* GUIManager.cpp */,
 				0E2C98FC2EB04AFF896B1234 /* Event */,
 				E22B238BE66943BA85F747E8 /* Actor */,
 				6EBF41A6CF5741119375D8B9 /* Components */,
@@ -755,6 +776,7 @@
 				564179760D6B4A33AD69D902 /* FrustumCullComponent.cpp in Sources */,
 				B7DB4200C6D1441498507C8A /* GeomTeapotComponent.cpp in Sources */,
 				5F65C9EFA7164CAE96D43E7C /* LightComponent.cpp in Sources */,
+				4F7F74A51B14B3AE001E4B82 /* GUIManager.cpp in Sources */,
 				D15188F9C04348BE90D93154 /* RoomComponent.cpp in Sources */,
 				4FBEC3EF1B1158F300C59BA4 /* KinectComponent.cpp in Sources */,
 				7FA9478E34E34C08846F2BBF /* Light.cpp in Sources */,

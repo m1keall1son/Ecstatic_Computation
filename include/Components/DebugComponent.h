@@ -27,6 +27,7 @@ public:
     virtual const ec::ComponentNameType   getName() const override;
     virtual const ec::ComponentUId        getId() const override;
     virtual const ec::ComponentType       getType() const override;
+    virtual void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
 
     inline ci::AxisAlignedBox3f& getAxisAlignedBoundingBox(){ return mObjectBoundingBox; }
     

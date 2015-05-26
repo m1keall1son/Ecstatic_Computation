@@ -42,7 +42,7 @@ const ci::CameraPersp& CameraManager::getCamera( const CameraType& cam_type )
     return mUI.getCamera();
 }
 
-CameraManager::CameraManager():mShuttingDown(false)
+CameraManager::CameraManager():mShuttingDown(false),mId( ec::getHash("camera_manager") )
 {
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &CameraManager::handleCameraRegistration), ec::ReturnActorCreatedEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &CameraManager::handleShutDown), ec::ShutDownEvent::TYPE);

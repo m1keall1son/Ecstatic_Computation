@@ -189,4 +189,9 @@ ci::JsonTree RoomComponent::serialize()
     
 }
 
+void RoomComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
+{
+    gui->addSeparator();
+    gui->addText(getName());
+}
 

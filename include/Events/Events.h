@@ -170,3 +170,5 @@ private:
     SwitchCameraEvent( const CameraManager::CameraType &type  );
     CameraManager::CameraType mType;
 };
+
+

@@ -179,3 +179,4 @@ ec::EventType SwitchCameraEvent::getEventType() const
 {
     return SwitchCameraEvent::TYPE;
 }
+

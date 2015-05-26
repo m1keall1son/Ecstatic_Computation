@@ -26,6 +26,8 @@ public:
     virtual const ec::ComponentNameType   getName() const override;
     virtual const ec::ComponentUId        getId() const override;
     virtual const ec::ComponentType       getType() const override;
+    virtual void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
+
 
     virtual bool                          postInit()override{ return true; }
     virtual void                          cull( ec::EventDataRef );
@@ -45,6 +47,7 @@ protected:
     void unregisterHandlers();
 
     ec::ComponentUId mId;
+    bool mEnableCull;
     bool mIsVisible;
     bool mShuttingDown;
 };

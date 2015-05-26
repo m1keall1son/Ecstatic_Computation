@@ -25,7 +25,7 @@ CameraComponentRef CameraComponent::create( ec::Actor * context )
     return CameraComponentRef( new CameraComponent(context) );
 }
 
-CameraComponent::CameraComponent( ec::Actor* context ) : ec::ComponentBase( context ), mId(ec::getHash( context->getName() + "camera_component" )),mShuttingDown(false)
+CameraComponent::CameraComponent( ec::Actor* context ) : ec::ComponentBase( context ), mId(ec::getHash( context->getName() + "camera_component" )),mShuttingDown(false), mNear(.1), mFar(1000.), mFov(60)
 {
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleShutDown), ec::ShutDownEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
@@ -68,15 +68,15 @@ bool CameraComponent::initialize( const ci::JsonTree &tree )
     
     try {
         
-        auto fov = tree["fov"].getValue<float>();
-        auto near = tree["near"].getValue<float>();
-        auto far = tree["far"].getValue<float>();
+        mFov = tree["fov"].getValue<float>();
+        mNear = tree["near"].getValue<float>();
+        mFar = tree["far"].getValue<float>();
         auto aspect = tree["aspect"].getValue();
         
         if(aspect == "window")
-            mCamera.setPerspective( fov, getWindowAspectRatio(), near, far);
+            mCamera.setPerspective( mFov, getWindowAspectRatio(), mNear, mFar);
         else
-            mCamera.setPerspective(fov, std::stof(aspect), near, far);
+            mCamera.setPerspective(mFov, std::stof(aspect), mNear, mFar);
         
     } catch ( JsonTree::ExcChildNotFound ex	) {
         CI_LOG_W(std::string(ex.what())+" setting default camera");
@@ -94,9 +94,9 @@ ci::JsonTree CameraComponent::serialize()
     
     save.addChild( ci::JsonTree( "type", getName() ) );
     save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
-    save.addChild( ci::JsonTree( "fov", mCamera.getFov() ) );
-    save.addChild( ci::JsonTree( "near", mCamera.getNearClip() ) );
-    save.addChild( ci::JsonTree( "far", mCamera.getFarClip() ) );
+    save.addChild( ci::JsonTree( "fov", mFov ) );
+    save.addChild( ci::JsonTree( "near", mNear ) );
+    save.addChild( ci::JsonTree( "far", mFar ) );
     save.addChild( ci::JsonTree( "aspect", mCamera.getAspectRatio() ) );
     
     return save;
@@ -127,5 +127,23 @@ void CameraComponent::update(ec::EventDataRef event)
     mCamera.setEyePoint( t );
     mCamera.setOrientation(transform->getRotation());
     // mCamera.setViewDirection( glm::eulerAngles( getRotation() ) );
+}
+
+void CameraComponent::updateCameraParams()
+{
+    mCamera.setFarClip(mFar);
+    mCamera.setFov(mFov);
+    mCamera.setNearClip(mNear);
+}
+
+void CameraComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
+{
+    gui->addSeparator();
+    gui->addText(getName());
+    auto updateFn = std::bind(&CameraComponent::updateCameraParams, this);
+    gui->addParam("FOV", &mFov).updateFn(updateFn);
+    gui->addParam("Far", &mFar).updateFn(updateFn);
+    gui->addParam("Near", &mNear).updateFn(updateFn);
+
 }
 

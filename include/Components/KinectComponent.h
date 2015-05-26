@@ -25,7 +25,8 @@ public:
     const ec::ComponentNameType   getName() const override;
     const ec::ComponentUId        getId() const override;
     const ec::ComponentType       getType() const override;
-    
+    void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
+
     bool postInit()override;
     
     void drawShadow( ec::EventDataRef );

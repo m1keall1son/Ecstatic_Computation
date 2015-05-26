@@ -42,7 +42,7 @@ std::string LightManager::parseLightTypeToString( const ci::Light::Type &type )
     else return "directional";
 }
 
-LightManager::LightManager():mShuttingDown(false)
+LightManager::LightManager():mShuttingDown(false),mId(ec::getHash("light_manager"))
 {
     
     mLightUboLocation = 0;

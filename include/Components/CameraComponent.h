@@ -13,6 +13,7 @@
 #include "ComponentBase.h"
 #include "TransformComponent.h"
 
+
 class CameraComponent : public ec::ComponentBase {
     
 public:
@@ -27,7 +28,8 @@ public:
     const ec::ComponentNameType   getName() const override;
     const ec::ComponentUId        getId() const override;
     const ec::ComponentType       getType() const override;
-    
+    void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
+
     void update( ec::EventDataRef );
     
     inline const ci::CameraPersp& getCamera(){ return mCamera; }
@@ -42,9 +44,14 @@ private:
     void registerHandlers();
     void unregisterHandlers();
 
+    void updateCameraParams();
+
     CameraComponent( ec::Actor * context );
     ci::CameraPersp mCamera;
     ec::ComponentUId mId;
+
+    float mFov, mNear, mFar;
+
     bool mShuttingDown;
 
 };

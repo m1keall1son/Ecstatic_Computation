@@ -31,6 +31,8 @@ public:
     
     void update();
     
+    inline ec::IdType getId(){ return mId; }
+    
     ~LightManager();
     
 private:
@@ -51,6 +53,7 @@ private:
     int                         mLightUboLocation;
     ShadowMapRef                mShadowMap;
     bool                        mShuttingDown;
+    ec::IdType                  mId;
     
     friend class AppSceneBase;
     
