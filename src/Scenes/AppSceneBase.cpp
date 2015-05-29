@@ -15,6 +15,10 @@
 #include "SystemEvents.h"
 #include "cinder/params/Params.h"
 #include "GUIManager.h"
+#include "GBuffer.h"
+
+using namespace ci;
+using namespace ci::app;
 
 AppSceneBase::~AppSceneBase()
 {
@@ -31,6 +35,40 @@ AppSceneBase::AppSceneBase( const std::string& name ):ec::Scene(name)
     mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::updateCamera), UpdateEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::handleCameraRegistration), ComponentRegistrationEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mLights.get(), &LightManager::handleLightRegistration), ComponentRegistrationEvent::TYPE);
+    
+    ///CREATE GBUFFER
+    
+    ///albedo
+    gl::Texture2d::Format colorData = gl::Texture2d::Format()
+    .internalFormat( GL_RGB10_A2 )
+    .magFilter( GL_NEAREST )
+    .minFilter( GL_NEAREST )
+    .wrap( GL_CLAMP_TO_EDGE )
+    .dataType( GL_FLOAT );
+    
+    ///encoded normal and material id
+    gl::Texture2d::Format data = gl::Texture2d::Format()
+    .internalFormat( GL_RGBA16F )
+    .magFilter( GL_NEAREST )
+    .minFilter( GL_NEAREST )
+    .wrap( GL_CLAMP_TO_EDGE )
+    .dataType( GL_HALF_FLOAT );
+    
+    gl::Texture2d::Format depthFormat;
+    depthFormat.setInternalFormat( GL_DEPTH_COMPONENT32F );
+    depthFormat.setMagFilter( GL_LINEAR );
+    depthFormat.setMinFilter( GL_LINEAR );
+    depthFormat.setWrap( GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE );
+    depthFormat.setCompareMode( GL_COMPARE_REF_TO_TEXTURE );
+    depthFormat.setCompareFunc( GL_LEQUAL );
+    depthFormat.setLabel("uGBufferDepthTexture");
+    
+    GBuffer::Format fmt;
+    fmt.attachment(GL_COLOR_ATTACHMENT0, colorData, "uAlbedo");
+    fmt.attachment(GL_COLOR_ATTACHMENT1, data, "uData");
+    fmt.depthTexture(depthFormat);
+    
+    mGBuffer = GBuffer::create(fmt);
 
 }
 

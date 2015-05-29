@@ -108,7 +108,7 @@ void CameraManager::handleCameraRegistration( ec::EventDataRef event )
     
     if( e->getType() == ComponentRegistrationEvent::RegistrationType::CAMERA ){
         
-        auto cam_component = dynamic_cast<CameraComponent*>(e->getComponentBase());
+        auto cam_component = std::dynamic_pointer_cast<CameraComponent>(e->getComponentBase());
         
         CI_LOG_V("Registering camera");
         auto cam_type =  cam_component->getCamType();

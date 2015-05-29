@@ -22,6 +22,7 @@
 #include "TunnelComponent.h"
 #include "CameraComponent.h"
 #include "GUIManager.h"
+#include "GBuffer.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -36,6 +37,8 @@ TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelS
     //initialize stuff
     CI_LOG_V("Tunnel scene constructed");
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::shutDown), ec::ShutDownEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::handlePresentScene), DrawToMainBufferEvent::TYPE);
+    
 }
 
 void TunnelScene::shutDown(ec::EventDataRef)
@@ -174,6 +177,19 @@ void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)
     params->addParam("scrub tunnel", &mScrubTunnel);
     params->addParam("tunnel position", &mTunnelSamplePt).max(1.).min(0.).step(.001);
     
+    
+}
+
+void TunnelScene::handlePresentScene(ec::EventDataRef event)
+{
+    auto e = std::dynamic_pointer_cast<FinishRenderEvent>(event);
+    
+    auto tex = e->getFinalTexture();
+    
+    gl::ScopedMatrices pushMatrix;
+    gl::setMatricesWindow(getWindowSize());
+    gl::ScopedViewport view( vec2(0), getWindowSize() );
+    gl::draw( tex );
     
 }
 

@@ -116,6 +116,47 @@ ec::EventType DrawToMainBufferEvent::getEventType() const
     return DrawToMainBufferEvent::TYPE;
 }
 
+//DRAW EVENT -------------------------------------------------------------/
+
+ec::EventType DrawEvent::TYPE = ec::getHash("draw__event");
+
+DrawEventRef DrawEvent::create()
+{
+    return DrawEventRef( new DrawEvent() );
+}
+
+DrawEvent::DrawEvent() : ec::EventData( cinder::app::getElapsedSeconds() ){}
+
+const char* DrawEvent::getName() const
+{
+    return "draw_event";
+}
+
+ec::EventType DrawEvent::getEventType() const
+{
+    return DrawEvent::TYPE;
+}
+
+//DRAW GEOMETRY -------------------------------------------------------------/
+
+ec::EventType DrawGeometryEvent::TYPE = ec::getHash("draw_geometry_event");
+
+DrawGeometryEventRef DrawGeometryEvent::create()
+{
+    return DrawGeometryEventRef( new DrawGeometryEvent() );
+}
+
+DrawGeometryEvent::DrawGeometryEvent() : ec::EventData( cinder::app::getElapsedSeconds() ){}
+
+const char* DrawGeometryEvent::getName() const
+{
+    return "draw_geometry_event";
+}
+
+ec::EventType DrawGeometryEvent::getEventType() const
+{
+    return DrawGeometryEvent::TYPE;
+}
 //DRAW SHADOW -------------------------------------------------------------/
 
 ec::EventType DrawShadowEvent::TYPE = ec::getHash("draw_shadow_event");
@@ -184,12 +225,12 @@ ec::EventType SwitchCameraEvent::getEventType() const
 
 ec::EventType ComponentRegistrationEvent::TYPE = ec::getHash("component_registration_event");
 
-ComponentRegistrationEventRef ComponentRegistrationEvent::create( const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBase* component  )
+ComponentRegistrationEventRef ComponentRegistrationEvent::create( const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBaseRef component  )
 {
     return ComponentRegistrationEventRef( new ComponentRegistrationEvent(type, actor, component) );
 }
 
-ComponentRegistrationEvent::ComponentRegistrationEvent(const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBase* component  ) : ec::EventData( cinder::app::getElapsedSeconds() ), mType(type), mActor(actor), mComponent(component){}
+ComponentRegistrationEvent::ComponentRegistrationEvent(const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBaseRef component  ) : ec::EventData( cinder::app::getElapsedSeconds() ), mType(type), mActor(actor), mComponent(component){}
 
 const char* ComponentRegistrationEvent::getName() const
 {
@@ -200,4 +241,26 @@ ec::EventType ComponentRegistrationEvent::getEventType() const
 {
     return ComponentRegistrationEvent::TYPE;
 }
+
+//FINISH RENDER SCENE -------------------------------------------------------------/
+
+ec::EventType FinishRenderEvent::TYPE = ec::getHash("finish_render_event");
+
+FinishRenderEventRef FinishRenderEvent::create(const ci::gl::Texture2dRef &final)
+{
+    return FinishRenderEventRef( new FinishRenderEvent(final) );
+}
+
+FinishRenderEvent::FinishRenderEvent(const ci::gl::Texture2dRef &final) : ec::EventData( cinder::app::getElapsedSeconds() ), mFinalTexture(final){}
+
+const char* FinishRenderEvent::getName() const
+{
+    return "finish_render_event";
+}
+
+ec::EventType FinishRenderEvent::getEventType() const
+{
+    return FinishRenderEvent::TYPE;
+}
+
 

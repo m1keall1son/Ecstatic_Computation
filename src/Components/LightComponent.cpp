@@ -615,7 +615,7 @@ bool LightComponent::initialize( const ci::JsonTree &tree )
         CI_LOG_E("Couldn't find light tree");
     }
     
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::LIGHT, mContext->getUId(), this ) );
+    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::LIGHT, mContext->getUId(), shared_from_this() ) );
     
     return true;
 }

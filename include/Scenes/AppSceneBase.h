@@ -42,5 +42,7 @@ protected:
         
     LightManagerRef mLights;
     CameraManagerRef mCameras;
+    GBufferRef mGBuffer;
+    PostProcessingManagerRef mPostManager;
     
 };

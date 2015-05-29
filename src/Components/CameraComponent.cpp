@@ -124,7 +124,7 @@ bool CameraComponent::initialize( const ci::JsonTree &tree )
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialized");
     
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::CAMERA, mContext->getUId(), this ) );
+    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::CAMERA, mContext->getUId(), shared_from_this() ) );
     
     return true;
 }
