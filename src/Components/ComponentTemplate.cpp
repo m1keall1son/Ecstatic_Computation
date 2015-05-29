@@ -14,7 +14,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType ComponentTemplate::TYPE = 0x000;
+ec::ComponentType ComponentTemplate::TYPE = ec::getHash("component_template");
 
 ComponentTemplateRef ComponentTemplate::create( ec::Actor* context )
 {

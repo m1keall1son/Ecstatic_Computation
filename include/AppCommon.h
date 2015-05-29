@@ -45,6 +45,7 @@ using PassPriority = uint32_t;
 using LightPassRef = std::shared_ptr< class LightPass >;
 using ShadowPassRef = std::shared_ptr< class ShadowPass >;
 using GBufferPassRef = std::shared_ptr< class GBufferPass >;
+using FXAAPassRef = std::shared_ptr< class FXAAPass >;
 
 ///App EVENTS
 
@@ -53,7 +54,7 @@ using UpdateEventRef = std::shared_ptr<class UpdateEvent>;
 using DrawEventRef = std::shared_ptr<class DrawEvent>;
 using DrawToMainBufferEventRef = std::shared_ptr<class DrawToMainBufferEvent>;
 using DrawDebugEventRef = std::shared_ptr<class DrawDebugEvent>;
-using DrawGeometeryEventRef = std::shared_ptr<class DrawGeometryEvent>;
+using DrawGeometryEventRef = std::shared_ptr<class DrawGeometryEvent>;
 using DrawShadowEventRef = std::shared_ptr<class DrawShadowEvent>;
 using ReloadGlslProgEventRef = std::shared_ptr< class ReloadGlslProgEvent >;
 using SaveSceneEventRef = std::shared_ptr< class SaveSceneEvent >;

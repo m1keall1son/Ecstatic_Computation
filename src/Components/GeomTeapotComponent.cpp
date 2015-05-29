@@ -99,7 +99,7 @@ void GeomTeapotComponent::draw( ec::EventDataRef event )
     
 }
 
-ec::ComponentType GeomTeapotComponent::TYPE = 0x011;
+ec::ComponentType GeomTeapotComponent::TYPE = ec::getHash("geom_teapot_component");
 
 bool GeomTeapotComponent::postInit()
 {

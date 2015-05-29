@@ -19,7 +19,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType BitComponent::TYPE = 0x019;
+ec::ComponentType BitComponent::TYPE = ec::getHash("bit_component");
 
 BitComponentRef BitComponent::create( ec::Actor* context )
 {

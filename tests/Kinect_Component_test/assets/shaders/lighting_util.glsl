@@ -179,6 +179,7 @@ void calcLighting( const in Material material,
         float dist = 1.0;
         vec3  L = -lights.uLight[i].direction;
         
+        
         if( !isDirectional )
         {
             float t = clamp( dot( vertPosition.xyz - lightStart, lights.uLight[i].horizontal ), 0.0, lights.uLight[i].width );

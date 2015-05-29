@@ -37,7 +37,7 @@ TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelS
     //initialize stuff
     CI_LOG_V("Tunnel scene constructed");
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::shutDown), ec::ShutDownEvent::TYPE);
-    mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::handlePresentScene), DrawToMainBufferEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::handlePresentScene), FinishRenderEvent::TYPE);
     
 }
 
@@ -109,65 +109,9 @@ void TunnelScene::preDraw()
 
 void TunnelScene::draw()
 {
-    
     ///DRAW SHADOWS
-    CI_LOG_V("Drawing into shadowbuffers");
-    
-    {
-        gl::ScopedFramebuffer shadow_buffer( mLights->getShadowMap()->getFbo() );
-        
-        gl::clear();
-        
-        for( auto & light_id : mLights->getLights() ){
-            
-            auto light_actor = ec::ActorManager::get()->retreiveUnique(light_id).lock();
-            
-            if(light_actor){
-                
-                auto light_component = light_actor->getComponent<LightComponent>().lock();
-                auto light = light_component->getLight();
-                if( light->hasShadows() )
-                {
-                    if( light->getType() == Light::Type::Spot ){
-                        
-                        auto spot_light = std::dynamic_pointer_cast<SpotLight>(light);
-                        gl::ScopedMatrices pushMatrix;
-                        gl::setViewMatrix( spot_light->getViewMatrix() );
-                        gl::setProjectionMatrix( spot_light->getProjectionMatrix() );
-                        gl::setModelMatrix(mat4());
-                        auto shadow_view_mapping = spot_light->getMapping();
-                        gl::ScopedViewport shadow_view( vec2( shadow_view_mapping.x, shadow_view_mapping.y ), vec2( shadow_view_mapping.x + shadow_view_mapping.z, shadow_view_mapping.y + shadow_view_mapping.w ) );
-                        
-                        mSceneManager->triggerEvent( DrawShadowEvent::create() );
-                        
-                    }
-                    
-                }
-            }
-            
-        }
-        
-    }
-    
-    //do stuff
-    CI_LOG_V("Intro scene preDrawing");
-    
-    {
-        gl::ScopedMatrices pushMatrix;
-        
-        gl::setMatrices(mCameras->getActiveCamera());
-        
-        gl::ScopedTextureBind shadowMap( mLights->getShadowMap()->getTexture(), 3 );
-        
-        CI_LOG_V("draw visible event triggered");
-        mSceneManager->triggerEvent( DrawToMainBufferEvent::create() );
-        
-        if( ec::Controller::get()->debugEnabled() ){
-            mSceneManager->triggerEvent( DrawDebugEvent::create() );
-            gl::drawCoordinateFrame();
-        }
-    }
-        
+    CI_LOG_V("firing draw command");
+    manager()->triggerEvent(DrawEvent::create());
 }
 
 void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)
@@ -177,7 +121,6 @@ void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)
     params->addParam("scrub tunnel", &mScrubTunnel);
     params->addParam("tunnel position", &mTunnelSamplePt).max(1.).min(0.).step(.001);
     
-    
 }
 
 void TunnelScene::handlePresentScene(ec::EventDataRef event)
@@ -185,11 +128,12 @@ void TunnelScene::handlePresentScene(ec::EventDataRef event)
     auto e = std::dynamic_pointer_cast<FinishRenderEvent>(event);
     
     auto tex = e->getFinalTexture();
-    
-    gl::ScopedMatrices pushMatrix;
-    gl::setMatricesWindow(getWindowSize());
-    gl::ScopedViewport view( vec2(0), getWindowSize() );
-    gl::draw( tex );
+    {
+        gl::ScopedMatrices pushMatrix;
+        gl::setMatricesWindow(getWindowSize());
+        gl::ScopedViewport view( vec2(0), getWindowSize() );
+        gl::draw( tex );
+    }
     
 }
 

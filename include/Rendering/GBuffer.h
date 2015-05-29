@@ -59,7 +59,7 @@ public:
     void resize();
     
     ci::gl::Texture2dRef getTexture( const std::string& label );
-    inline ci::gl::Texture2dRef getDepthTexture(){ return mFormat.mDepthTexture; }
+    inline ci::gl::Texture2dRef getDepthTexture(){ return mGBuffer->getDepthTexture(); }
     inline ci::gl::FboRef getFbo(){ return mGBuffer; }
     
 private:

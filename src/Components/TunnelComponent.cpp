@@ -20,7 +20,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType TunnelComponent::TYPE = 0x020;
+ec::ComponentType TunnelComponent::TYPE = ec::getHash("tunnel_component");
 
 TunnelComponentRef TunnelComponent::create( ec::Actor* context )
 {
@@ -46,15 +46,18 @@ void TunnelComponent::registerHandlers()
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawShadow), DrawShadowEvent::TYPE);
     //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::update), UpdateEvent::TYPE);
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawGeometry), DrawGeometryEvent::TYPE);
 }
+
 void TunnelComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawShadow), DrawShadowEvent::TYPE);
     //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::update), UpdateEvent::TYPE);
-    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawGeometry), DrawGeometryEvent::TYPE);
 }
 
 void TunnelComponent::update(ec::EventDataRef event )
@@ -196,6 +199,27 @@ void TunnelComponent::draw( ec::EventDataRef event )
     
 }
 
+void TunnelComponent::drawGeometry( ec::EventDataRef event )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
+    
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
+    //gl::ScopedFaceCulling pushFace(true,GL_BACK);
+    
+    gl::ScopedModelMatrix model;
+    auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+    gl::multModelMatrix( transform->getModelMatrix() );
+    
+    auto glsl = mTunnel->getGlslProg();
+    glsl->uniform("uNoiseScale", mNoiseScale);
+    
+    mTunnel->draw();
+    //Draw
+    
+}
+
 void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
 {
     try {
@@ -203,6 +227,13 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
         
     } catch (const ci::gl::GlslProgCompileExc e) {
         CI_LOG_E(std::string("tunnel render error: ") + e.what());
+    }
+    
+    try {
+        mTunnelGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry.vert")).fragment(loadAsset("shaders/tunnel_geometry.frag")).geometry(loadAsset("shaders/tunnel_geometry.geom")).preprocess(true) );
+        
+    } catch (const ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(std::string("tunnel geometry error: ") + e.what());
     }
     
     try {
@@ -220,7 +251,7 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
     ///replace 
     
     if(mTunnel)
-        mTunnel->replaceGlslProg(mTunnelBasicRender);
+        mTunnel->replaceGlslProg(mTunnelGeometryRender);
 
     
 }
@@ -264,7 +295,7 @@ bool TunnelComponent::postInit()
     
     auto geom = ci::geom::ExtrudeSpline( face, mSpline, 1000 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
     
-    mTunnel = ci::gl::Batch::create( geom , mTunnelBasicRender );
+    mTunnel = ci::gl::Batch::create( geom , mTunnelGeometryRender );
     mTunnelShadow = ci::gl::Batch::create( geom , mTunnelShadowRender );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");

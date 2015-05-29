@@ -37,8 +37,7 @@ void GBuffer::resize(){
         fboFormat.attachment( GL_DEPTH_ATTACHMENT, mDepthTexture);
         
     }else{
-        mDepthTexture = gl::Texture2d::create(width,height,mFormat.mDepthFormat);
-        fboFormat.attachment( GL_DEPTH_ATTACHMENT, mDepthTexture );
+        fboFormat.depthTexture( mFormat.mDepthFormat );
     }
     
     mGBuffer = gl::Fbo::create( width, height, fboFormat );

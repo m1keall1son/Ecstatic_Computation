@@ -16,6 +16,9 @@ class RenderManager : public ec::ComponentBase {
     
 public:
     
+    static int& getPingPong();
+    static ci::gl::FboRef getWindowFbo( int pingPong );
+    
     static ec::ComponentType TYPE;
     
     static RenderManagerRef create( ec::Actor* context );

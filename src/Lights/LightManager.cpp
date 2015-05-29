@@ -109,9 +109,9 @@ void LightManager::update() {
                 if( light_strong->isActive() && light_component->getLight()->isVisible() ){
                     if(activeLights.size() < 24)
                         activeLights.push_back(light_component->getLight() );
-                    if( light_component->needsUpdate() ){
+                    //if( light_component->needsUpdate() ){
                         updateAll = true;
-                    }
+                   // }
                 }
             }
         }

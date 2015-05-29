@@ -21,7 +21,7 @@
 #include "CameraComponent.h"
 #include "Light.h"
 
-ec::ComponentType DebugComponent::TYPE = 0x016;
+ec::ComponentType DebugComponent::TYPE = ec::getHash("debug_component");
 
 DebugComponentRef DebugComponent::create(ec::Actor *context)
 {

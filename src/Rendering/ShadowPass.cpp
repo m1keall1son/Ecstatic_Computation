@@ -20,7 +20,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType ShadowPass::TYPE = 0x103;
+ec::ComponentType ShadowPass::TYPE =  ec::getHash("shadow_pass");
 
 ShadowPassRef ShadowPass::create( ec::Actor* context )
 {
@@ -71,7 +71,7 @@ bool ShadowPass::postInit()
     return true;
 }
 
-ShadowPass::ShadowPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_shadow_pass" ) ),mShuttingDown(false)
+ShadowPass::ShadowPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_shadow_pass" ) ),mShuttingDown(false),mPriority(0)
 {
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleShutDown), ec::ShutDownEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
@@ -120,6 +120,9 @@ ci::gl::Texture2dRef ShadowPass::getShadowTexture(){ return mShadowMap->getTextu
 
 void ShadowPass::process()
 {
+    
+    CI_LOG_V(mContext->getName() + " : " + getName() + " process " );
+
     gl::ScopedFramebuffer shadow_buffer( mShadowMap->getFbo() );
     
     gl::clear();

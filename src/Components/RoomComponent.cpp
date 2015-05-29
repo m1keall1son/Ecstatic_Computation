@@ -27,7 +27,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType RoomComponent::TYPE = 0x011;
+ec::ComponentType RoomComponent::TYPE = ec::getHash("room_component");
 
 RoomComponentRef RoomComponent::create( ec::Actor* context )
 {

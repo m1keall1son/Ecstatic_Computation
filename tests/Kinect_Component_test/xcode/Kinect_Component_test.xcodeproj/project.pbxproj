@@ -40,6 +40,16 @@
 		4F07074E1B18C24600A7A450 /* ShadowPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F07074D1B18C24600A7A450 /* ShadowPass.cpp */; };
 		4F0707501B18C36A00A7A450 /* ComponentTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F07074F1B18C36A00A7A450 /* ComponentTemplate.cpp */; };
 		4F0707541B18C67600A7A450 /* RenderManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F0707531B18C67600A7A450 /* RenderManager.cpp */; };
+		4F0707561B18F2FD00A7A450 /* ss_lighting.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707551B18F2FD00A7A450 /* ss_lighting.vert */; };
+		4F0707581B18F30800A7A450 /* ss_lighting.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707571B18F30800A7A450 /* ss_lighting.frag */; };
+		4F07075A1B18F3C100A7A450 /* gbuffer_util.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707591B18F3C100A7A450 /* gbuffer_util.glsl */; };
+		4F07075C1B18F73B00A7A450 /* material_util.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 4F07075B1B18F73B00A7A450 /* material_util.glsl */; };
+		4F07075E1B18F7A100A7A450 /* tunnel_geometry.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F07075D1B18F7A100A7A450 /* tunnel_geometry.vert */; };
+		4F0707601B18F7AE00A7A450 /* tunnel_geometry.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F07075F1B18F7AE00A7A450 /* tunnel_geometry.geom */; };
+		4F0707621B18F7BA00A7A450 /* tunnel_geometry.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707611B18F7BA00A7A450 /* tunnel_geometry.frag */; };
+		4F0707641B191E9900A7A450 /* FXAAPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F0707631B191E9800A7A450 /* FXAAPass.cpp */; };
+		4F0707671B19245100A7A450 /* fxaa.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707661B19245100A7A450 /* fxaa.frag */; };
+		4F0707691B19248800A7A450 /* pass.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707681B19248800A7A450 /* pass.vert */; };
 		4F7F74A51B14B3AE001E4B82 /* GUIManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7F74A41B14B3AE001E4B82 /* GUIManager.cpp */; };
 		4FBEC3EA1B11544900C59BA4 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3E61B11544900C59BA4 /* config.json */; };
 		4FBEC3EB1B11544900C59BA4 /* lighting.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3E81B11544900C59BA4 /* lighting.frag */; };
@@ -151,6 +161,17 @@
 		4F0707511B18C3B000A7A450 /* ComponentTemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ComponentTemplate.h; path = ../../../include/Components/ComponentTemplate.h; sourceTree = "<group>"; };
 		4F0707521B18C63E00A7A450 /* RenderManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RenderManager.h; path = ../../../include/Rendering/RenderManager.h; sourceTree = "<group>"; };
 		4F0707531B18C67600A7A450 /* RenderManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderManager.cpp; path = ../../../src/Rendering/RenderManager.cpp; sourceTree = "<group>"; };
+		4F0707551B18F2FD00A7A450 /* ss_lighting.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ss_lighting.vert; sourceTree = "<group>"; };
+		4F0707571B18F30800A7A450 /* ss_lighting.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ss_lighting.frag; sourceTree = "<group>"; };
+		4F0707591B18F3C100A7A450 /* gbuffer_util.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gbuffer_util.glsl; sourceTree = "<group>"; };
+		4F07075B1B18F73B00A7A450 /* material_util.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = material_util.glsl; sourceTree = "<group>"; };
+		4F07075D1B18F7A100A7A450 /* tunnel_geometry.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_geometry.vert; sourceTree = "<group>"; };
+		4F07075F1B18F7AE00A7A450 /* tunnel_geometry.geom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_geometry.geom; sourceTree = "<group>"; };
+		4F0707611B18F7BA00A7A450 /* tunnel_geometry.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_geometry.frag; sourceTree = "<group>"; };
+		4F0707631B191E9800A7A450 /* FXAAPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FXAAPass.cpp; path = ../../../src/Rendering/FXAAPass.cpp; sourceTree = "<group>"; };
+		4F0707651B191EAB00A7A450 /* FXAAPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FXAAPass.h; path = ../../../include/Rendering/FXAAPass.h; sourceTree = "<group>"; };
+		4F0707661B19245100A7A450 /* fxaa.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fxaa.frag; sourceTree = "<group>"; };
+		4F0707681B19248800A7A450 /* pass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pass.vert; sourceTree = "<group>"; };
 		4F7F74A21B14B38A001E4B82 /* GUIManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GUIManager.h; path = ../blocks/Ecstatic/include/GUI/GUIManager.h; sourceTree = "<group>"; };
 		4F7F74A41B14B3AE001E4B82 /* GUIManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GUIManager.cpp; path = ../blocks/Ecstatic/src/GUI/GUIManager.cpp; sourceTree = "<group>"; };
 		4F9C382C655F4021805E2F19 /* Components.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Components.h; path = ../../../include/Components/Components.h; sourceTree = "<group>"; };
@@ -459,6 +480,7 @@
 				4F07074B1B18C10D00A7A450 /* GBufferPass.h */,
 				4F07074C1B18C22D00A7A450 /* ShadowPass.h */,
 				4F0707521B18C63E00A7A450 /* RenderManager.h */,
+				4F0707651B191EAB00A7A450 /* FXAAPass.h */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -472,6 +494,7 @@
 				4F0707491B18C0FB00A7A450 /* GBufferPass.cpp */,
 				4F07074D1B18C24600A7A450 /* ShadowPass.cpp */,
 				4F0707531B18C67600A7A450 /* RenderManager.cpp */,
+				4F0707631B191E9800A7A450 /* FXAAPass.cpp */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -535,6 +558,15 @@
 				4F017F881B1760EB006F60F8 /* tunnel_basic.frag */,
 				4F017F891B1760EB006F60F8 /* tunnel_basic.vert */,
 				4F07072E1B1816B700A7A450 /* tunnel_basic.geom */,
+				4F0707551B18F2FD00A7A450 /* ss_lighting.vert */,
+				4F0707571B18F30800A7A450 /* ss_lighting.frag */,
+				4F0707591B18F3C100A7A450 /* gbuffer_util.glsl */,
+				4F07075B1B18F73B00A7A450 /* material_util.glsl */,
+				4F07075D1B18F7A100A7A450 /* tunnel_geometry.vert */,
+				4F07075F1B18F7AE00A7A450 /* tunnel_geometry.geom */,
+				4F0707611B18F7BA00A7A450 /* tunnel_geometry.frag */,
+				4F0707661B19245100A7A450 /* fxaa.frag */,
+				4F0707681B19248800A7A450 /* pass.vert */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -804,6 +836,7 @@
 				4FBEC4011B11628700C59BA4 /* kinect_shadow.frag in Resources */,
 				4FBEC4081B12599D00C59BA4 /* bit.frag in Resources */,
 				4FBEC40C1B1259B000C59BA4 /* bit_shadow.frag in Resources */,
+				4F0707621B18F7BA00A7A450 /* tunnel_geometry.frag in Resources */,
 				4FBEC40A1B1259A700C59BA4 /* bit_shadow.vert in Resources */,
 				4F017F8A1B1760EB006F60F8 /* tunnel_basic.frag in Resources */,
 				4FBEC3FD1B115C1F00C59BA4 /* curl_noise.glsl in Resources */,
@@ -811,21 +844,29 @@
 				4FBEC3FF1B115F3000C59BA4 /* lighting_util.glsl in Resources */,
 				B4B39034E7B04425A683736E /* CinderApp.icns in Resources */,
 				4F0707381B18239500A7A450 /* simplex_noise.glsl in Resources */,
+				4F0707671B19245100A7A450 /* fxaa.frag in Resources */,
 				4FBEC3F31B115A3D00C59BA4 /* kinect_lighting.frag in Resources */,
 				4FBEC3F91B115A7E00C59BA4 /* kinect_lighting.geom in Resources */,
 				4F0707351B181CED00A7A450 /* tunnel_shadow.frag in Resources */,
 				4F017F8B1B1760EB006F60F8 /* tunnel_basic.vert in Resources */,
 				4FBEC3EB1B11544900C59BA4 /* lighting.frag in Resources */,
+				4F0707581B18F30800A7A450 /* ss_lighting.frag in Resources */,
 				4FBEC3F11B115A3000C59BA4 /* kinect_lighting.vert in Resources */,
 				4FBEC3F71B115A6200C59BA4 /* kinect_shadow.vert in Resources */,
 				4FBEC3EC1B11544900C59BA4 /* lighting.vert in Resources */,
 				4FBEC3EA1B11544900C59BA4 /* config.json in Resources */,
+				4F07075E1B18F7A100A7A450 /* tunnel_geometry.vert in Resources */,
+				4F07075C1B18F73B00A7A450 /* material_util.glsl in Resources */,
 				4FBEC3F51B115A5200C59BA4 /* kinect_shadow.geom in Resources */,
 				4F07073A1B18240C00A7A450 /* linear_map.glsl in Resources */,
 				4F0707361B181CED00A7A450 /* tunnel_shadow.vert in Resources */,
+				4F07075A1B18F3C100A7A450 /* gbuffer_util.glsl in Resources */,
 				4F07072F1B1816B700A7A450 /* tunnel_basic.geom in Resources */,
+				4F0707601B18F7AE00A7A450 /* tunnel_geometry.geom in Resources */,
 				4FBEC3FC1B115C1F00C59BA4 /* kinect_util.glsl in Resources */,
+				4F0707561B18F2FD00A7A450 /* ss_lighting.vert in Resources */,
 				4FBEC40E1B136EAA00C59BA4 /* bit.geom in Resources */,
+				4F0707691B19248800A7A450 /* pass.vert in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -840,6 +881,7 @@
 				54427083246D4B7687B80CAD /* EventManager.cpp in Sources */,
 				9524F7EB8CDA4270A2FB38D9 /* EventManagerBase.cpp in Sources */,
 				8406CA5109C84446882AB3A2 /* SystemEvents.cpp in Sources */,
+				4F0707641B191E9900A7A450 /* FXAAPass.cpp in Sources */,
 				598712FD452B4E57977E9FFA /* Actor.cpp in Sources */,
 				E7E2E1718AEE406E86FDF34F /* ActorFactory.cpp in Sources */,
 				B0315FC8DE264A7AB4F1E421 /* ActorManager.cpp in Sources */,

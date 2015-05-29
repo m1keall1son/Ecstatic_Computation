@@ -36,6 +36,7 @@ public:
     void draw( ec::EventDataRef event );
     void update( ec::EventDataRef );
     void drawShadow( ec::EventDataRef );
+    void drawGeometry( ec::EventDataRef );
     
     ~TunnelComponent();
     
@@ -52,7 +53,7 @@ private:
     void unregisterHandlers();
     
     ci::gl::BatchRef    mTunnel, mTunnelShadow;
-    ci::gl::GlslProgRef mTunnelBasicRender, mTunnelShadowRender;
+    ci::gl::GlslProgRef mTunnelBasicRender, mTunnelShadowRender, mTunnelGeometryRender;
     ci::BSpline3f       mSpline;
     
     ec::ComponentUId    mId;

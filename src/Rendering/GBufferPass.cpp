@@ -18,7 +18,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType GBufferPass::TYPE = 0x101;
+ec::ComponentType GBufferPass::TYPE = ec::getHash("gbuffer_pass");
 
 GBufferPassRef GBufferPass::create( ec::Actor* context )
 {
@@ -61,22 +61,48 @@ bool GBufferPass::initialize( const ci::JsonTree &tree )
 
 bool GBufferPass::postInit()
 {
+
+    auto colorFmt = gl::Texture2d::Format()
+    .internalFormat( GL_RGBA32F )
+    .magFilter( GL_NEAREST )
+    .minFilter( GL_NEAREST )
+    .wrap( GL_CLAMP_TO_EDGE )
+    .dataType( GL_FLOAT );
     
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+    auto dataFmt = gl::Texture2d::Format()
+    .internalFormat( GL_RGBA16F )
+    .magFilter( GL_NEAREST )
+    .minFilter( GL_NEAREST )
+    .wrap( GL_CLAMP_TO_EDGE )
+    .dataType( GL_HALF_FLOAT );
+    
+    auto depthFmt = gl::Texture2d::Format()
+    .internalFormat( GL_DEPTH_COMPONENT32F )
+    .magFilter( GL_LINEAR )
+    .minFilter( GL_LINEAR )
+    .wrap( GL_CLAMP_TO_EDGE )
+    .dataType( GL_FLOAT );
+    
+    GBuffer::Format fmt;
+    fmt.attachment(GL_COLOR_ATTACHMENT0, colorFmt, "uAlbedo");
+    fmt.attachment(GL_COLOR_ATTACHMENT1, dataFmt, "uData");
+    fmt.depthTexture(depthFmt);
+    
+    mGBuffer = GBuffer::create(fmt);
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
-    ///this could reflect errors...
+    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+    
     return true;
 }
 
-GBufferPass::GBufferPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_gbuffer_pass" ) ),mShuttingDown(false)
+GBufferPass::GBufferPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_gbuffer_pass" ) ),mShuttingDown(false),mPriority(1)
 {
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleShutDown), ec::ShutDownEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-    
 }
 
 GBufferPass::~GBufferPass()
@@ -121,6 +147,8 @@ void GBufferPass::process()
     gl::enableDepthRead();
     gl::enableDepthWrite();
     
+    CI_LOG_V(mContext->getName() + " : " + getName() + " process " );
+    
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     
     gl::ScopedFramebuffer gbuffer( mGBuffer->getFbo() );
@@ -129,15 +157,14 @@ void GBufferPass::process()
     gl::ScopedMatrices pushMatrix;
     gl::setMatrices(scene->cameras()->getActiveCamera());
     gl::ScopedViewport view( vec2(0), mGBuffer->getFbo()->getSize() );
-
+    
     CI_LOG_V("draw geometry event triggered");
     scene->manager()->triggerEvent( DrawGeometryEvent::create() );
     
-    
-//    if( ec::Controller::get()->debugEnabled() ){
-//        mSceneManager->triggerEvent( DrawDebugEvent::create() );
-//        gl::drawCoordinateFrame();
-//    }
+    //    if( ec::Controller::get()->debugEnabled() ){
+    //        mSceneManager->triggerEvent( DrawDebugEvent::create() );
+    //        gl::drawCoordinateFrame();
+    //    }
     
     
     

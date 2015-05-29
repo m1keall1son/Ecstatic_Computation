@@ -33,7 +33,7 @@ std::string CameraComponent::parseCameraType( const CameraComponent::CameraType 
     else return "main";
 }
 
-ec::ComponentType CameraComponent::TYPE = 0x012;
+ec::ComponentType CameraComponent::TYPE = ec::getHash("camera_component");;
 
 CameraComponentRef CameraComponent::create( ec::Actor * context )
 {

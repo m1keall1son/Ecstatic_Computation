@@ -17,7 +17,33 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType RenderManager::TYPE = 0x200;
+static ci::gl::FboRef sWindowFbo[2] = { nullptr, nullptr };
+static int sPingPong = 0;
+
+ci::gl::FboRef RenderManager::getWindowFbo( int pingPong )
+{
+    CI_ASSERT(pingPong == 0 || pingPong == 1);
+    if( !sWindowFbo[0] || !sWindowFbo[1] ){
+        sWindowFbo[0] = gl::Fbo::create(getWindowWidth(), getWindowHeight(), gl::Fbo::Format().disableDepth());
+        sWindowFbo[1] = gl::Fbo::create(getWindowWidth(), getWindowHeight(), gl::Fbo::Format().disableDepth());
+        
+        {
+            gl::ScopedFramebuffer fbo( sWindowFbo[0] );
+            gl::clear();
+        }
+        
+        {
+            gl::ScopedFramebuffer fbo( sWindowFbo[1] );
+            gl::clear();
+        }
+        
+    }
+    return sWindowFbo[pingPong];
+}
+
+int& RenderManager::getPingPong(){ return sPingPong; }
+
+ec::ComponentType RenderManager::TYPE = ec::getHash("render_manager");
 
 RenderManagerRef RenderManager::create( ec::Actor* context )
 {
@@ -135,6 +161,7 @@ void RenderManager::handlePassRegistration(ec::EventDataRef event)
 {
     auto e = std::dynamic_pointer_cast<ComponentRegistrationEvent>(event);
     if( e->getType() == ComponentRegistrationEvent::RegistrationType::PASS ){
+        CI_LOG_V("Registering Pass: " + e->getComponentBase()->getName());
         mPasses.push_back( std::dynamic_pointer_cast<PassBase>(e->getComponentBase()) );
         mSorted = false;
     }

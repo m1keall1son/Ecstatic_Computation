@@ -1,28 +1,25 @@
 //
-//  LightPass.h
-//  Kinect_Component_test
+//  FXAAPass.h
+//  System_test
 //
-//  Created by Mike Allison on 5/29/15.
+//  Created by Mike Allison on 5/23/15.
 //
 //
 
 #pragma once
 #include "Common.h"
+#include "ComponentFactory.h"
+#include "ComponentBase.h"
 #include "AppCommon.h"
 #include "PassBase.h"
-#include "cinder/gl/Batch.h"
-#include "cinder/gl/GlslProg.h"
-#include "cinder/gl/Fbo.h"
 
-class LightPass : public PassBase {
+class FXAAPass : public PassBase {
     
 public:
     
-    ///ComponentBase
-    
     static ec::ComponentType TYPE;
     
-    static LightPassRef create( ec::Actor* context );
+    static FXAAPassRef create( ec::Actor* context );
     
     bool                          initialize( const ci::JsonTree &tree )override;
     ci::JsonTree                  serialize()override;
@@ -33,29 +30,25 @@ public:
     
     bool postInit()override;
     
-    ///PostProcessingBase
-    
     const PassPriority getPriority() const override;
     void process()override;
     
-    ~LightPass();
+    ~FXAAPass();
     
 private:
     
-    LightPass(  ec::Actor* context  );
+    FXAAPass( ec::Actor* context );
+    
+    void handleShutDown( ec::EventDataRef );
+    void handleSceneChange( ec::EventDataRef );
     
     void registerHandlers();
     void unregisterHandlers();
     
-    void handleSceneChange( ec::EventDataRef );
-    void handleShutDown( ec::EventDataRef );
-    void handleGlslProgReload( ec::EventDataRef );
-
-    ci::gl::FboRef mFbo;
-    ci::gl::BatchRef mScreenSpace;
-    ci::gl::GlslProgRef mSSLightingRender;
-    PassPriority mPriority;
-    bool mShuttingDown;
-    ec::ComponentUId mId;
+    ec::ComponentUId    mId;
+    PassPriority        mPriority;
+    bool                mShuttingDown;
+    ci::gl::BatchRef        mScreenQuad;
+    ci::gl::GlslProgRef     mFXAARender;
     
 };

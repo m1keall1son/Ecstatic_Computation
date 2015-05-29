@@ -14,7 +14,7 @@
 #include "DebugComponent.h"
 #include "Events.h"
 
-ec::ComponentType FrustumCullComponent::TYPE = 0x013;
+ec::ComponentType FrustumCullComponent::TYPE = ec::getHash("frustum_cull_component");
 
 FrustumCullComponentRef FrustumCullComponent::create(ec::Actor *context)
 {

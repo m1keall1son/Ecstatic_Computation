@@ -24,7 +24,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType KinectComponent::TYPE = 0x018;
+ec::ComponentType KinectComponent::TYPE = ec::getHash("kinect_component");
 
 KinectComponentRef KinectComponent::create(ec::Actor *context)
 {

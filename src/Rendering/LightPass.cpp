@@ -21,11 +21,12 @@
 #include "ShadowMap.h"
 #include "GBufferPass.h"
 #include "GBuffer.h"
+#include "RenderManager.h"
 
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType LightPass::TYPE = 0x100;
+ec::ComponentType LightPass::TYPE = ec::getHash("light_pass");
 
 LightPassRef LightPass::create( ec::Actor* context )
 {
@@ -53,12 +54,13 @@ void LightPass::registerHandlers()
 {
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-   
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightPass::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
+    
 }
 void LightPass::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &LightPass::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
 }
 
 bool LightPass::initialize( const ci::JsonTree &tree )
@@ -68,22 +70,41 @@ bool LightPass::initialize( const ci::JsonTree &tree )
 }
 
 
-bool LightPass::postInit()
+void LightPass::handleGlslProgReload(ec::EventDataRef)
 {
     
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+    try {
+        mSSLightingRender = gl::GlslProg::create(gl::GlslProg::Format().vertex(loadAsset("shaders/ss_lighting.vert")).fragment(loadAsset("shaders/ss_lighting.frag")).preprocess(true));
+    } catch (const gl::GlslProgCompileExc &e ) {
+        CI_LOG_E(e.what());
+    }
     
-    mFbo = gl::Fbo::create(getWindowWidth(), getWindowHeight(), gl::Fbo::Format().disableDepth() );
+}
+
+bool LightPass::postInit()
+{
+
+    handleGlslProgReload(ec::EventDataRef());
     
+    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     
+    mSSLightingRender->uniformBlock("uLights", scene->lights()->getLightUboLocation());
+    mSSLightingRender->uniform("uShadowMap", 3);
+    mSSLightingRender->uniform("uGBufferDepthTexture", 10);
+    mSSLightingRender->uniform("uData", 11);
+    mSSLightingRender->uniform("uAlbedo", 12);
+    
+    mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRender);
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+    
+    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
     
     ///this could reflect errors...
     return true;
 }
 
-LightPass::LightPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_light_pass" ) ),mShuttingDown(false)
+LightPass::LightPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_light_pass" ) ),mShuttingDown(false),mPriority(2)
 {
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightPass::handleShutDown), ec::ShutDownEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
@@ -133,32 +154,61 @@ void LightPass::process()
     gl::enableDepthRead();
     gl::disableDepthWrite();
     
-    bool shadows = mContext->hasComponent(ShadowPass::TYPE);
-    
-    if( shadows )
-        mContext->getComponent<ShadowPass>().lock()->getShadowTexture()->bind( 3 );
-    
+    CI_LOG_V(mContext->getName() + " : " + getName() + " process " );
     
     auto gbuffer = mContext->getComponent<GBufferPass>().lock()->getGBuffer();
+    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     
-    gl::ScopedFramebuffer fbo( mFbo );
+    auto & pingpong = RenderManager::getPingPong();
     
-    gl::clear( GL_COLOR_BUFFER_BIT );
+    auto window_fbo = RenderManager::getWindowFbo( pingpong );
     
-    ///TODO: texture bind locations!
+    {
+        gl::ScopedFramebuffer fbo( window_fbo );
+        
+        gl::clear( GL_COLOR_BUFFER_BIT );
+        
+        ///TODO: texture bind locations!
+        
+        auto depth = gbuffer->getDepthTexture();
+        auto data = gbuffer->getTexture("uData");
+        auto albedo = gbuffer->getTexture("uAlbedo");
+        
+        gl::ScopedTextureBind depthTex( depth, 10 );
+        gl::ScopedTextureBind dataTex( data, 11 );
+        gl::ScopedTextureBind colorTex( albedo, 12 );
+        
+        gl::ScopedMatrices pushMatrix;
+        gl::setMatricesWindow(window_fbo->getSize());
+        gl::ScopedViewport view( vec2(0), window_fbo->getSize() );
+        
+        auto glsl = mScreenSpace->getGlslProg();
+        
+        auto cam = scene->cameras()->getActiveCamera();
+        
+        float nearClip					= cam.getNearClip();
+        float farClip					= cam.getFarClip();
+        vec2 projectionParams			= vec2( farClip / ( farClip - nearClip ),
+                                               ( -farClip * nearClip ) / ( farClip - nearClip ) );
+        
+        glsl->uniform("uProjectionParams", projectionParams );
+        glsl->uniform("uProjMatrixInverse", inverse( cam.getProjectionMatrix() ) );
+        glsl->uniform("uViewMatrixInverse", inverse( cam.getViewMatrix() ) );
+        glsl->uniform("uViewMatrix", inverse( cam.getViewMatrix() ) );
+        
+        bool shadows = mContext->hasComponent(ShadowPass::TYPE);
+        
+        if( shadows )
+            mContext->getComponent<ShadowPass>().lock()->getShadowTexture()->bind( 3 );
+        
+        mScreenSpace->draw();
+        
+        if(shadows)
+            mContext->getComponent<ShadowPass>().lock()->getShadowTexture()->unbind();
+        
+    }
     
-    gl::ScopedTextureBind depthTex( gbuffer->getDepthTexture(), 10 );
-    gl::ScopedTextureBind dataTex( gbuffer->getTexture("uData"), 11 );
-    gl::ScopedTextureBind colorTex( gbuffer->getTexture("uAlbedo"), 12 );
-
-    gl::ScopedMatrices pushMatrix;
-    gl::setMatricesWindow(mFbo->getSize());
-    gl::ScopedViewport view( vec2(0), mFbo->getSize() );
+    pingpong = 1 - pingpong;
     
-    mScreenSpace->draw();
-    
-    if(shadows)
-        mContext->getComponent<ShadowPass>().lock()->getShadowTexture()->unbind();
-
 }
 

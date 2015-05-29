@@ -26,6 +26,11 @@
 #include "LightManager.h"
 #include "ShadowMap.h"
 
+#include "RenderManager.h"
+#include "ShadowPass.h"
+#include "GBufferPass.h"
+#include "LightPass.h"
+#include "FXAAPass.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -128,6 +133,46 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
         return debug;
         
     }
+    ///RENDERING PASSES
+    
+    else if (type == "render_manager")
+    {
+        CI_LOG_V("parsed render_manager");
+        auto c = RenderManager::create(context);
+        c->initialize(init);
+        return c;
+        
+    }
+    else if (type == "shadow_pass")
+    {
+        CI_LOG_V("parsed shadow_pass");
+        auto c = ShadowPass::create(context);
+        c->initialize(init);
+        return c;
+        
+    }
+    else if (type == "gbuffer_pass")
+    {
+        CI_LOG_V("parsed shadow_pass");
+        auto c = GBufferPass::create(context);
+        c->initialize(init);
+        return c;
+    }
+    else if (type == "light_pass")
+    {
+        CI_LOG_V("parsed light_pass");
+        auto c = LightPass::create(context);
+        c->initialize(init);
+        return c;
+    }
+    else if (type == "FXAA_pass")
+    {
+        CI_LOG_V("parsed light_pass");
+        auto c = FXAAPass::create(context);
+        c->initialize(init);
+        return c;
+    }
+    
     else{
         ///TODO exceptions and exception handling
         throw std::runtime_error( "Unknown component type" );
