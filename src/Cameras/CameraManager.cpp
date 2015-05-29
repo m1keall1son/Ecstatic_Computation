@@ -7,7 +7,6 @@
 //
 
 #include "CameraManager.h"
-#include "CameraComponent.h"
 #include "ActorManager.h"
 #include "Actor.h"
 #include "Controller.h"
@@ -16,19 +15,13 @@
 #include "Scene.h"
 #include "Events.h"
 
-CameraManager::CameraType CameraManager::parseCameraType( const ec::ActorTypeQualifier &qualifier )
-{
-    if( qualifier == "main" )return CameraType::MAIN_CAMERA;
-    else if( qualifier == "debug" )return CameraType::DEBUG_CAMERA;
-    else return CameraType::MAIN_CAMERA;
-}
 
 const ci::CameraPersp& CameraManager::getActiveCamera()
 {
-    return mUI.getCamera();
+    return getCamera(mCurrentCamera);
 }
 
-const ci::CameraPersp& CameraManager::getCamera( const CameraType& cam_type )
+const ci::CameraPersp& CameraManager::getCamera( const CameraComponent::CameraType& cam_type )
 {
     
     auto it = mCameras.find(cam_type);
@@ -42,9 +35,8 @@ const ci::CameraPersp& CameraManager::getCamera( const CameraType& cam_type )
     return mUI.getCamera();
 }
 
-CameraManager::CameraManager():mShuttingDown(false),mId( ec::getHash("camera_manager") )
+CameraManager::CameraManager():mShuttingDown(false),mId( ec::getHash("camera_manager") ),mCurrentCamera(CameraComponent::CameraType::MAIN_CAMERA)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &CameraManager::handleCameraRegistration), ec::ReturnActorCreatedEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &CameraManager::handleShutDown), ec::ShutDownEvent::TYPE);
     
     mUI.connect(ci::app::getWindow());
@@ -65,9 +57,23 @@ CameraManager::~CameraManager()
 {
     //TODO: how to shutdown properly
     if(!mShuttingDown){
-        ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &CameraManager::handleCameraRegistration), ec::ReturnActorCreatedEvent::TYPE);
         ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &CameraManager::handleShutDown), ec::ShutDownEvent::TYPE);
     }
+}
+
+void CameraManager::updateCamera(ec::EventDataRef)
+{
+    if( mCurrentCamera == CameraComponent::CameraType::DEBUG_CAMERA){
+        auto cur_cam_id = mCameras.find(mCurrentCamera)->second;
+        if( auto cur_actor = ec::ActorManager::get()->retreiveUnique(cur_cam_id).lock()){
+            auto transform = cur_actor->getComponent<ec::TransformComponent>().lock();
+            auto cur_settings = mUI.getCamera();
+            transform->setTranslation(cur_settings.getEyePoint());
+            transform->setRotation(cur_settings.getOrientation());
+            cur_actor->getComponent<CameraComponent>().lock()->getCamera().setCenterOfInterestPoint(cur_settings.getCenterOfInterestPoint());
+        }
+    }
+    
 }
 
 void CameraManager::handleSwitchCamera(ec::EventDataRef event)
@@ -79,15 +85,18 @@ void CameraManager::handleSwitchCamera(ec::EventDataRef event)
         
         auto cur_cam_id = mCameras.find(mCurrentCamera)->second;
         if( auto cur_actor = ec::ActorManager::get()->retreiveUnique(cur_cam_id).lock()){
-
-            auto transform = cur_actor->getComponent<ec::TransformComponent>().lock();
-            auto cur_settings = mUI.getCamera();
-            transform->setTranslation(cur_settings.getEyePoint());
-            transform->setRotation(cur_settings.getOrientation());
-
+            if( mCurrentCamera==CameraComponent::CameraType::DEBUG_CAMERA ){
+                auto transform = cur_actor->getComponent<ec::TransformComponent>().lock();
+                auto cur_settings = mUI.getCamera();
+                transform->setTranslation(cur_settings.getEyePoint());
+                transform->setRotation(cur_settings.getOrientation());
+                cur_actor->getComponent<CameraComponent>().lock()->getCamera().setCenterOfInterestPoint(cur_settings.getCenterOfInterestPoint());
+            }
         }
-        
-        mUI.setCurrentCam( actor ->getComponent<CameraComponent>().lock()->getCamera() );
+        auto & cam_comp = actor->getComponent<CameraComponent>().lock()->getCamera();
+        if( e->getType() == CameraComponent::CameraType::DEBUG_CAMERA ){
+            mUI.setCurrentCam( cam_comp );
+        }
         mCurrentCamera = e->getType();
     }
     
@@ -95,14 +104,18 @@ void CameraManager::handleSwitchCamera(ec::EventDataRef event)
 
 void CameraManager::handleCameraRegistration( ec::EventDataRef event )
 {
-    auto e = std::dynamic_pointer_cast<ec::ReturnActorCreatedEvent>( event );
-    auto strong = e->getActorWeakRef().lock();
-    if( strong ){
-        if( strong->getType() == "camera" ){
-            CI_LOG_V("Registering camera");
-            auto cam_type =  parseCameraType( strong->getTypeQualifier() );
-            mCameras.insert( std::make_pair( cam_type , strong->getUId() ) );
-            if( cam_type == CameraType::MAIN_CAMERA )mUI.setCurrentCam(strong->getComponent<CameraComponent>().lock()->getCamera());
+    auto e = std::dynamic_pointer_cast<ComponentRegistrationEvent>( event );
+    
+    if( e->getType() == ComponentRegistrationEvent::RegistrationType::CAMERA ){
+        
+        auto cam_component = dynamic_cast<CameraComponent*>(e->getComponentBase());
+        
+        CI_LOG_V("Registering camera");
+        auto cam_type =  cam_component->getCamType();
+        mCameras.insert( std::make_pair( cam_type , e->getActorUId() ) );
+        if( cam_type == CameraComponent::CameraType::DEBUG_CAMERA ){
+            auto & cam = cam_component->getCamera();
+            mUI.setCurrentCam(cam);
         }
     }
 }

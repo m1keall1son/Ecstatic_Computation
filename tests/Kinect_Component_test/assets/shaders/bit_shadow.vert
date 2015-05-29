@@ -6,7 +6,7 @@ in vec2 ciTexCoord0;
 uniform mat4 ciModelViewProjection;
 uniform float ciElapsedSeconds;
 
-#include "util.glsl"
+#include "curl_noise.glsl"
 
 const int OCTAVES = 3;
 

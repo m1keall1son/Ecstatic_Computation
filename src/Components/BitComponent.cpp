@@ -137,14 +137,9 @@ bool BitComponent::postInit()
     mBitRender->uniform("uShadowMap", 3);
     
     auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    auto trimesh = TriMesh( ci::geom::Icosphere().subdivisions(3) );
-    aab_debug = trimesh.calcBoundingBox();
-    
-    trimesh.recalculateTangents();
-    trimesh.recalculateBitangents();
-    
-    mBit = ci::gl::Batch::create( trimesh , mBitRender );
-    mBitShadow = ci::gl::Batch::create( trimesh, mBitShadowRender );
+    auto geom = ci::geom::Icosphere().subdivisions(3) >> geom::Bounds( &aab_debug );
+    mBit = ci::gl::Batch::create( geom , mBitRender );
+    mBitShadow = ci::gl::Batch::create( geom, mBitShadowRender );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     

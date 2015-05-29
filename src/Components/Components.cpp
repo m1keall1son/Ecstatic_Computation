@@ -15,6 +15,7 @@
 #include "FrustumCullComponent.h"
 #include "BitComponent.h"
 #include "GeomTeapotComponent.h"
+#include "TunnelComponent.h"
 #include "KinectComponent.h"
 #include "RoomComponent.h"
 #include "cinder/Log.h"
@@ -24,6 +25,7 @@
 #include "Controller.h"
 #include "LightManager.h"
 #include "ShadowMap.h"
+
 
 using namespace ci;
 using namespace ci::app;
@@ -68,6 +70,14 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
         auto bit = BitComponent::create(context);
         bit->initialize(init);
         return bit;
+        
+    }
+    else if (type == "tunnel_component")
+    {
+        CI_LOG_V("parsed tunnel_component");
+        auto tunnel = TunnelComponent::create(context);
+        tunnel->initialize(init);
+        return tunnel;
         
     }
     else if (type == "kinect_component")

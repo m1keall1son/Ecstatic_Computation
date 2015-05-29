@@ -23,21 +23,3 @@ public:
     
 };
 
-class IntroScene : public AppSceneBase {
-    
-public:
-    
-    static IntroSceneRef create( const std::string& name );
-
-    void update() override;
-    void preDraw() override;
-    void draw() override;
-    void postDraw() override;
-    void shutDown( ec::EventDataRef )override;
-    
-private:
-    
-    IntroScene( const std::string& name );
-
-    
-};

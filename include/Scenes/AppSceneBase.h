@@ -22,6 +22,8 @@ public:
     
     virtual void initialize( const ci::JsonTree& init )override;
     
+    virtual void postInit()override = 0;
+    
     virtual void update()override;
     virtual void preDraw() = 0;
     virtual void draw() = 0;
@@ -36,6 +38,7 @@ protected:
     
     void handleSaveScene( ec::EventDataRef );
     void initGUI( const ec::GUIManagerRef &gui_manager )override;
+    
         
     LightManagerRef mLights;
     CameraManagerRef mCameras;

@@ -30,8 +30,6 @@ public:
     const ec::ComponentUId          getId() const override;
     const ec::ComponentType         getType() const override;
     void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
-
-    void update( ec::EventDataRef );
     
     inline ci::LightRef getLight(){ return mLight; }
     inline bool needsUpdate(){ return mNeedsUpdate; }
@@ -45,7 +43,8 @@ protected:
     
     void handleShutDown( ec::EventDataRef );
     void handleSceneChange( ec::EventDataRef );
-    
+    void handleUpdate( ec::EventDataRef );
+
     void registerHandlers();
     void unregisterHandlers();
     

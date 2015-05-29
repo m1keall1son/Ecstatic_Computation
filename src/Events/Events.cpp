@@ -163,12 +163,12 @@ ec::EventType SaveSceneEvent::getEventType() const
 
 ec::EventType SwitchCameraEvent::TYPE = ec::getHash("switch_camera_event");
 
-SwitchCameraEventRef SwitchCameraEvent::create( const CameraManager::CameraType& type )
+SwitchCameraEventRef SwitchCameraEvent::create( const CameraComponent::CameraType& type )
 {
     return SwitchCameraEventRef( new SwitchCameraEvent(type) );
 }
 
-SwitchCameraEvent::SwitchCameraEvent(const CameraManager::CameraType& type) : ec::EventData( cinder::app::getElapsedSeconds() ), mType(type){}
+SwitchCameraEvent::SwitchCameraEvent(const CameraComponent::CameraType& type) : ec::EventData( cinder::app::getElapsedSeconds() ), mType(type){}
 
 const char* SwitchCameraEvent::getName() const
 {
@@ -178,5 +178,26 @@ const char* SwitchCameraEvent::getName() const
 ec::EventType SwitchCameraEvent::getEventType() const
 {
     return SwitchCameraEvent::TYPE;
+}
+
+//COMPONENT REGISTRATION EVENT -------------------------------------------------------------/
+
+ec::EventType ComponentRegistrationEvent::TYPE = ec::getHash("component_registration_event");
+
+ComponentRegistrationEventRef ComponentRegistrationEvent::create( const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBase* component  )
+{
+    return ComponentRegistrationEventRef( new ComponentRegistrationEvent(type, actor, component) );
+}
+
+ComponentRegistrationEvent::ComponentRegistrationEvent(const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBase* component  ) : ec::EventData( cinder::app::getElapsedSeconds() ), mType(type), mActor(actor), mComponent(component){}
+
+const char* ComponentRegistrationEvent::getName() const
+{
+    return "component_registration_event";
+}
+
+ec::EventType ComponentRegistrationEvent::getEventType() const
+{
+    return ComponentRegistrationEvent::TYPE;
 }
 

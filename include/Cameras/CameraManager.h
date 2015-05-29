@@ -11,20 +11,17 @@
 #include "AppCommon.h"
 #include "Common.h"
 #include "cinder/MayaCamUI.h"
+#include "CameraComponent.h"
 
 class CameraManager {
     
 public:
     
-    enum CameraType { MAIN_CAMERA, DEBUG_CAMERA };
-
-    static CameraType parseCameraType( const ec::ActorTypeQualifier &qualifier );
-    
-    const ci::CameraPersp& getCamera( const CameraType& cam_type );
+    const ci::CameraPersp& getCamera( const CameraComponent::CameraType& cam_type );
     const ci::CameraPersp& getActiveCamera();
     
     inline ec::IdType getId(){ return mId; }
-
+    
     ~CameraManager();
     
 private:
@@ -35,12 +32,14 @@ private:
     void handleShutDown( ec::EventDataRef );
     void handleSwitchCamera( ec::EventDataRef );
     
-    std::map< CameraType, ec::ActorUId >    mCameras;
+    void updateCamera( ec::EventDataRef );
+    
+    std::map< CameraComponent::CameraType, ec::ActorUId >    mCameras;
     ci::CameraPersp                         mDefaultCamera;
     ci::MayaCamUI                           mUI;
     bool                                    mShuttingDown;
     bool                                    mCameraSet;
-    CameraType                              mCurrentCamera;
+    CameraComponent::CameraType             mCurrentCamera;
     ec::IdType                              mId;
     
     friend class AppSceneBase;

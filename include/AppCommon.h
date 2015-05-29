@@ -11,7 +11,7 @@
 ///SCENES
 
 using SceneFactoryRef = std::shared_ptr<class SceneFactory>;
-using IntroSceneRef = std::shared_ptr<class IntroScene>;
+using TunnelSceneRef = std::shared_ptr<class TunnelScene>;
 
 ///COMPONENTS
 
@@ -20,6 +20,7 @@ using FrustumCullComponentRef = std::shared_ptr< class FrustumCullComponent >;
 using DebugComponentRef = std::shared_ptr< class DebugComponent >;
 using KinectComponentRef = std::shared_ptr< class KinectComponent >;
 using BitComponentRef = std::shared_ptr<class BitComponent>;
+using TunnelComponentRef = std::shared_ptr< class TunnelComponent >;
 
 
 ///CAMERAS
@@ -49,3 +50,4 @@ using ReloadGlslProgEventRef = std::shared_ptr< class ReloadGlslProgEvent >;
 using SaveSceneEventRef = std::shared_ptr< class SaveSceneEvent >;
 using SwitchCameraEventRef = std::shared_ptr<class SwitchCameraEvent>;
 using LoadGUIEventRef = std::shared_ptr<class LoadGUIEvent>;
+using ComponentRegistrationEventRef = std::shared_ptr<class ComponentRegistrationEvent>;

@@ -28,6 +28,9 @@ AppSceneBase::AppSceneBase( const std::string& name ):ec::Scene(name)
         
     mSceneManager->addListener(fastdelegate::MakeDelegate(this, &AppSceneBase::handleSaveScene), SaveSceneEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::handleSwitchCamera), SwitchCameraEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::updateCamera), UpdateEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::handleCameraRegistration), ComponentRegistrationEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(mLights.get(), &LightManager::handleLightRegistration), ComponentRegistrationEvent::TYPE);
 
 }
 
@@ -56,6 +59,7 @@ void AppSceneBase::initGUI(const ec::GUIManagerRef &gui_manager)
     auto scene_params = ci::params::InterfaceGl::create(ci::app::getWindow(), "Scene: "+getName() + " GUI", ci::vec2(100,100));
     auto saveFn = [&]{ mSceneManager->triggerEvent(SaveSceneEvent::create()); };
     scene_params->addButton("Save", saveFn);
+    scene_params->hide();
     
     gui_manager->instertGUI(getId(), scene_params);
     

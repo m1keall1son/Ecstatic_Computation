@@ -154,7 +154,7 @@ public:
     
     static ec::EventType TYPE;
     
-    static SwitchCameraEventRef create( const CameraManager::CameraType &type );
+    static SwitchCameraEventRef create( const CameraComponent::CameraType &type );
     
     ~SwitchCameraEvent(){}
     ec::EventDataRef copy(){ return ec::EventDataRef(); }
@@ -164,11 +164,42 @@ public:
     void serialize( ci::Buffer &streamOut ){}
     void deSerialize( const ci::Buffer &streamIn ){}
     
-    inline CameraManager::CameraType& getType(){ return mType; }
+    inline CameraComponent::CameraType& getType(){ return mType; }
     
 private:
-    SwitchCameraEvent( const CameraManager::CameraType &type  );
-    CameraManager::CameraType mType;
+    SwitchCameraEvent( const CameraComponent::CameraType &type  );
+    CameraComponent::CameraType mType;
 };
+
+class ComponentRegistrationEvent : public ec::EventData {
+public:
+    
+    enum RegistrationType { CAMERA, LIGHT };
+    
+    static ec::EventType TYPE;
+    
+    ///TODO: this is the only unsafe pplace for components
+    
+    static ComponentRegistrationEventRef create( const RegistrationType &type, const ec::ActorUId& actor, ec::ComponentBase* component );
+    
+    ~ComponentRegistrationEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+    inline RegistrationType& getType(){ return mType; }
+    inline ec::ActorUId& getActorUId(){ return mActor; }
+    inline ec::ComponentBase* getComponentBase(){ return mComponent; }
+
+private:
+    ComponentRegistrationEvent( const RegistrationType &type, const ec::ActorUId& actor, ec::ComponentBase* component );
+    RegistrationType mType;
+    ec::ActorUId mActor;
+    ec::ComponentBase* mComponent;
+};
+
 
 

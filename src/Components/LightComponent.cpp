@@ -31,7 +31,7 @@ LightComponent::LightComponent( ec::Actor * context ): ec::ComponentBase( contex
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleShutDown), ec::ShutDownEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-
+    
 }
 
 LightComponent::~LightComponent()
@@ -43,7 +43,7 @@ void LightComponent::handleShutDown( ec::EventDataRef )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" handle shutdown");
     mShuttingDown = true;
-
+    
 }
 
 void LightComponent::handleSceneChange( ec::EventDataRef )
@@ -55,12 +55,12 @@ void LightComponent::handleSceneChange( ec::EventDataRef )
 void LightComponent::registerHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::update), UpdateEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleUpdate), UpdateEvent::TYPE);
 }
 void LightComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &LightComponent::update), UpdateEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &LightComponent::handleUpdate), UpdateEvent::TYPE);
 }
 
 bool LightComponent::postInit()
@@ -68,9 +68,7 @@ bool LightComponent::postInit()
     
     ///get bounding box;
     auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    auto trimesh = TriMesh( geom::Cube() );
-    aab_debug = trimesh.calcBoundingBox();
-    
+    geom::Cube() >> geom::Bounds( &aab_debug );
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
     return true;
@@ -534,6 +532,66 @@ static void serializeCapsuleLight( const ci::CapsuleLightRef& light, ci::JsonTre
     
 }
 
+void LightComponent::handleUpdate(ec::EventDataRef event)
+{
+    
+    CI_LOG_V( mContext->getName() + " : "+getName()+" update");
+    ///i dunno
+    if( mContext->hasComponent(FrustumCullComponent::TYPE) ){
+        auto cull = mContext->getComponent<FrustumCullComponent>().lock();
+        mLight->setVisible( cull->isVisible() );
+    }
+    
+    if( mContext->hasComponent(ec::TransformComponent::TYPE) ){
+        
+        //TODO: transform must have target (pointer to another actor location), lookat, view direction,
+        auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+        auto t = transform->getTranslation();
+        
+        switch (mLight->getType()) {
+            case ci::Light::Type::Point:
+            {
+                auto l = std::dynamic_pointer_cast<PointLight>(mLight);
+                l->setPosition( t + l->getPosition() );
+                auto dir = normalize( l->getPosition() * transform->getRotation() );
+                l->setDirection(dir);
+            }
+                break;
+                
+            case ci::Light::Type::Capsule:
+            {
+                auto l = std::dynamic_pointer_cast<CapsuleLight>(mLight);
+                l->setPosition( t );
+                auto dir = normalize( l->getPosition() * transform->getRotation() );
+                l->setDirection(dir);
+            }
+                break;
+                
+            case ci::Light::Type::Spot:
+            {
+                auto l = std::dynamic_pointer_cast<SpotLight>(mLight);
+                l->setPosition( t );
+                auto dir = normalize( l->getPosition() * transform->getRotation() );
+                l->setDirection(dir);
+            }
+                break;
+                
+            case ci::Light::Type::Wedge:
+            {
+                auto l = std::dynamic_pointer_cast<WedgeLight>(mLight);
+                l->setPosition( t );
+                auto dir = normalize( l->getPosition() * transform->getRotation() );
+                l->setDirection(dir);
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+}
+
 bool LightComponent::initialize( const ci::JsonTree &tree )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
@@ -556,6 +614,8 @@ bool LightComponent::initialize( const ci::JsonTree &tree )
         CI_LOG_E(e.what());
         CI_LOG_E("Couldn't find light tree");
     }
+    
+    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::LIGHT, mContext->getUId(), this ) );
     
     return true;
 }
@@ -592,19 +652,6 @@ const ec::ComponentUId        LightComponent::getId() const
 const ec::ComponentType       LightComponent::getType() const
 {
     return TYPE;
-}
-
-void LightComponent::update( ec::EventDataRef event )
-{
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" update");
-    ///i dunno
-    if( mContext->hasComponent(FrustumCullComponent::TYPE) ){
-        auto cull = mContext->getComponent<FrustumCullComponent>().lock();
-        mLight->setVisible( cull->isVisible() );
-    }
-    
-    
 }
 
 void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
@@ -668,7 +715,7 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
             }, std::move(weak_light));
             
             gui->addParam("enable shadows", &spot->mHasShadows).updateFn(enableShadows);
-
+            
         }
             break;
         case Light::Type::Capsule:
@@ -690,7 +737,7 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
             
             gui->addParam("length", &capsule->mLength);
             gui->addParam("axis", &capsule->mAxis);
-
+            
         }
             break;
         case Light::Type::Wedge:
@@ -702,7 +749,7 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
             gui->addParam("range", &wedge->mRange);
             gui->addParam("attenuation linear", &wedge->mAttenuation.x);
             gui->addParam("attenuation quadratic", &wedge->mAttenuation.y);
-
+            
             std::weak_ptr< WedgeLight > weak_light = std::weak_ptr< WedgeLight >(wedge);
             auto enableShadows = std::bind([](std::weak_ptr< WedgeLight >& weak_light){
                 if (auto strong_light = weak_light.lock()) strong_light->enableShadows( strong_light->mHasShadows );

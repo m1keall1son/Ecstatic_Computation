@@ -113,13 +113,9 @@ bool GeomTeapotComponent::postInit()
 
     auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     
-    auto trimesh = TriMesh( ci::geom::Teapot() );
-    
-    aab_debug = trimesh.calcBoundingBox();
-    
-    mTeapot = ci::gl::Batch::create( trimesh , glsl );
-    
-    mTeapotShadow = ci::gl::Batch::create( ci::geom::Teapot(), gl::getStockShader( gl::ShaderDef() ) );
+    auto geom = geom::Teapot() >> geom::Bounds( &aab_debug );
+    mTeapot = ci::gl::Batch::create( geom , glsl );
+    mTeapotShadow = ci::gl::Batch::create( geom, gl::getStockShader( gl::ShaderDef() ) );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     

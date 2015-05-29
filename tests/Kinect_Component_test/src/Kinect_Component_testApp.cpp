@@ -51,9 +51,9 @@ void Kinect_Component_testApp::keyUp( KeyEvent event )
         mDebug = !mDebug;
         mController->enableDebug( mDebug );
         if(mDebug)
-            mController->scene().lock()->manager()->queueEvent( SwitchCameraEvent::create( CameraManager::CameraType::DEBUG_CAMERA ) );
+            mController->scene().lock()->manager()->queueEvent( SwitchCameraEvent::create( CameraComponent::CameraType::DEBUG_CAMERA ) );
         else
-            mController->scene().lock()->manager()->queueEvent( SwitchCameraEvent::create( CameraManager::CameraType::MAIN_CAMERA ) );
+            mController->scene().lock()->manager()->queueEvent( SwitchCameraEvent::create( CameraComponent::CameraType::MAIN_CAMERA ) );
     }
     else if( event.getChar() == KeyEvent::KEY_r ){
         mController->scene().lock()->manager()->queueEvent( ReloadGlslProgEvent::create() );
@@ -77,6 +77,7 @@ void Kinect_Component_testApp::draw()
 {
     gl::clear( ColorA( 0,0,0,1 ) );
     mController->draw();
+    gl::drawString(std::to_string(getAverageFps()),vec2(10));
 }
 
 void Kinect_Component_testApp::cleanup()

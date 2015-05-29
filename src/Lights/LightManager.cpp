@@ -18,6 +18,7 @@
 #include "Scene.h"
 #include "CameraManager.h"
 #include "AppSceneBase.h"
+#include "Events.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -47,7 +48,6 @@ LightManager::LightManager():mShuttingDown(false),mId(ec::getHash("light_manager
     
     mLightUboLocation = 0;
     
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightManager::handleLightRegistration), ec::ReturnActorCreatedEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightManager::handleShutDown), ec::ShutDownEvent::TYPE);
     Lights lights;
     lights.numLights = 0;
@@ -86,13 +86,10 @@ void LightManager::initShadowMap(const ci::JsonTree &init)
 
 void LightManager::handleLightRegistration( ec::EventDataRef event )
 {
-    auto e = std::dynamic_pointer_cast<ec::ReturnActorCreatedEvent>( event );
-    auto strong = e->getActorWeakRef().lock();
-    if( strong ){
-        if( strong->getType() == "light" ){
-            CI_LOG_V("Registering light");
-            mLights.push_back( strong->getUId() );
-        }
+    auto e = std::dynamic_pointer_cast<ComponentRegistrationEvent>( event );
+    if( e->getType() == ComponentRegistrationEvent::RegistrationType::LIGHT ){
+        CI_LOG_V("Registering light");
+        mLights.push_back( e->getActorUId() );
     }
 }
 

@@ -103,15 +103,12 @@ bool RoomComponent::postInit()
 
     glsl->uniform("uShadowMap", 3);
     
-    auto flipNormals = []( const vec3& normal ) { return -normal; };
-    mRoom = ci::gl::Batch::create( ci::geom::Cube().size( vec3( mRoomSize )) >> geom::AttribFn<vec3, vec3>( geom::NORMAL, geom::NORMAL, flipNormals ), glsl );
-    
-    ///get bounding box;
     auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    auto trimesh = TriMesh( geom::Cube().size( vec3( mRoomSize ) ));
-    aab_debug = trimesh.calcBoundingBox();
     
-    mRoomShadow = gl::Batch::create( trimesh, gl::getStockShader(gl::ShaderDef()) );
+    auto flipNormals = []( const vec3& normal ) { return -normal; };
+    auto geom = ci::geom::Cube().size( vec3( mRoomSize )) >> geom::AttribFn<vec3, vec3>( geom::NORMAL, geom::NORMAL, flipNormals ) >> geom::Bounds( &aab_debug );
+    mRoom = ci::gl::Batch::create( geom, glsl );
+    mRoomShadow = gl::Batch::create( geom, gl::getStockShader(gl::ShaderDef()) );
 
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     

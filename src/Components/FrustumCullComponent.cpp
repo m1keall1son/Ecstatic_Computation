@@ -66,7 +66,8 @@ void FrustumCullComponent::cull( ec::EventDataRef )
             
             auto scene = std::dynamic_pointer_cast<AppSceneBase>(ec::Controller::get()->scene().lock());
             if(scene){
-                ci::Frustumf visibleWorld( scene->cameras()->getCamera(CameraManager::CameraType::MAIN_CAMERA) );
+                auto & cam = scene->cameras()->getCamera(CameraComponent::CameraType::MAIN_CAMERA);
+                ci::Frustumf visibleWorld( cam );
                 ci::AxisAlignedBox3f worldBoundingBox;
                 auto transform = mContext->getComponent<ec::TransformComponent>().lock();
                 auto & boundingbox = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();

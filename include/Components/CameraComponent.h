@@ -18,12 +18,17 @@ class CameraComponent : public ec::ComponentBase {
     
 public:
     
+    enum CameraType { MAIN_CAMERA, DEBUG_CAMERA };
+    
     static ec::ComponentType TYPE;
     
+    static CameraType parseCameraType( const std::string &qualifier );
+    static std::string parseCameraType( const CameraType &qualifier );
+
     static CameraComponentRef create( ec::Actor * context );
     
     bool                          initialize( const ci::JsonTree &tree )override;
-    bool                          postInit()override{ return true; }
+    bool                          postInit()override;
     ci::JsonTree                  serialize()override;
     const ec::ComponentNameType   getName() const override;
     const ec::ComponentUId        getId() const override;
@@ -32,8 +37,9 @@ public:
 
     void update( ec::EventDataRef );
     
-    inline const ci::CameraPersp& getCamera(){ return mCamera; }
-
+    inline ci::CameraPersp& getCamera(){ return mCamera; }
+    inline CameraType getCamType(){ return mCamType; }
+    
     ~CameraComponent();
 
 private:
@@ -49,8 +55,11 @@ private:
     CameraComponent( ec::Actor * context );
     ci::CameraPersp mCamera;
     ec::ComponentUId mId;
+    CameraType mCamType;
+    
 
     float mFov, mNear, mFar;
+    ci::vec3 mInterestPoint;
 
     bool mShuttingDown;
 

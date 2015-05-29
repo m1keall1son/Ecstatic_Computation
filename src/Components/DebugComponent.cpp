@@ -137,7 +137,6 @@ void DebugComponent::draw( ec::EventDataRef )
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" drawDebug");
     
-    ci::gl::ScopedModelMatrix pushModel;
     ci::gl::ScopedColor pushColor;
     if( mContext->hasComponent(FrustumCullComponent::TYPE) ){
     
@@ -153,21 +152,25 @@ void DebugComponent::draw( ec::EventDataRef )
     
     if( mContext->hasComponent(ec::TransformComponent::TYPE) )
     {
-        
-        auto transform = mContext->getComponent<ec::TransformComponent>().lock();
-        ci::gl::multModelMatrix( transform->getModelMatrix() );
-        
+ 
         if( mContext->hasComponent(CameraComponent::TYPE) ){
 
             auto & camera = mContext->getComponent<CameraComponent>().lock()->getCamera();
             ci::gl::drawFrustum( camera );
             
         }else{
-       
+            ci::gl::ScopedModelMatrix pushModel;
+            auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+            ci::gl::multModelMatrix( transform->getModelMatrix() );
             ci::gl::drawStrokedCube(mObjectBoundingBox);
         }
 
-    }else if( mContext->hasComponent(LightComponent::TYPE) ){
+    }
+    
+    if( mContext->hasComponent(LightComponent::TYPE) ){
+        
+        ci::gl::ScopedModelMatrix pushModel;
+
         auto light = mContext->getComponent<LightComponent>().lock()->getLight();
         
         if( light->getType() ==  ci::Light::Type::Spot ){
