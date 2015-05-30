@@ -1,5 +1,5 @@
 //
-//  FXAAPass.h
+//  OculusRiftComponent.h
 //  System_test
 //
 //  Created by Mike Allison on 5/23/15.
@@ -11,15 +11,24 @@
 #include "ComponentFactory.h"
 #include "ComponentBase.h"
 #include "AppCommon.h"
-#include "PassBase.h"
+#include "cinder/gl/Ubo.h"
 
-class FXAAPass : public PassBase {
+#include "CinderOculus.h"
+
+class OculusRiftComponent : public ec::ComponentBase {
     
 public:
     
+    struct RiftData {
+        ci::mat4 matrices[4];
+    };
+    
+    static void                   initializeRift();
+    static int                    getRiftUboLocation();
+    
     static ec::ComponentType TYPE;
     
-    static FXAAPassRef create( ec::Actor* context );
+    static OculusRiftComponentRef create( ec::Actor* context );
     
     bool                          initialize( const ci::JsonTree &tree )override;
     ci::JsonTree                  serialize()override;
@@ -30,25 +39,26 @@ public:
     
     bool postInit()override;
     
-    const PassPriority getPriority() const override;
-    void process()override;
+    inline hmd::OculusRiftRef getRift(){ return mRift; }
     
-    ~FXAAPass();
+    ~OculusRiftComponent();
     
 private:
     
-    FXAAPass( ec::Actor* context );
+    OculusRiftComponent( ec::Actor* context );
     
     void handleShutDown( ec::EventDataRef );
     void handleSceneChange( ec::EventDataRef );
     
+    void handleUpdate( ec::EventDataRef );
+    
     void registerHandlers();
     void unregisterHandlers();
     
-    ec::ComponentUId        mId;
-    PassPriority            mPriority;
-    bool                    mShuttingDown;
-    ci::gl::BatchRef        mScreenQuad;
-    ci::gl::GlslProgRef     mFXAARender;
+    ec::ComponentUId mId;
+    bool             mShuttingDown;
+    
+    hmd::OculusRiftRef mRift;
+    ci::gl::UboRef     mRiftUbo;
     
 };

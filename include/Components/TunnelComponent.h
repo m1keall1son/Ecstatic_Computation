@@ -53,7 +53,7 @@ private:
     void unregisterHandlers();
     
     ci::gl::BatchRef    mTunnel, mTunnelShadow;
-    ci::gl::GlslProgRef mTunnelBasicRender, mTunnelShadowRender, mTunnelGeometryRender;
+    ci::gl::GlslProgRef mTunnelBasicRender, mTunnelShadowRender, mTunnelGeometryRender, mTunnelRiftInstancedGeometryRender;
     ci::BSpline3f       mSpline;
     
     ec::ComponentUId    mId;

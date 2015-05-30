@@ -243,17 +243,26 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
         CI_LOG_E(std::string("tunnel shadow render error: ") + e.what());
     }
     
-    
+    try{
+        mTunnelRiftInstancedGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry_rift.vert")).fragment(loadAsset("shaders/tunnel_geometry_rift.frag")).geometry(loadAsset("shaders/tunnel_geometry_rift.geom")).preprocess(true) );
+        
+    } catch (const ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(std::string("tunnel shadow render error: ") + e.what());
+    }
+
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     mTunnelBasicRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     mTunnelBasicRender->uniform("uShadowMap", 3);
     
     ///replace 
     
-    if(mTunnel)
-        mTunnel->replaceGlslProg(mTunnelGeometryRender);
+    if(mTunnel){
+        if( ec::Controller::isRiftEnabled() )
+            mTunnel->replaceGlslProg(mTunnelRiftInstancedGeometryRender);
+        else
+            mTunnel->replaceGlslProg(mTunnelGeometryRender);
+    }
 
-    
 }
 
 
@@ -295,7 +304,11 @@ bool TunnelComponent::postInit()
     
     auto geom = ci::geom::ExtrudeSpline( face, mSpline, 1000 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
     
-    mTunnel = ci::gl::Batch::create( geom , mTunnelGeometryRender );
+    if( ec::Controller::isRiftEnabled() )
+        mTunnel = ci::gl::Batch::create( geom , mTunnelRiftInstancedGeometryRender );
+    else
+        mTunnel = ci::gl::Batch::create( geom , mTunnelGeometryRender );
+
     mTunnelShadow = ci::gl::Batch::create( geom , mTunnelShadowRender );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");

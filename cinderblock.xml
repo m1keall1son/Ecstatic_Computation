@@ -16,13 +16,15 @@
     <headerPattern>include/Scenes/*.h</headerPattern>
     <headerPattern>include/Lights/*.h</headerPattern>
     <headerPattern>include/Cameras/*.h</headerPattern>
+    <headerPattern>include/Rendering/*.h</headerPattern>
     <sourcePattern>src/*.cpp</sourcePattern>
 	<sourcePattern>src/Events/*.cpp</sourcePattern>
     <sourcePattern>src/Components/*.cpp</sourcePattern>
     <sourcePattern>src/Lights/*.cpp</sourcePattern>
     <sourcePattern>src/Scenes/*.cpp</sourcePattern>
     <sourcePattern>src/Cameras/*.cpp</sourcePattern>
-    
+    <sourcePattern>src/Rendering/*.cpp</sourcePattern>
+
     <asset>assets/shaders/lighting.vert</asset>
     <asset>assets/shaders/lighting.frag</asset>
     <asset>assets/configs/config.json</asset>
@@ -30,6 +32,7 @@
     <platform os="macosx">
     <requires>org.libcinder.ecstatic</requires>
     <requires>freenect.libcinder.org</requires>
+    <requires>org.libcinder.oculusrift</requires>
     </platform>
     
 </block>

@@ -50,6 +50,7 @@
 		4F0707641B191E9900A7A450 /* FXAAPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F0707631B191E9800A7A450 /* FXAAPass.cpp */; };
 		4F0707671B19245100A7A450 /* fxaa.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707661B19245100A7A450 /* fxaa.frag */; };
 		4F0707691B19248800A7A450 /* pass.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0707681B19248800A7A450 /* pass.vert */; };
+		4F07076B1B19282A00A7A450 /* OculusRiftComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F07076A1B19282A00A7A450 /* OculusRiftComponent.cpp */; };
 		4F7F74A51B14B3AE001E4B82 /* GUIManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7F74A41B14B3AE001E4B82 /* GUIManager.cpp */; };
 		4FBEC3EA1B11544900C59BA4 /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3E61B11544900C59BA4 /* config.json */; };
 		4FBEC3EB1B11544900C59BA4 /* lighting.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FBEC3E81B11544900C59BA4 /* lighting.frag */; };
@@ -172,6 +173,8 @@
 		4F0707651B191EAB00A7A450 /* FXAAPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FXAAPass.h; path = ../../../include/Rendering/FXAAPass.h; sourceTree = "<group>"; };
 		4F0707661B19245100A7A450 /* fxaa.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fxaa.frag; sourceTree = "<group>"; };
 		4F0707681B19248800A7A450 /* pass.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = pass.vert; sourceTree = "<group>"; };
+		4F07076A1B19282A00A7A450 /* OculusRiftComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OculusRiftComponent.cpp; path = ../../../src/Components/OculusRiftComponent.cpp; sourceTree = "<group>"; };
+		4F07076C1B19284B00A7A450 /* OculusRiftComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OculusRiftComponent.h; path = ../../../include/Components/OculusRiftComponent.h; sourceTree = "<group>"; };
 		4F7F74A21B14B38A001E4B82 /* GUIManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GUIManager.h; path = ../blocks/Ecstatic/include/GUI/GUIManager.h; sourceTree = "<group>"; };
 		4F7F74A41B14B3AE001E4B82 /* GUIManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GUIManager.cpp; path = ../blocks/Ecstatic/src/GUI/GUIManager.cpp; sourceTree = "<group>"; };
 		4F9C382C655F4021805E2F19 /* Components.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Components.h; path = ../../../include/Components/Components.h; sourceTree = "<group>"; };
@@ -585,6 +588,7 @@
 				4FBEC3ED1B1158BE00C59BA4 /* KinectComponent.h */,
 				4FBEC4021B12579500C59BA4 /* BitComponent.h */,
 				4F017F851B174D7A006F60F8 /* TunnelComponent.h */,
+				4F07076C1B19284B00A7A450 /* OculusRiftComponent.h */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -713,6 +717,7 @@
 				4FBEC3EE1B1158F300C59BA4 /* KinectComponent.cpp */,
 				4FBEC4031B1257AB00C59BA4 /* BitComponent.cpp */,
 				4F017F861B174DA9006F60F8 /* TunnelComponent.cpp */,
+				4F07076A1B19282A00A7A450 /* OculusRiftComponent.cpp */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -898,6 +903,7 @@
 				21BA9AAAF9DD43B28252C0B0 /* ConfigManager.cpp in Sources */,
 				48107E18C4914AD39B7BFC57 /* Controller.cpp in Sources */,
 				4F017F871B174DA9006F60F8 /* TunnelComponent.cpp in Sources */,
+				4F07076B1B19282A00A7A450 /* OculusRiftComponent.cpp in Sources */,
 				4F07074E1B18C24600A7A450 /* ShadowPass.cpp in Sources */,
 				81BFDA4A0D70452AB4FF2B26 /* CinderFreenect.cpp in Sources */,
 				4B7AE683437F49349A63D2EC /* cameras.c in Sources */,

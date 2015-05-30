@@ -51,7 +51,6 @@ private:
     void handleShutDown( ec::EventDataRef );
     void handleGlslProgReload( ec::EventDataRef );
 
-    ci::gl::FboRef mFbo;
     ci::gl::BatchRef mScreenSpace;
     ci::gl::GlslProgRef mSSLightingRender;
     PassPriority mPriority;

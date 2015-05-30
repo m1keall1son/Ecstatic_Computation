@@ -24,6 +24,7 @@ using BitComponentRef = std::shared_ptr<class BitComponent>;
 using TunnelComponentRef = std::shared_ptr< class TunnelComponent >;
 using GeomTeapotComponentRef = std::shared_ptr< class GeomTeapotComponent >;
 using RoomComponentRef = std::shared_ptr< class RoomComponent >;
+using OculusRiftComponentRef = std::shared_ptr< class OculusRiftComponent >;
 
 ///CAMERAS
 using CameraManagerRef = std::shared_ptr< class CameraManager >;
