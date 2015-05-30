@@ -64,6 +64,15 @@ ComponentTemplate::ComponentTemplate( ec::Actor* context ): ec::ComponentBase( c
 {
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ComponentTemplate::handleShutDown), ec::ShutDownEvent::TYPE);
     registerHandlers();
+    
+    auto window = ci::app::getWindow();
+    window->getSignalMouseUp().connect( std::bind( &ComponentTemplate::mouseUp, this , std::placeholders::_1 ) );
+    window->getSignalMouseDown().connect( std::bind( &ComponentTemplate::mouseDown, this , std::placeholders::_1 ) );
+    window->getSignalMouseDrag().connect( std::bind( &ComponentTemplate::mouseDrag, this , std::placeholders::_1 ) );
+    window->getSignalMouseMove().connect( std::bind( &ComponentTemplate::mouseMove, this , std::placeholders::_1 ) );
+    window->getSignalKeyDown().connect( std::bind( &ComponentTemplate::keyDown, this , std::placeholders::_1 ) );
+    window->getSignalKeyUp().connect( std::bind( &ComponentTemplate::keyUp, this , std::placeholders::_1 ) );
+    
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
 }

@@ -87,7 +87,7 @@ void Oculus_Component_test::cleanup()
 
 void prepareSettings( App::Settings*settings )
 {
-    ec::Controller::initializeRift();
+    ec::Controller::initializeRift(false);
     
     if( ec::Controller::isRiftEnabled() ){
         settings->disableFrameRate();

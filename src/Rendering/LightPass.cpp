@@ -21,6 +21,7 @@
 #include "ShadowMap.h"
 #include "GBufferPass.h"
 #include "GBuffer.h"
+#include "OculusRiftComponent.h"
 #include "RenderManager.h"
 
 using namespace ci;
@@ -79,6 +80,12 @@ void LightPass::handleGlslProgReload(ec::EventDataRef)
         CI_LOG_E(e.what());
     }
     
+    try {
+        mSSLightingRiftRender = gl::GlslProg::create(gl::GlslProg::Format().vertex(loadAsset("shaders/ss_lighting_rift.vert")).fragment(loadAsset("shaders/ss_lighting_rift.frag")).preprocess(true));
+    } catch (const gl::GlslProgCompileExc &e ) {
+        CI_LOG_E(e.what());
+    }
+    
 }
 
 bool LightPass::postInit()
@@ -94,8 +101,19 @@ bool LightPass::postInit()
     mSSLightingRender->uniform("uData", 11);
     mSSLightingRender->uniform("uAlbedo", 12);
     
-    mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRender);
+    mSSLightingRiftRender->uniformBlock("uLights", scene->lights()->getLightUboLocation());
+    mSSLightingRiftRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation() );
+    mSSLightingRiftRender->uniform("uShadowMap", 3);
+    mSSLightingRiftRender->uniform("uGBufferDepthTexture", 10);
+    mSSLightingRiftRender->uniform("uData", 11);
+    mSSLightingRiftRender->uniform("uAlbedo", 12);
     
+    
+    if(!ec::Controller::isRiftEnabled())
+        mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRender);
+    else
+        mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRiftRender);
+
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
     ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
@@ -160,7 +178,6 @@ void LightPass::process()
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     
     auto & pingpong = RenderManager::getPingPong();
-    
     auto window_fbo = RenderManager::getWindowFbo( pingpong );
     
     {
@@ -184,17 +201,19 @@ void LightPass::process()
         
         auto glsl = mScreenSpace->getGlslProg();
         
-        auto cam = scene->cameras()->getActiveCamera();
-        
-        float nearClip					= cam.getNearClip();
-        float farClip					= cam.getFarClip();
-        vec2 projectionParams			= vec2( farClip / ( farClip - nearClip ),
-                                               ( -farClip * nearClip ) / ( farClip - nearClip ) );
-        
-        glsl->uniform("uProjectionParams", projectionParams );
-        glsl->uniform("uProjMatrixInverse", inverse( cam.getProjectionMatrix() ) );
-        glsl->uniform("uViewMatrixInverse", inverse( cam.getViewMatrix() ) );
-        glsl->uniform("uViewMatrix", inverse( cam.getViewMatrix() ) );
+        if(!ec::Controller::isRiftEnabled()){
+            
+            auto cam = scene->cameras()->getActiveCamera();
+            
+            float nearClip					= cam.getNearClip();
+            float farClip					= cam.getFarClip();
+            vec2 projectionParams			= vec2( farClip / ( farClip - nearClip ),
+                                                   ( -farClip * nearClip ) / ( farClip - nearClip ) );
+            
+            glsl->uniform("uProjectionParams", projectionParams );
+            glsl->uniform("uProjMatrixInverse", inverse( cam.getProjectionMatrix() ) );
+            
+        }
         
         bool shadows = mContext->hasComponent(ShadowPass::TYPE);
         

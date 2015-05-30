@@ -12,6 +12,7 @@
 #include "Controller.h"
 #include "AppSceneBase.h"
 #include "Events.h"
+#include "CameraManager.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -50,14 +51,15 @@ void OculusRiftComponent::handleSceneChange( ec::EventDataRef )
 void OculusRiftComponent::registerHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleUpdate), UpdateEvent::TYPE);
-    
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleUpdate), UpdateEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleSwitchCamera), SwitchCameraEvent::TYPE);
+
 }
 void OculusRiftComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleUpdate), UpdateEvent::TYPE);
-    
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleSwitchCamera), SwitchCameraEvent::TYPE);
 }
 
 void OculusRiftComponent::handleUpdate(ec::EventDataRef)
@@ -80,6 +82,11 @@ void OculusRiftComponent::handleUpdate(ec::EventDataRef)
     RiftData data;
     for(int i=0;i<4;i++)
         data.matrices[i] = worldToEyeClipMatrices[i];
+    
+    auto cam = mRift->getHostCamera();
+    
+    data.farClip = cam.getFarClip();
+    data.nearClip = cam.getNearClip();
     
     mRiftUbo->bufferSubData( 0, sizeof( RiftData ), &data );
     
@@ -118,13 +125,29 @@ bool OculusRiftComponent::postInit()
     return true;
 }
 
+void OculusRiftComponent::handleSwitchCamera(ec::EventDataRef event)
+{
+    auto e = std::dynamic_pointer_cast<SwitchCameraEvent>(event);
+    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    auto new_host = scene->cameras()->getCamera(e->getType());
+    mRift->setHostCamera(new_host);
+    
+}
+
 OculusRiftComponent::OculusRiftComponent( ec::Actor* context ): ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_oculus_rift_component" ) ),mShuttingDown(false)
 {
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleShutDown), ec::ShutDownEvent::TYPE);
     ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     registerHandlers();
+    
+    auto window = ci::app::getWindow();
+    window->getSignalKeyDown().connect( std::bind( &OculusRiftComponent::keyDown, this , std::placeholders::_1 ) );
+    window->getSignalKeyUp().connect( std::bind( &OculusRiftComponent::keyUp, this , std::placeholders::_1 ) );
+    
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
+    //for instanced stereo rendering
+    gl::enable( GL_CLIP_DISTANCE0, true );
 }
 
 OculusRiftComponent::~OculusRiftComponent()
@@ -145,6 +168,16 @@ const ec::ComponentUId OculusRiftComponent::getId() const
 const ec::ComponentType OculusRiftComponent::getType() const
 {
     return TYPE;
+}
+
+void OculusRiftComponent::keyUp(ci::app::KeyEvent & event)
+{
+    
+}
+
+void OculusRiftComponent::keyDown(ci::app::KeyEvent & event)
+{
+    
 }
 
 ci::JsonTree OculusRiftComponent::serialize()

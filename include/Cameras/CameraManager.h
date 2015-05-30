@@ -22,6 +22,9 @@ public:
     
     inline ec::IdType getId(){ return mId; }
     
+    void keyUp( ci::app::KeyEvent & );
+    void keyDown( ci::app::KeyEvent & );
+    
     ~CameraManager();
     
 private:

@@ -29,6 +29,12 @@ public:
     
     bool postInit()override;
 
+    void mouseUp( ci::app::MouseEvent & ){}
+    void mouseDown( ci::app::MouseEvent & ){}
+    void mouseDrag( ci::app::MouseEvent & ){}
+    void mouseMove( ci::app::MouseEvent & ){}
+    void keyUp( ci::app::KeyEvent & ){}
+    void keyDown( ci::app::KeyEvent & ){}
     
     ~ComponentTemplate();
     

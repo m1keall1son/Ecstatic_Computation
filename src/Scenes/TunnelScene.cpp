@@ -23,6 +23,7 @@
 #include "CameraComponent.h"
 #include "GUIManager.h"
 #include "GBuffer.h"
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -127,12 +128,30 @@ void TunnelScene::handlePresentScene(ec::EventDataRef event)
 {
     auto e = std::dynamic_pointer_cast<FinishRenderEvent>(event);
     
-    auto tex = e->getFinalTexture();
-    {
-        gl::ScopedMatrices pushMatrix;
-        gl::setMatricesWindow(getWindowSize());
-        gl::ScopedViewport view( vec2(0), getWindowSize() );
-        gl::draw( tex );
+    if( ec::Controller::isRiftEnabled() ){
+        
+        auto rift = ec::ActorManager::get()->retreiveUnique(ec::getHash("rift")).lock();
+        auto rift_component = rift->getComponent<OculusRiftComponent>().lock();
+        auto oculus = rift_component->getRift();
+
+        hmd::ScopedBind bind{ *oculus };
+        gl::clear();
+        
+        auto tex = e->getFinalTexture();
+        {
+            gl::ScopedMatrices pushMatrix;
+            gl::setMatricesWindow(oculus->getFboSize());
+            gl::ScopedViewport view( vec2(0), oculus->getFboSize());
+            gl::draw( tex );
+        }
+    }else{
+        auto tex = e->getFinalTexture();
+        {
+            gl::ScopedMatrices pushMatrix;
+            gl::setMatricesWindow(getWindowSize());
+            gl::ScopedViewport view( vec2(0), getWindowSize());
+            gl::draw( tex );
+        }
     }
     
 }

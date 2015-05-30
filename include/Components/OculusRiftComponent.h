@@ -21,6 +21,10 @@ public:
     
     struct RiftData {
         ci::mat4 matrices[4];
+        float nearClip;
+        float farClip;
+        float reserved0;
+        float reserved1;
     };
     
     static void                   initializeRift();
@@ -41,6 +45,9 @@ public:
     
     inline hmd::OculusRiftRef getRift(){ return mRift; }
     
+    void keyUp( ci::app::KeyEvent & );
+    void keyDown( ci::app::KeyEvent & );
+    
     ~OculusRiftComponent();
     
 private:
@@ -49,6 +56,7 @@ private:
     
     void handleShutDown( ec::EventDataRef );
     void handleSceneChange( ec::EventDataRef );
+    void handleSwitchCamera( ec::EventDataRef );
     
     void handleUpdate( ec::EventDataRef );
     

@@ -46,6 +46,7 @@ CameraComponent::CameraComponent( ec::Actor* context ) : ec::ComponentBase( cont
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
 
     registerHandlers();
+    
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
 }
 

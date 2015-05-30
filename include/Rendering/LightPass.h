@@ -52,7 +52,7 @@ private:
     void handleGlslProgReload( ec::EventDataRef );
 
     ci::gl::BatchRef mScreenSpace;
-    ci::gl::GlslProgRef mSSLightingRender;
+    ci::gl::GlslProgRef mSSLightingRender, mSSLightingRiftRender;
     PassPriority mPriority;
     bool mShuttingDown;
     ec::ComponentUId mId;

@@ -15,6 +15,8 @@
 #include "Scene.h"
 #include "Events.h"
 
+using namespace ci;
+using namespace ci::app;
 
 const ci::CameraPersp& CameraManager::getActiveCamera()
 {
@@ -45,6 +47,10 @@ CameraManager::CameraManager():mShuttingDown(false),mId( ec::getHash("camera_man
     mDefaultCamera.lookAt(ci::vec3(0,0,1),ci::vec3(0));
     mUI.setCurrentCam(mDefaultCamera);
     
+    auto window = ci::app::getWindow();
+    //window->getSignalKeyDown().connect( std::bind( &CameraManager::keyDown, this , std::placeholders::_1 ) );
+    window->getSignalKeyUp().connect( std::bind( &CameraManager::keyUp, this , std::placeholders::_1 ) );
+    
 }
 
 void CameraManager::handleShutDown(ec::EventDataRef)
@@ -63,7 +69,7 @@ CameraManager::~CameraManager()
 
 void CameraManager::updateCamera(ec::EventDataRef)
 {
-    if( mCurrentCamera == CameraComponent::CameraType::DEBUG_CAMERA){
+    if( mCurrentCamera == CameraComponent::CameraType::DEBUG_CAMERA && !ec::Controller::isRiftEnabled() ){
         auto cur_cam_id = mCameras.find(mCurrentCamera)->second;
         if( auto cur_actor = ec::ActorManager::get()->retreiveUnique(cur_cam_id).lock()){
             auto transform = cur_actor->getComponent<ec::TransformComponent>().lock();
@@ -85,7 +91,7 @@ void CameraManager::handleSwitchCamera(ec::EventDataRef event)
         
         auto cur_cam_id = mCameras.find(mCurrentCamera)->second;
         if( auto cur_actor = ec::ActorManager::get()->retreiveUnique(cur_cam_id).lock()){
-            if( mCurrentCamera==CameraComponent::CameraType::DEBUG_CAMERA ){
+            if( mCurrentCamera==CameraComponent::CameraType::DEBUG_CAMERA  && !ec::Controller::isRiftEnabled()){
                 auto transform = cur_actor->getComponent<ec::TransformComponent>().lock();
                 auto cur_settings = mUI.getCamera();
                 transform->setTranslation(cur_settings.getEyePoint());
@@ -94,7 +100,7 @@ void CameraManager::handleSwitchCamera(ec::EventDataRef event)
             }
         }
         auto & cam_comp = actor->getComponent<CameraComponent>().lock()->getCamera();
-        if( e->getType() == CameraComponent::CameraType::DEBUG_CAMERA ){
+        if( e->getType() == CameraComponent::CameraType::DEBUG_CAMERA && !ec::Controller::isRiftEnabled() ){
             mUI.setCurrentCam( cam_comp );
         }
         mCurrentCamera = e->getType();
@@ -113,9 +119,37 @@ void CameraManager::handleCameraRegistration( ec::EventDataRef event )
         CI_LOG_V("Registering camera");
         auto cam_type =  cam_component->getCamType();
         mCameras.insert( std::make_pair( cam_type , e->getActorUId() ) );
-        if( cam_type == CameraComponent::CameraType::DEBUG_CAMERA ){
+        if( cam_type == CameraComponent::CameraType::DEBUG_CAMERA && !ec::Controller::isRiftEnabled() ){
             auto & cam = cam_component->getCamera();
             mUI.setCurrentCam(cam);
         }
     }
 }
+
+void CameraManager::keyUp(ci::app::KeyEvent & event)
+{
+    if(ec::Controller::isRiftEnabled() && mCurrentCamera == CameraComponent::CameraType::DEBUG_CAMERA){
+        
+        auto cur_cam_id = mCameras.find(mCurrentCamera)->second;
+        auto cam = ec::ActorManager::get()->retreiveUnique(cur_cam_id).lock()->getComponent<CameraComponent>().lock()->getCamera();
+        
+        if(event.getCode() == KeyEvent::KEY_UP){
+            cam.setEyePoint( cam.getEyePoint() + vec3( 0.,0,-.1 ) );
+        }
+        else if(event.getCode() == KeyEvent::KEY_DOWN){
+            cam.setEyePoint( cam.getEyePoint() + vec3( 0.,.0,.1 ) );
+        }
+        else if(event.getCode() == KeyEvent::KEY_LEFT){
+            cam.setEyePoint( cam.getEyePoint() + vec3( -.1,.0,.0 ) );
+        }
+        else if(event.getCode() == KeyEvent::KEY_RIGHT){
+            cam.setEyePoint( cam.getEyePoint() + vec3( .1,.0,.0 ) );
+        }
+    }
+}
+
+void CameraManager::keyDown(ci::app::KeyEvent & event)
+{
+    
+}
+

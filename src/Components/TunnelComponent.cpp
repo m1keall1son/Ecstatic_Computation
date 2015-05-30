@@ -16,6 +16,7 @@
 #include "TransformComponent.h"
 #include "FrustumCullComponent.h"
 #include "cinder/Perlin.h"
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -215,7 +216,7 @@ void TunnelComponent::drawGeometry( ec::EventDataRef event )
     auto glsl = mTunnel->getGlslProg();
     glsl->uniform("uNoiseScale", mNoiseScale);
     
-    mTunnel->draw();
+    mTunnel->drawInstanced(2);
     //Draw
     
 }
@@ -247,14 +248,16 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
         mTunnelRiftInstancedGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry_rift.vert")).fragment(loadAsset("shaders/tunnel_geometry_rift.frag")).geometry(loadAsset("shaders/tunnel_geometry_rift.geom")).preprocess(true) );
         
     } catch (const ci::gl::GlslProgCompileExc e) {
-        CI_LOG_E(std::string("tunnel shadow render error: ") + e.what());
+        CI_LOG_E(std::string("tunnel instanced geom render error: ") + e.what());
     }
 
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     mTunnelBasicRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     mTunnelBasicRender->uniform("uShadowMap", 3);
     
-    ///replace 
+    ///replace
+    
+    mTunnelRiftInstancedGeometryRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
     
     if(mTunnel){
         if( ec::Controller::isRiftEnabled() )
