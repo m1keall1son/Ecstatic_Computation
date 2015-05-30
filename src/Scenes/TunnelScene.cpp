@@ -24,6 +24,7 @@
 #include "GUIManager.h"
 #include "GBuffer.h"
 #include "OculusRiftComponent.h"
+#include "DebugManager.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -113,6 +114,7 @@ void TunnelScene::draw()
     ///DRAW SHADOWS
     CI_LOG_V("firing draw command");
     manager()->triggerEvent(DrawEvent::create());
+    if( ec::Controller::get()->debugEnabled() )manager()->triggerEvent(DrawDebugEvent::create());
 }
 
 void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)
@@ -128,6 +130,9 @@ void TunnelScene::handlePresentScene(ec::EventDataRef event)
 {
     auto e = std::dynamic_pointer_cast<FinishRenderEvent>(event);
     
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
+    
     if( ec::Controller::isRiftEnabled() ){
         
         auto rift = ec::ActorManager::get()->retreiveUnique(ec::getHash("rift")).lock();
@@ -142,15 +147,28 @@ void TunnelScene::handlePresentScene(ec::EventDataRef event)
             gl::ScopedMatrices pushMatrix;
             gl::setMatricesWindow(oculus->getFboSize());
             gl::ScopedViewport view( vec2(0), oculus->getFboSize());
-            gl::draw( tex );
+            
+            if( ec::Controller::get()->debugEnabled() ){
+                gl::draw( mDebug->getDebugTexture(), Rectf( vec2(0), oculus->getFboSize() ) );
+            }else{
+                gl::draw( tex, Rectf( vec2(0), oculus->getFboSize() ) );
+            }
         }
     }else{
         auto tex = e->getFinalTexture();
         {
+            
             gl::ScopedMatrices pushMatrix;
             gl::setMatricesWindow(getWindowSize());
             gl::ScopedViewport view( vec2(0), getWindowSize());
-            gl::draw( tex );
+            
+            if( ec::Controller::get()->debugEnabled() ){
+                gl::draw(mDebug->getDebugTexture());
+            }
+            else{
+                gl::draw( tex );
+            }
+            
         }
     }
     

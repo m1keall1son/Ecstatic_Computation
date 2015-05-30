@@ -69,6 +69,11 @@
 		4F07086A1B1A0CE400A7A450 /* tunnel_geometry_rift.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708431B1A0CE400A7A450 /* tunnel_geometry_rift.vert */; };
 		4F07086B1B1A0CE400A7A450 /* tunnel_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */; };
 		4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */; };
+		4F0708711B1A16E400A7A450 /* DebugManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F0708701B1A16E400A7A450 /* DebugManager.cpp */; };
+		4FEA35401B1A5F4E001513D8 /* ForwardPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */; };
+		4FEA35441B1A653E001513D8 /* tunnel_rift.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35411B1A653E001513D8 /* tunnel_rift.frag */; };
+		4FEA35451B1A653E001513D8 /* tunnel_rift.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35421B1A653E001513D8 /* tunnel_rift.geom */; };
+		4FEA35461B1A653E001513D8 /* tunnel_rift.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35431B1A653E001513D8 /* tunnel_rift.vert */; };
 		52BE2919EB0047808B438295 /* KinectComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D5D845F5FAFE4B4B9780D221 /* KinectComponent.cpp */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
@@ -187,6 +192,13 @@
 		4F0708431B1A0CE400A7A450 /* tunnel_geometry_rift.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_geometry_rift.vert; sourceTree = "<group>"; };
 		4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.frag; sourceTree = "<group>"; };
 		4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.vert; sourceTree = "<group>"; };
+		4F07086D1B1A169300A7A450 /* DebugManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DebugManager.h; path = ../../../include/DEBUG/DebugManager.h; sourceTree = "<group>"; };
+		4F0708701B1A16E400A7A450 /* DebugManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugManager.cpp; path = ../../../src/Debug/DebugManager.cpp; sourceTree = "<group>"; };
+		4FEA353E1B1A5F39001513D8 /* ForwardPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ForwardPass.h; path = ../../../include/Rendering/ForwardPass.h; sourceTree = "<group>"; };
+		4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ForwardPass.cpp; path = ../../../src/Rendering/ForwardPass.cpp; sourceTree = "<group>"; };
+		4FEA35411B1A653E001513D8 /* tunnel_rift.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_rift.frag; sourceTree = "<group>"; };
+		4FEA35421B1A653E001513D8 /* tunnel_rift.geom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_rift.geom; sourceTree = "<group>"; };
+		4FEA35431B1A653E001513D8 /* tunnel_rift.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_rift.vert; sourceTree = "<group>"; };
 		512F21E92A004A71A5B8622C /* TunnelComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TunnelComponent.h; path = ../../../include/Components/TunnelComponent.h; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		5323E6B50EAFCA7E003A9687 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
@@ -307,6 +319,7 @@
 			isa = PBXGroup;
 			children = (
 				97C5015F84C243C983B8A836 /* AppCommon.h */,
+				4F07086E1B1A169900A7A450 /* Debug */,
 				423A6790F4024E0A89C354A3 /* Events */,
 				D5731626F6824C1FA7396194 /* Components */,
 				5334A4F4590B45CEA2ADA5E1 /* Scenes */,
@@ -327,6 +340,7 @@
 				C60A84FA7FE648BC89E2FBD7 /* PassBase.cpp */,
 				5715F061E0474B8C9FC9F7C9 /* RenderManager.cpp */,
 				04463685272F44EE99F139CF /* ShadowPass.cpp */,
+				4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -437,6 +451,7 @@
 		1AA85A46454E49B69714BAE3 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				4F07086F1B1A16B600A7A450 /* Debug */,
 				8D93D842A086465793849CBA /* Events */,
 				2189DAD682F0449F8E996680 /* Components */,
 				CD831C86C6D0407F8BC33DB3 /* Lights */,
@@ -615,11 +630,30 @@
 				4F0708411B1A0CE400A7A450 /* tunnel_geometry_rift.frag */,
 				4F0708421B1A0CE400A7A450 /* tunnel_geometry_rift.geom */,
 				4F0708431B1A0CE400A7A450 /* tunnel_geometry_rift.vert */,
+				4FEA35411B1A653E001513D8 /* tunnel_rift.frag */,
+				4FEA35421B1A653E001513D8 /* tunnel_rift.geom */,
+				4FEA35431B1A653E001513D8 /* tunnel_rift.vert */,
 				4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */,
 				4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */,
 			);
 			name = shaders;
 			path = ../assets/shaders;
+			sourceTree = "<group>";
+		};
+		4F07086E1B1A169900A7A450 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				4F07086D1B1A169300A7A450 /* DebugManager.h */,
+			);
+			name = Debug;
+			sourceTree = "<group>";
+		};
+		4F07086F1B1A16B600A7A450 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				4F0708701B1A16E400A7A450 /* DebugManager.cpp */,
+			);
+			name = Debug;
 			sourceTree = "<group>";
 		};
 		4F727D0A92B14583802F85B6 /* Rendering */ = {
@@ -632,6 +666,7 @@
 				95DF3981BBE84F08965B3F73 /* PassBase.h */,
 				5C95E3A5578B4C5E8E86DF3F /* RenderManager.h */,
 				7ED1E58E69E04035ACC4B69B /* ShadowPass.h */,
+				4FEA353E1B1A5F39001513D8 /* ForwardPass.h */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -882,6 +917,7 @@
 				4F0708691B1A0CE400A7A450 /* tunnel_geometry_rift.geom in Resources */,
 				4F0708511B1A0CE400A7A450 /* kinect_lighting.vert in Resources */,
 				4F0708681B1A0CE400A7A450 /* tunnel_geometry_rift.frag in Resources */,
+				4FEA35451B1A653E001513D8 /* tunnel_rift.geom in Resources */,
 				4F0708541B1A0CE400A7A450 /* kinect_shadow.vert in Resources */,
 				4F07084C1B1A0CE400A7A450 /* curl_noise.glsl in Resources */,
 				4F07084B1B1A0CE400A7A450 /* bit_shadow.vert in Resources */,
@@ -905,9 +941,11 @@
 				4F07084A1B1A0CE400A7A450 /* bit_shadow.frag in Resources */,
 				4F07084E1B1A0CE400A7A450 /* gbuffer_util.glsl in Resources */,
 				4F0708671B1A0CE400A7A450 /* tunnel_geometry.vert in Resources */,
+				4FEA35441B1A653E001513D8 /* tunnel_rift.frag in Resources */,
 				4F0708471B1A0CE400A7A450 /* bit.frag in Resources */,
 				4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */,
 				4F0708461B1A0CE400A7A450 /* config.json in Resources */,
+				4FEA35461B1A653E001513D8 /* tunnel_rift.vert in Resources */,
 				4F0708531B1A0CE400A7A450 /* kinect_shadow.geom in Resources */,
 				4F0708571B1A0CE400A7A450 /* lighting.vert in Resources */,
 			);
@@ -939,6 +977,7 @@
 				943FD31A91BD4272ACC8D502 /* CinderFreenect.cpp in Sources */,
 				D659BC107AD74AF1B2DF4B85 /* cameras.c in Sources */,
 				5996431E2E624B77A5BA60F7 /* core.c in Sources */,
+				4F0708711B1A16E400A7A450 /* DebugManager.cpp in Sources */,
 				AAACEA1AEB3A4D749A33DBC6 /* registration.c in Sources */,
 				25436B1F3BCF4DB69285B534 /* tilt.c in Sources */,
 				A14333D4CF50432191539804 /* usb_libusb10.c in Sources */,
@@ -955,6 +994,7 @@
 				B4B39B2755EF4A1FA0804B84 /* LightComponent.cpp in Sources */,
 				291E3CBB5C754404B20B11C9 /* OculusRiftComponent.cpp in Sources */,
 				EB711B7018B246C387EAE70F /* RoomComponent.cpp in Sources */,
+				4FEA35401B1A5F4E001513D8 /* ForwardPass.cpp in Sources */,
 				1A5CBC22718B445A9D192FDF /* TunnelComponent.cpp in Sources */,
 				098AE3DEAF634DE5BC0BA724 /* Light.cpp in Sources */,
 				15DF3EE7C003491990305F0D /* LightManager.cpp in Sources */,

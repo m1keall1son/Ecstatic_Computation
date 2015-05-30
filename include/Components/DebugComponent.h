@@ -16,13 +16,15 @@ class DebugComponent : public ec::ComponentBase {
     
 public:
     
+    static ci::gl::Texture2dRef getDebugRender();
+    
     static ec::ComponentType TYPE;
     
     static DebugComponentRef create( ec::Actor * context );
     
     virtual bool initialize( const ci::JsonTree &tree )override;
     virtual ci::JsonTree serialize()override;
-    virtual bool postInit()override{ return true; }
+    virtual bool postInit()override;
 
     virtual const ec::ComponentNameType   getName() const override;
     virtual const ec::ComponentUId        getId() const override;
@@ -31,7 +33,7 @@ public:
 
     inline ci::AxisAlignedBox3f& getAxisAlignedBoundingBox(){ return mObjectBoundingBox; }
     
-    void draw( ec::EventDataRef );
+    void draw();
 
     virtual ~DebugComponent();
 

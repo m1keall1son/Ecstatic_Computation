@@ -55,7 +55,7 @@ public:
         
     };
     
-    static GBufferRef create( const Format& format );
+    static GBufferRef create( const ci::vec2 &size, const Format& format );
     void resize();
     
     ci::gl::Texture2dRef getTexture( const std::string& label );
@@ -64,11 +64,12 @@ public:
     
 private:
     
-    GBuffer( const Format& format );
+    GBuffer(const ci::vec2 &size, const Format& format );
     
     ci::gl::FboRef mGBuffer;
     std::list<ci::gl::Texture2dRef> mAttachments;
     ci::gl::Texture2dRef mDepthTexture;
+    ci::vec2 mSize;
     Format mFormat;
     
 };

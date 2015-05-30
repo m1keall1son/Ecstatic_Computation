@@ -19,6 +19,8 @@ class OculusRiftComponent : public ec::ComponentBase {
     
 public:
     
+    static  const ci::vec2&  getRiftFboSize();
+    
     struct RiftData {
         ci::mat4 matrices[4];
         float nearClip;

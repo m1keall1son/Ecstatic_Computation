@@ -4,24 +4,32 @@
                "actors" : [
                            {
                            "active" : true,
-                           "components" : [{
+                           "components" : [
+                                           {
                                            "type" : "render_manager"
                                            },
                                            {
-                                           "type" : "gbuffer_pass"
-                                           },
-                                           {
-                                           "type" : "light_pass"
-                                           },
-                                           {
-                                           "type" : "FXAA_pass"
+                                           "type" : "forward_pass"
                                            }
                                            ],
                            "create_on_scene_init" : true,
-                           "name" : "deferred_render",
+                           "name" : "forward_render",
                            "persistent" : true,
                            "type" : "render",
-                           "type_qualifier" : "deferred"
+                           "type_qualifier" : "forward"
+                           },
+                           {
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "type" : "oculus_rift_component"
+                                           }
+                                           ],
+                           "create_on_scene_init" : true,
+                           "name" : "rift",
+                           "persistent" : true,
+                           "type" : "actor",
+                           "type_qualifier" : "hardware"
                            },
                            {
                            "active" : true,

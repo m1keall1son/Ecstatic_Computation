@@ -15,6 +15,7 @@
 #include "SystemEvents.h"
 #include "cinder/params/Params.h"
 #include "GUIManager.h"
+#include "DebugManager.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -28,12 +29,16 @@ AppSceneBase::AppSceneBase( const std::string& name ):ec::Scene(name)
 {
     mLights = LightManagerRef( new LightManager );
     mCameras = CameraManagerRef( new CameraManager );
-        
+    mDebug = DebugManagerRef(new DebugManager );
+    
     mSceneManager->addListener(fastdelegate::MakeDelegate(this, &AppSceneBase::handleSaveScene), SaveSceneEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::handleSwitchCamera), SwitchCameraEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::updateCamera), UpdateEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mCameras.get(), &CameraManager::handleCameraRegistration), ComponentRegistrationEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(mLights.get(), &LightManager::handleLightRegistration), ComponentRegistrationEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(mDebug.get(), &DebugManager::handleDebugComponentRegistration), ComponentRegistrationEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(mDebug.get(), &DebugManager::initDebug), ShareGeometryDepthTextureEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(mDebug.get(), &DebugManager::handleDebugDraw), DrawDebugEvent::TYPE);
 
 }
 

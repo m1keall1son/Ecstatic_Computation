@@ -13,6 +13,7 @@
 #include "Controller.h"
 #include "Events.h"
 #include "PassBase.h"
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -24,8 +25,13 @@ ci::gl::FboRef RenderManager::getWindowFbo( int pingPong )
 {
     CI_ASSERT(pingPong == 0 || pingPong == 1);
     if( !sWindowFbo[0] || !sWindowFbo[1] ){
-        sWindowFbo[0] = gl::Fbo::create(getWindowWidth(), getWindowHeight(), gl::Fbo::Format().disableDepth());
-        sWindowFbo[1] = gl::Fbo::create(getWindowWidth(), getWindowHeight(), gl::Fbo::Format().disableDepth());
+        
+        int w = 0, h = 0;
+        w = getWindowWidth();
+        h = getWindowHeight();
+        
+        sWindowFbo[0] = gl::Fbo::create(w, h, gl::Fbo::Format().disableDepth());
+        sWindowFbo[1] = gl::Fbo::create(w, h, gl::Fbo::Format().disableDepth());
         
         {
             gl::ScopedFramebuffer fbo( sWindowFbo[0] );

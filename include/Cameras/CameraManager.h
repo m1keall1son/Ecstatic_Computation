@@ -17,7 +17,7 @@ class CameraManager {
     
 public:
     
-    const ci::CameraPersp& getCamera( const CameraComponent::CameraType& cam_type );
+    ci::CameraPersp& getCamera( const CameraComponent::CameraType& cam_type );
     const ci::CameraPersp& getActiveCamera();
     
     inline ec::IdType getId(){ return mId; }

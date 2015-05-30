@@ -11,23 +11,20 @@
 using namespace ci;
 using namespace ci::app;
 
-GBufferRef GBuffer::create(const GBuffer::Format &format){
-    return GBufferRef( new GBuffer(format) );
+GBufferRef GBuffer::create( const ci::vec2 &size, const GBuffer::Format &format){
+    return GBufferRef( new GBuffer(size, format) );
 }
 
 
-GBuffer::GBuffer( const Format& format ):mFormat(format){ resize(); }
+GBuffer::GBuffer( const ci::vec2 &size, const Format& format ):mFormat(format),mSize(size){ resize(); }
 
 void GBuffer::resize(){
-    
-    int width = getWindowWidth();
-    int height = getWindowHeight();
     
     gl::Fbo::Format fboFormat;
     
     for( Attachment a : mFormat.mAttachments ){
         
-        gl::TextureRef texture = gl::Texture::create( width, height, a.getFormat() );
+        gl::TextureRef texture = gl::Texture::create( mSize.x, mSize.y, a.getFormat() );
         mAttachments.push_back( texture );
         fboFormat.attachment( a.getLocation(), mAttachments.back() );
     }
@@ -40,7 +37,7 @@ void GBuffer::resize(){
         fboFormat.depthTexture( mFormat.mDepthFormat );
     }
     
-    mGBuffer = gl::Fbo::create( width, height, fboFormat );
+    mGBuffer = gl::Fbo::create( mSize.x, mSize.y, fboFormat );
     
 }
 

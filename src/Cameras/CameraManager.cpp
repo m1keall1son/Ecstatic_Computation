@@ -23,7 +23,7 @@ const ci::CameraPersp& CameraManager::getActiveCamera()
     return getCamera(mCurrentCamera);
 }
 
-const ci::CameraPersp& CameraManager::getCamera( const CameraComponent::CameraType& cam_type )
+ci::CameraPersp& CameraManager::getCamera( const CameraComponent::CameraType& cam_type )
 {
     
     auto it = mCameras.find(cam_type);
@@ -34,7 +34,7 @@ const ci::CameraPersp& CameraManager::getCamera( const CameraComponent::CameraTy
         }
     }
     CI_LOG_E("Didn't find requested camera returning default");
-    return mUI.getCamera();
+    return mDefaultCamera;
 }
 
 CameraManager::CameraManager():mShuttingDown(false),mId( ec::getHash("camera_manager") ),mCurrentCamera(CameraComponent::CameraType::MAIN_CAMERA)

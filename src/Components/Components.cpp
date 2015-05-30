@@ -25,12 +25,14 @@
 #include "Controller.h"
 #include "LightManager.h"
 #include "ShadowMap.h"
+#include "OculusRiftComponent.h"
 
 #include "RenderManager.h"
 #include "ShadowPass.h"
 #include "GBufferPass.h"
 #include "LightPass.h"
 #include "FXAAPass.h"
+#include "ForwardPass.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -91,6 +93,14 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
         auto kinect = KinectComponent::create(context);
         kinect->initialize(init);
         return kinect;
+        
+    }
+    else if (type == "oculus_rift_component")
+    {
+        CI_LOG_V("parsed oculus_rift");
+        auto c = OculusRiftComponent::create(context);
+        c->initialize(init);
+        return c;
         
     }
     else if (type == "geom_teapot_component")
@@ -169,6 +179,13 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
     {
         CI_LOG_V("parsed light_pass");
         auto c = FXAAPass::create(context);
+        c->initialize(init);
+        return c;
+    }
+    else if (type == "forward_pass")
+    {
+        CI_LOG_V("parsed light_pass");
+        auto c = ForwardPass::create(context);
         c->initialize(init);
         return c;
     }

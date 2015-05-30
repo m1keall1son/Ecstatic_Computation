@@ -3,7 +3,7 @@ struct RiftData {
     mat4 matrices[ 4 ];
     float nearClip;
     float farClip;
-    float reseverd0;
+    float reserved0;
     float reserved1;
 };
 

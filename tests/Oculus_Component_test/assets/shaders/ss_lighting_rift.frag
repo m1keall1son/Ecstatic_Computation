@@ -29,7 +29,9 @@ vec4 getPosition( in vec2 uv, uint eye )
 
     float depth			= texture( uGBufferDepthTexture, uv ).x;
     float linearDepth 	= uProjectionParams.y / ( depth - uProjectionParams.x );
+    
     vec4 posProj		= vec4( ( uv.x - 0.5 ) * 2.0, ( uv.y - 0.5 ) * 2.0, 0.0, 1.0 );
+        
     vec4 viewRay		= uProjMatrixInverse * posProj;
     return vec4( viewRay.xyz * linearDepth, 1.0 );
 }
@@ -38,13 +40,13 @@ out vec4 FragColor;
 
 void main(){
     
-    
     vec4 data = texture( uData, vTexCoord0 );
     vec3 color = texture( uAlbedo, vTexCoord0 ).rgb;
     
     vec3 normal = normalize(decodeNormal( data.xy ));
     
     int material_id = int( data.z );
+    
     uint eye = uint( data.w );
 
     vec4 position = getPosition(vTexCoord0, eye);

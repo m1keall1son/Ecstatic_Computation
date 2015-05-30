@@ -34,6 +34,7 @@ public:
     inline const float& getTunnelLength(){ return mLength; }
 
     void draw( ec::EventDataRef event );
+    void drawRift( ec::EventDataRef event );
     void update( ec::EventDataRef );
     void drawShadow( ec::EventDataRef );
     void drawGeometry( ec::EventDataRef );
@@ -53,7 +54,7 @@ private:
     void unregisterHandlers();
     
     ci::gl::BatchRef    mTunnel, mTunnelShadow;
-    ci::gl::GlslProgRef mTunnelBasicRender, mTunnelShadowRender, mTunnelGeometryRender, mTunnelRiftInstancedGeometryRender;
+    ci::gl::GlslProgRef mTunnelBasicRender, mTunnelShadowRender, mTunnelGeometryRender, mTunnelRiftInstancedGeometryRender,mTunnelRiftInstancedRender;
     ci::BSpline3f       mSpline;
     
     ec::ComponentUId    mId;

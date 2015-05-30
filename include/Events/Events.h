@@ -109,6 +109,31 @@ private:
     DrawToMainBufferEvent();
 };
 
+class DrawToRiftBufferEvent : public ec::EventData {
+public:
+    
+    enum Style { TWICE, STEREO };
+    
+    static ec::EventType TYPE;
+    
+    static DrawToRiftBufferEventRef create( const Style& style );
+    
+    ~DrawToRiftBufferEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+    inline Style getStyle(){ return mStyle; }
+    
+private:
+    DrawToRiftBufferEvent(const Style& style );
+    Style mStyle;
+};
+
+
 
 class DrawEvent : public ec::EventData {
 public:
@@ -214,7 +239,7 @@ private:
 class ComponentRegistrationEvent : public ec::EventData {
 public:
     
-    enum RegistrationType { CAMERA, LIGHT, PASS };
+    enum RegistrationType { CAMERA, LIGHT, PASS, DEBUG_COMPONENT };
     
     static ec::EventType TYPE;
     
@@ -261,5 +286,27 @@ public:
 private:
     FinishRenderEvent(const ci::gl::Texture2dRef &final);
     ci::gl::Texture2dRef mFinalTexture;
+};
+
+class ShareGeometryDepthTextureEvent : public ec::EventData {
+public:
+    
+    static ec::EventType TYPE;
+    
+    static ShareGeometryDepthTextureEventRef create( const ci::gl::Texture2dRef &depth );
+    
+    ~ShareGeometryDepthTextureEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+    inline ci::gl::Texture2dRef getDepthTexture(){ return mDepthTexture; }
+    
+private:
+    ShareGeometryDepthTextureEvent(const ci::gl::Texture2dRef &final);
+    ci::gl::Texture2dRef mDepthTexture;
 };
 

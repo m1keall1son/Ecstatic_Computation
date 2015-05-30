@@ -14,7 +14,7 @@ out vec4 vPosition;
 out vec2 vTexCoord0;
 out float vId;
 
-const int OCTAVES = 3;
+const int OCTAVES = 1;
 
 uniform float uNoiseScale;
 

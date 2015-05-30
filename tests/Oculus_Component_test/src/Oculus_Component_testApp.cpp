@@ -31,7 +31,7 @@ public:
 void Oculus_Component_test::setup()
 {
     //configure system with my concrete scene factory and component factory
-    mController = ec::Controller::create( SceneFactory::create(), ComponentFactory::create() );
+    mController = ec::Controller::create( this, SceneFactory::create(), ComponentFactory::create() );
     //init system
     mController->initialize( JsonTree( loadAsset("configs/config.json") ) );
     
@@ -71,13 +71,12 @@ void Oculus_Component_test::keyUp( KeyEvent event )
 void Oculus_Component_test::update()
 {
     mController->update();
+    if(getElapsedFrames()%30==0)cout<<getAverageFps()<<endl;
 }
 
 void Oculus_Component_test::draw()
 {
-    gl::clear( ColorA( 0,0,0,1 ) );
-    mController->draw();
-    gl::drawString(std::to_string(getAverageFps()),vec2(10));
+    mController->draw();    
 }
 
 void Oculus_Component_test::cleanup()
@@ -87,7 +86,7 @@ void Oculus_Component_test::cleanup()
 
 void prepareSettings( App::Settings*settings )
 {
-    ec::Controller::initializeRift(false);
+    ec::Controller::initializeRift();
     
     if( ec::Controller::isRiftEnabled() ){
         settings->disableFrameRate();

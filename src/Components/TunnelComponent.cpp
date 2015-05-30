@@ -47,7 +47,8 @@ void TunnelComponent::registerHandlers()
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawShadow), DrawShadowEvent::TYPE);
     //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::update), UpdateEvent::TYPE);
-    //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawRift), DrawToRiftBufferEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawGeometry), DrawGeometryEvent::TYPE);
 }
 
@@ -57,7 +58,8 @@ void TunnelComponent::unregisterHandlers()
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawShadow), DrawShadowEvent::TYPE);
     //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::update), UpdateEvent::TYPE);
-    //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawGeometry), DrawGeometryEvent::TYPE);
 }
 
@@ -179,6 +181,43 @@ void TunnelComponent::drawShadow( ec::EventDataRef event )
     
 }
 
+void TunnelComponent::drawRift( ec::EventDataRef event )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
+    
+    auto e = std::dynamic_pointer_cast<DrawToRiftBufferEvent>(event);
+    
+    switch (e->getStyle()) {
+        case DrawToRiftBufferEvent::TWICE:
+        {
+          //  mTunnel->replaceGlslProg(mTunnelBasicRender);
+            //draw( nullptr );
+        }
+            break;
+        case DrawToRiftBufferEvent::STEREO:
+        {
+            mTunnel->replaceGlslProg(mTunnelRiftInstancedRender);
+            
+            auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+            if(!visible) return;
+            
+            gl::ScopedModelMatrix model;
+            auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+            gl::multModelMatrix( transform->getModelMatrix() );
+            
+            auto glsl = mTunnel->getGlslProg();
+            glsl->uniform("uNoiseScale", mNoiseScale);
+            
+            mTunnel->drawInstanced(2);
+            
+        }
+            break;
+        default:
+            break;
+    }
+    
+}
+
 void TunnelComponent::draw( ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
@@ -186,18 +225,13 @@ void TunnelComponent::draw( ec::EventDataRef event )
     auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
     if(!visible) return;
     
-    //gl::ScopedFaceCulling pushFace(true,GL_BACK);
-    
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
     
     auto glsl = mTunnel->getGlslProg();
     glsl->uniform("uNoiseScale", mNoiseScale);
-    
     mTunnel->draw();
-    //Draw
-    
 }
 
 void TunnelComponent::drawGeometry( ec::EventDataRef event )
@@ -207,16 +241,12 @@ void TunnelComponent::drawGeometry( ec::EventDataRef event )
     auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
     if(!visible) return;
     
-    //gl::ScopedFaceCulling pushFace(true,GL_BACK);
-    
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-    
     auto glsl = mTunnel->getGlslProg();
     glsl->uniform("uNoiseScale", mNoiseScale);
-    
-    mTunnel->drawInstanced(2);
+    mTunnel->draw();
     //Draw
     
 }
@@ -250,6 +280,14 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
     } catch (const ci::gl::GlslProgCompileExc e) {
         CI_LOG_E(std::string("tunnel instanced geom render error: ") + e.what());
     }
+    
+    try{
+        mTunnelRiftInstancedRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_rift.vert")).fragment(loadAsset("shaders/tunnel_rift.frag")).geometry(loadAsset("shaders/tunnel_rift.geom")).preprocess(true) );
+        
+    } catch (const ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(std::string("tunnel instanced rift render error: ") + e.what());
+    }
+
 
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     mTunnelBasicRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
@@ -258,10 +296,11 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
     ///replace
     
     mTunnelRiftInstancedGeometryRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
-    
+    mTunnelRiftInstancedRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
+
     if(mTunnel){
         if( ec::Controller::isRiftEnabled() )
-            mTunnel->replaceGlslProg(mTunnelRiftInstancedGeometryRender);
+            mTunnel->replaceGlslProg(mTunnelRiftInstancedRender);
         else
             mTunnel->replaceGlslProg(mTunnelGeometryRender);
     }
@@ -305,12 +344,13 @@ bool TunnelComponent::postInit()
     
     mSpline = BSpline3f( path, 3, false, true );
     
-    auto geom = ci::geom::ExtrudeSpline( face, mSpline, 1000 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
+    auto geom = ci::geom::ExtrudeSpline( face, mSpline, 100 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
     
     if( ec::Controller::isRiftEnabled() )
-        mTunnel = ci::gl::Batch::create( geom , mTunnelRiftInstancedGeometryRender );
+        mTunnel = ci::gl::Batch::create( geom , mTunnelRiftInstancedRender );
     else
-        mTunnel = ci::gl::Batch::create( geom , mTunnelGeometryRender );
+        mTunnel = ci::gl::Batch::create( geom , mTunnelBasicRender );
+    
 
     mTunnelShadow = ci::gl::Batch::create( geom , mTunnelShadowRender );
     

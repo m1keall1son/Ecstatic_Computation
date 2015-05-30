@@ -86,6 +86,14 @@ void LightPass::handleGlslProgReload(ec::EventDataRef)
         CI_LOG_E(e.what());
     }
     
+    if(mScreenSpace){
+        if(!ec::Controller::isRiftEnabled()){
+            mScreenSpace->replaceGlslProg(mSSLightingRender);
+        }else{
+            mScreenSpace->replaceGlslProg(mSSLightingRiftRender);
+        }
+    }
+
 }
 
 bool LightPass::postInit()
@@ -108,11 +116,11 @@ bool LightPass::postInit()
     mSSLightingRiftRender->uniform("uData", 11);
     mSSLightingRiftRender->uniform("uAlbedo", 12);
     
-    
-    if(!ec::Controller::isRiftEnabled())
-        mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRender);
-    else
+    if(ec::Controller::isRiftEnabled())
         mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRiftRender);
+    else
+        mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRender);
+
 
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
     
@@ -228,6 +236,6 @@ void LightPass::process()
     }
     
     pingpong = 1 - pingpong;
-    
+
 }
 

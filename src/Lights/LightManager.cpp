@@ -60,7 +60,6 @@ LightManager::LightManager():mShuttingDown(false),mId(ec::getHash("light_manager
 LightManager::~LightManager()
 {
     if(!mShuttingDown){
-        ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightManager::handleLightRegistration), ec::ReturnActorCreatedEvent::TYPE);
         ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightManager::handleShutDown), ec::ShutDownEvent::TYPE);
     }
 }

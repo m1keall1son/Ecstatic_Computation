@@ -116,6 +116,28 @@ ec::EventType DrawToMainBufferEvent::getEventType() const
     return DrawToMainBufferEvent::TYPE;
 }
 
+
+//DRAW TO MAIN BUFFER -------------------------------------------------------------/
+
+ec::EventType DrawToRiftBufferEvent::TYPE = ec::getHash("draw_to_rift_buffer_event");
+
+DrawToRiftBufferEventRef DrawToRiftBufferEvent::create(const Style& style )
+{
+    return DrawToRiftBufferEventRef( new DrawToRiftBufferEvent(style) );
+}
+
+DrawToRiftBufferEvent::DrawToRiftBufferEvent(const Style& style ) : ec::EventData( cinder::app::getElapsedSeconds() ),mStyle(style){}
+
+const char* DrawToRiftBufferEvent::getName() const
+{
+    return "draw_to_rift_buffer_event";
+}
+
+ec::EventType DrawToRiftBufferEvent::getEventType() const
+{
+    return DrawToRiftBufferEvent::TYPE;
+}
+
 //DRAW EVENT -------------------------------------------------------------/
 
 ec::EventType DrawEvent::TYPE = ec::getHash("draw__event");
@@ -261,6 +283,27 @@ const char* FinishRenderEvent::getName() const
 ec::EventType FinishRenderEvent::getEventType() const
 {
     return FinishRenderEvent::TYPE;
+}
+
+//SHARE DEPTH TEXTURE -------------------------------------------------------------/
+
+ec::EventType ShareGeometryDepthTextureEvent::TYPE = ec::getHash("share_geometry_depth_texture_event");
+
+ShareGeometryDepthTextureEventRef ShareGeometryDepthTextureEvent::create(const ci::gl::Texture2dRef &depth)
+{
+    return ShareGeometryDepthTextureEventRef( new ShareGeometryDepthTextureEvent(depth) );
+}
+
+ShareGeometryDepthTextureEvent::ShareGeometryDepthTextureEvent(const ci::gl::Texture2dRef &depth) : ec::EventData( cinder::app::getElapsedSeconds() ), mDepthTexture(depth){}
+
+const char* ShareGeometryDepthTextureEvent::getName() const
+{
+    return "share_geometry_depth_texture_event";
+}
+
+ec::EventType ShareGeometryDepthTextureEvent::getEventType() const
+{
+    return ShareGeometryDepthTextureEvent::TYPE;
 }
 
 

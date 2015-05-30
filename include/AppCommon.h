@@ -36,6 +36,8 @@ using LightManagerRef = std::shared_ptr< class LightManager >;
 using LightComponentRef = std::shared_ptr< class LightComponent >;
 using ShadowMapRef = std::shared_ptr<class ShadowMap>;
 
+///DEBUG
+using DebugManagerRef = std::shared_ptr< class DebugManager >;
 
 ///RENDERING
 using RenderManagerRef = std::shared_ptr<class RenderManager>;
@@ -47,6 +49,7 @@ using LightPassRef = std::shared_ptr< class LightPass >;
 using ShadowPassRef = std::shared_ptr< class ShadowPass >;
 using GBufferPassRef = std::shared_ptr< class GBufferPass >;
 using FXAAPassRef = std::shared_ptr< class FXAAPass >;
+using ForwardPassRef = std::shared_ptr< class ForwardPass >;
 
 ///App EVENTS
 
@@ -54,6 +57,7 @@ using CullEventRef = std::shared_ptr<class CullEvent>;
 using UpdateEventRef = std::shared_ptr<class UpdateEvent>;
 using DrawEventRef = std::shared_ptr<class DrawEvent>;
 using DrawToMainBufferEventRef = std::shared_ptr<class DrawToMainBufferEvent>;
+using DrawToRiftBufferEventRef = std::shared_ptr<class DrawToRiftBufferEvent>;
 using DrawDebugEventRef = std::shared_ptr<class DrawDebugEvent>;
 using DrawGeometryEventRef = std::shared_ptr<class DrawGeometryEvent>;
 using DrawShadowEventRef = std::shared_ptr<class DrawShadowEvent>;
@@ -63,4 +67,5 @@ using SwitchCameraEventRef = std::shared_ptr<class SwitchCameraEvent>;
 using LoadGUIEventRef = std::shared_ptr<class LoadGUIEvent>;
 using ComponentRegistrationEventRef = std::shared_ptr<class ComponentRegistrationEvent>;
 using FinishRenderEventRef = std::shared_ptr<class FinishRenderEvent>;
+using ShareGeometryDepthTextureEventRef = std::shared_ptr<class ShareGeometryDepthTextureEvent>;
 

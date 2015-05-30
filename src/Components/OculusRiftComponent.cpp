@@ -18,6 +18,12 @@ using namespace ci;
 using namespace ci::app;
 
 static int sRiftUboLocation = 1;
+static ci::vec2 sRiftFboSize = ci::vec2(0);
+
+const ci::vec2& OculusRiftComponent::getRiftFboSize()
+{
+    return sRiftFboSize;
+}
 
 int OculusRiftComponent::getRiftUboLocation()
 {
@@ -40,7 +46,7 @@ void OculusRiftComponent::handleShutDown( ec::EventDataRef )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" handle shutdown");
     mShuttingDown = true;
-    
+    mRift = nullptr;
 }
 void OculusRiftComponent::handleSceneChange( ec::EventDataRef )
 {
@@ -65,28 +71,25 @@ void OculusRiftComponent::unregisterHandlers()
 void OculusRiftComponent::handleUpdate(ec::EventDataRef)
 {
     
-    mat4 worldToEyeClipMatrices[4];
-    
-    {
-        hmd::ScopedBind bind{ *mRift };
-        
-        for( auto eye : mRift->getEyes() ) {
-            gl::ScopedMatrices push;
-            mRift->enableEye( eye );
-            auto idx = 2 * static_cast<size_t>( eye );
-            worldToEyeClipMatrices[ idx ] = mRift->getViewMatrix();
-            worldToEyeClipMatrices[idx + 1] = mRift->getProjectionMatrix();
-        }
-    }
+    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    auto & host = scene->cameras()->getActiveCamera();
+    mRift->setHostCamera( host );
     
     RiftData data;
-    for(int i=0;i<4;i++)
-        data.matrices[i] = worldToEyeClipMatrices[i];
     
-    auto cam = mRift->getHostCamera();
+    for( auto eye : mRift->getEyes() ) {
+        mRift->enableEye( eye );
+        auto idx = 2 * static_cast<size_t>( eye );
+        data.matrices[ idx ] = mRift->getViewMatrix();
+        data.matrices[ idx + 1 ] = mRift->getProjectionMatrix();
+    }
+    
+    auto & cam = mRift->getHostCamera();
     
     data.farClip = cam.getFarClip();
     data.nearClip = cam.getNearClip();
+    data.reserved0 = 0;
+    data.reserved1 = 0;
     
     mRiftUbo->bufferSubData( 0, sizeof( RiftData ), &data );
     
@@ -101,20 +104,11 @@ bool OculusRiftComponent::initialize( const ci::JsonTree &tree )
 
 bool OculusRiftComponent::postInit()
 {
-    mRift = hmd::OculusRiftRef( new hmd::OculusRift );
     
-    if( mRift->attachToWindow( getWindow() ) ) {
-        if( mRift->isDesktopExtended() )
-            app::setFullScreen();
-        else
-            app::setWindowSize( mRift->getNativeWindowResolution() );
-        
-        auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-        
-        auto host = scene->cameras()->getCamera(CameraComponent::CameraType::MAIN_CAMERA);
-        mRift->setHostCamera( host );
-        mRift->setScreenPercentage( 1.25f );
-    }
+    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    auto & host = scene->cameras()->getCamera(CameraComponent::CameraType::MAIN_CAMERA);
+    host.setAspectRatio(mRift->getFboSize().x/mRift->getFboSize().y);
+    mRift->setHostCamera( host );
     
     mRiftUbo = ci::gl::Ubo::create( sizeof(RiftData), nullptr , GL_DYNAMIC_DRAW);
     mRiftUbo->bindBufferBase(sRiftUboLocation);
@@ -129,7 +123,8 @@ void OculusRiftComponent::handleSwitchCamera(ec::EventDataRef event)
 {
     auto e = std::dynamic_pointer_cast<SwitchCameraEvent>(event);
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    auto new_host = scene->cameras()->getCamera(e->getType());
+    auto & new_host = scene->cameras()->getCamera(e->getType());
+    new_host.setAspectRatio(mRift->getFboSize().x/mRift->getFboSize().y);
     mRift->setHostCamera(new_host);
     
 }
@@ -143,6 +138,19 @@ OculusRiftComponent::OculusRiftComponent( ec::Actor* context ): ec::ComponentBas
     auto window = ci::app::getWindow();
     window->getSignalKeyDown().connect( std::bind( &OculusRiftComponent::keyDown, this , std::placeholders::_1 ) );
     window->getSignalKeyUp().connect( std::bind( &OculusRiftComponent::keyUp, this , std::placeholders::_1 ) );
+    
+    mRift = hmd::OculusRiftRef( new hmd::OculusRift );
+    
+    if( mRift->attachToWindow( window ) ) {
+        if( mRift->isDesktopExtended() )
+            app::setFullScreen();
+        else
+            app::setWindowSize( mRift->getNativeWindowResolution() );
+        
+        mRift->setScreenPercentage( 1.25f );
+    }
+    
+    sRiftFboSize = getWindowSize();
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     

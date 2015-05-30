@@ -15,7 +15,7 @@ out vec2 vTexCoord0;
 out float vEye;
 out mat3 vNormalMatrix;
 
-const int OCTAVES = 3;
+const int OCTAVES = 2;
 
 uniform float uNoiseScale;
 
@@ -55,11 +55,12 @@ void main(void)
                               yNoisePotentialDerivatives[0] - xNoisePotentialDerivatives[1] ) * uNoiseScale; //noise scale
     
     ////here
+
+    
+    pos.xyz     += noiseVelocity;
     
     mat4 viewMatrix = rift.matrices[ 2u * eyeIndex ];
     mat4 projectionMatrix = rift.matrices[ 2u * eyeIndex + 1u ];
-    
-    pos.xyz     += noiseVelocity;
     
     vNormalMatrix = mat3(transpose(inverse(ciModelMatrix)));
     vPosition = viewMatrix * ciModelMatrix * pos;

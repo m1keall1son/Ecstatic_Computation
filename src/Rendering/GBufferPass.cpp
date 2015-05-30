@@ -13,7 +13,7 @@
 #include "Scene.h"
 #include "Events.h"
 #include "AppSceneBase.h"
-
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -88,11 +88,12 @@ bool GBufferPass::postInit()
     fmt.attachment(GL_COLOR_ATTACHMENT1, dataFmt, "uData");
     fmt.depthTexture(depthFmt);
     
-    mGBuffer = GBuffer::create(fmt);
+    mGBuffer = GBuffer::create( getWindowSize(), fmt);
+
+    ec::Controller::get()->scene().lock()->manager()->queueEvent( ShareGeometryDepthTextureEvent::create( mGBuffer->getDepthTexture() ) );
+    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
     
     return true;
 }
@@ -153,9 +154,12 @@ void GBufferPass::process()
     
     gl::ScopedFramebuffer gbuffer( mGBuffer->getFbo() );
     gl::clear();
-    
     gl::ScopedMatrices pushMatrix;
-    gl::setMatrices(scene->cameras()->getActiveCamera());
+    
+    if(!ec::Controller::isRiftEnabled()){
+        gl::setMatrices(scene->cameras()->getActiveCamera());
+    }
+    
     gl::ScopedViewport view( vec2(0), mGBuffer->getFbo()->getSize() );
     
     CI_LOG_V("draw geometry event triggered");

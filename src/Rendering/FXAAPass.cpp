@@ -13,6 +13,7 @@
 #include "Events.h"
 #include "RenderManager.h"
 #include "AppSceneBase.h"
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -149,8 +150,8 @@ void FXAAPass::process()
     pingpong = 1 - pingpong;
 
     //TODO: somehow imply if this is the last step, render manager will probably have to check
-    
     scene->manager()->triggerEvent(FinishRenderEvent::create(window_fbo->getColorTexture()));
+
     
 }
 
