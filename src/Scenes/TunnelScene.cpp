@@ -22,6 +22,10 @@
 #include "TunnelComponent.h"
 #include "CameraComponent.h"
 #include "GUIManager.h"
+#include "GBuffer.h"
+#include "OculusRiftComponent.h"
+#include "DebugManager.h"
+#include "cinder/Perlin.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -35,7 +39,27 @@ TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelS
 {
     //initialize stuff
     CI_LOG_V("Tunnel scene constructed");
+}
+
+std::vector<ec::ActorUId> TunnelScene::shutdown(){
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelScene::shutDown), ec::ShutDownEvent::TYPE);
+    return ec::Scene::shutdown();
+}
+
+TunnelScene::~TunnelScene()
+{
+}
+
+void TunnelScene::initialize(const ci::JsonTree &init)
+{
+    //init super
+    AppSceneBase::initialize(init);
+    
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::shutDown), ec::ShutDownEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::handlePresentScene), FinishRenderEvent::TYPE);
+    
+    CI_LOG_V("Tunnel scene initialized");
+
 }
 
 void TunnelScene::shutDown(ec::EventDataRef)
@@ -70,27 +94,37 @@ void TunnelScene::update()
         mTunnelSamplePt += mTunnelSpeed*.005;
     }
     
+    Perlin p;
+    
     static float light_sample = 0.;
     light_sample+=.001;
     
     auto sample_pt = ci::constrain( mTunnelSamplePt , 0.f, 1.f);
+    
+    if( mTunnelSamplePt > .99 ){
+        ec::Controller::get()->eventManager()->queueEvent(ec::RequestSceneChangeEvent::create());
+        return;
+    }
+    
     auto new_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(sample_pt);
     camera_transform->setTranslation( new_pos );
     
-    auto lamp = std::dynamic_pointer_cast<SpotLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
+    auto lamp = std::dynamic_pointer_cast<PointLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
     lamp->setPosition( new_pos + vec3( 0,2,0 ) );
     lamp->pointAt( main_camera_actor->getComponent<CameraComponent>().lock()->getCamera().getCenterOfInterestPoint() );
-    
+
     tunnel_component->getNoiseScale() = .5 + sample_pt*2.;
     
     auto light = std::dynamic_pointer_cast<PointLight>(follow_light->getComponent<LightComponent>().lock()->getLight());
-    if( light_sample > .99){
+
+    if( light_sample > .998){
         light_sample = 0.;
     }
     auto light_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(light_sample);
-    light->setPosition( light_pos + vec3( 6.*cos(light_pos.z*.04), 6.*sin(light_pos.z*.0153), 0.) );
     
-    
+    light->setPosition( light_pos + vec3( 6. * cos(light_pos.z * .04), 6. * sin(light_pos.z * .0153), 0.) );
+    //light->setIntensity( light->getIntensity() + cos( light_pos.z * .03 ) * .0096 );
+
     CI_LOG_V("update components event triggered");
     mSceneManager->triggerEvent( UpdateEvent::create() );
     
@@ -106,65 +140,9 @@ void TunnelScene::preDraw()
 
 void TunnelScene::draw()
 {
-    
     ///DRAW SHADOWS
-    CI_LOG_V("Drawing into shadowbuffers");
-    
-    {
-        gl::ScopedFramebuffer shadow_buffer( mLights->getShadowMap()->getFbo() );
-        
-        gl::clear();
-        
-        for( auto & light_id : mLights->getLights() ){
-            
-            auto light_actor = ec::ActorManager::get()->retreiveUnique(light_id).lock();
-            
-            if(light_actor){
-                
-                auto light_component = light_actor->getComponent<LightComponent>().lock();
-                auto light = light_component->getLight();
-                if( light->hasShadows() )
-                {
-                    if( light->getType() == Light::Type::Spot ){
-                        
-                        auto spot_light = std::dynamic_pointer_cast<SpotLight>(light);
-                        gl::ScopedMatrices pushMatrix;
-                        gl::setViewMatrix( spot_light->getViewMatrix() );
-                        gl::setProjectionMatrix( spot_light->getProjectionMatrix() );
-                        gl::setModelMatrix(mat4());
-                        auto shadow_view_mapping = spot_light->getMapping();
-                        gl::ScopedViewport shadow_view( vec2( shadow_view_mapping.x, shadow_view_mapping.y ), vec2( shadow_view_mapping.x + shadow_view_mapping.z, shadow_view_mapping.y + shadow_view_mapping.w ) );
-                        
-                        mSceneManager->triggerEvent( DrawShadowEvent::create() );
-                        
-                    }
-                    
-                }
-            }
-            
-        }
-        
-    }
-    
-    //do stuff
-    CI_LOG_V("Intro scene preDrawing");
-    
-    {
-        gl::ScopedMatrices pushMatrix;
-        
-        gl::setMatrices(mCameras->getActiveCamera());
-        
-        gl::ScopedTextureBind shadowMap( mLights->getShadowMap()->getTexture(), 3 );
-        
-        CI_LOG_V("draw visible event triggered");
-        mSceneManager->triggerEvent( DrawToMainBufferEvent::create() );
-        
-        if( ec::Controller::get()->debugEnabled() ){
-            mSceneManager->triggerEvent( DrawDebugEvent::create() );
-            gl::drawCoordinateFrame();
-        }
-    }
-        
+    CI_LOG_V("firing draw command");
+    manager()->triggerEvent(DrawEvent::create());
 }
 
 void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)
@@ -174,6 +152,53 @@ void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)
     params->addParam("scrub tunnel", &mScrubTunnel);
     params->addParam("tunnel position", &mTunnelSamplePt).max(1.).min(0.).step(.001);
     
+}
+
+void TunnelScene::handlePresentScene(ec::EventDataRef event)
+{
+    auto e = std::dynamic_pointer_cast<FinishRenderEvent>(event);
+    
+    gl::disableDepthRead();
+    gl::disableDepthWrite();
+    
+    if( ec::Controller::isRiftEnabled() ){
+        
+        auto rift = ec::ActorManager::get()->retreiveUnique(ec::getHash("rift")).lock();
+        auto rift_component = rift->getComponent<OculusRiftComponent>().lock();
+        auto oculus = rift_component->getRift();
+
+        hmd::ScopedBind bind{ *oculus };
+        gl::clear();
+        
+        auto tex = e->getFinalTexture();
+        {
+            gl::ScopedMatrices pushMatrix;
+            gl::setMatricesWindow(oculus->getFboSize());
+            gl::ScopedViewport view( vec2(0), oculus->getFboSize());
+            
+            if( ec::Controller::get()->debugEnabled() ){
+                gl::draw( mDebug->getDebugTexture(), Rectf( vec2(0), oculus->getFboSize() ) );
+            }else{
+                gl::draw( tex, Rectf( vec2(0), oculus->getFboSize() ) );
+            }
+        }
+    }else{
+        auto tex = e->getFinalTexture();
+        {
+            
+            gl::ScopedMatrices pushMatrix;
+            gl::setMatricesWindow(getWindowSize());
+            gl::ScopedViewport view( vec2(0), getWindowSize());
+            
+            if( ec::Controller::get()->debugEnabled() ){
+                gl::draw(mDebug->getDebugTexture());
+            }
+            else{
+                gl::draw( tex );
+            }
+            
+        }
+    }
     
 }
 

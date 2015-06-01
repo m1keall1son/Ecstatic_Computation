@@ -25,9 +25,9 @@ public:
     inline std::vector< ec::ActorUId >& getLights(){ return mLights; }
     inline int getLightUboLocation(){ return mLightUboLocation; }
     
-    void initShadowMap( const ci::JsonTree& init );
+//    void initShadowMap( const ci::JsonTree& init );
     
-    inline ShadowMapRef getShadowMap(){ return mShadowMap; }
+//    inline ShadowMapRef getShadowMap(){ return mShadowMap; }
     
     void update();
     
@@ -51,7 +51,7 @@ private:
     std::vector< ec::ActorUId > mLights;
     ci::gl::UboRef              mLightUbo;
     int                         mLightUboLocation;
-    ShadowMapRef                mShadowMap;
+//    ShadowMapRef                mShadowMap;
     bool                        mShuttingDown;
     ec::IdType                  mId;
     

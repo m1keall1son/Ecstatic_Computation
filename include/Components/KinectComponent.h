@@ -26,13 +26,14 @@ public:
     const ec::ComponentUId        getId() const override;
     const ec::ComponentType       getType() const override;
     void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
-
+    void                          cleanup()override;
     bool postInit()override;
     
     void drawShadow( ec::EventDataRef );
     
     void update( ec::EventDataRef );
     void draw( ec::EventDataRef );
+    void drawRift( ec::EventDataRef event );
     
     ci::gl::Texture2dRef getKinectTexture();
     
@@ -58,7 +59,9 @@ private:
     
     ci::gl::Texture2dRef mKinectDepthTexture;
     ci::gl::Texture2dRef mKinectColorTexture;
-    ci::gl::GlslProgRef mKinectRender, mKinectShadowRender;
-    ci::gl::BatchRef mKinectMesh;
+    ci::gl::GlslProgRef mKinectRender, mKinectShadowRender, mKinectStereoRender;
+    ci::gl::BatchRef mKinectMesh, mKinectMeshShadow;
+    
+    float mTriangleCutoff;
     
 };

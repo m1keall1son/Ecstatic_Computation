@@ -38,6 +38,8 @@ void GeomTeapotComponent::handleSceneChange( ec::EventDataRef )
 
 void GeomTeapotComponent::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::drawShadow), DrawShadowEvent::TYPE);
@@ -46,6 +48,8 @@ void GeomTeapotComponent::registerHandlers()
 }
 void GeomTeapotComponent::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::update), UpdateEvent::TYPE);
@@ -64,6 +68,11 @@ bool GeomTeapotComponent::initialize( const ci::JsonTree &tree )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
     return true;
+}
+
+void GeomTeapotComponent::cleanup()
+{
+    unregisterHandlers();
 }
 
 void GeomTeapotComponent::drawShadow( ec::EventDataRef event )
@@ -99,26 +108,27 @@ void GeomTeapotComponent::draw( ec::EventDataRef event )
     
 }
 
-ec::ComponentType GeomTeapotComponent::TYPE = 0x011;
+ec::ComponentType GeomTeapotComponent::TYPE = ec::getHash("geom_teapot_component");
 
 bool GeomTeapotComponent::postInit()
 {
+    if( !mInitialized ){
+        auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
     
-    auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
-    
-    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    
-    glsl->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
-    glsl->uniform("uShadowMap", 3);
-
-    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    
-    auto geom = geom::Teapot() >> geom::Bounds( &aab_debug );
-    mTeapot = ci::gl::Batch::create( geom , glsl );
-    mTeapotShadow = ci::gl::Batch::create( geom, gl::getStockShader( gl::ShaderDef() ) );
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+        auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+        
+        glsl->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
+        glsl->uniform("uShadowMap", 3);
+        
+        auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+        
+        auto geom = geom::Teapot() >> geom::Bounds( &aab_debug );
+        mTeapot = ci::gl::Batch::create( geom , glsl );
+        mTeapotShadow = ci::gl::Batch::create( geom, gl::getStockShader( gl::ShaderDef() ) );
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized = true;
+    }
     ///this could reflect errors...
     return true;
 }
@@ -126,8 +136,7 @@ bool GeomTeapotComponent::postInit()
 GeomTeapotComponent::GeomTeapotComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "geom_teapot_component" ) ),mShuttingDown(false)
 {
 
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &GeomTeapotComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
 
@@ -135,7 +144,6 @@ GeomTeapotComponent::GeomTeapotComponent( ec::Actor* context ):ec::ComponentBase
 
 GeomTeapotComponent::~GeomTeapotComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
 }
 
 const ec::ComponentNameType GeomTeapotComponent::getName() const

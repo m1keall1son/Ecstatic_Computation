@@ -19,7 +19,8 @@ public:
     
     inline LightManagerRef lights(){ return mLights; }
     inline CameraManagerRef cameras(){ return mCameras; }
-    
+    inline DebugManagerRef debug(){ return mDebug; }
+
     virtual void initialize( const ci::JsonTree& init )override;
     
     virtual void postInit()override = 0;
@@ -41,6 +42,8 @@ protected:
     
         
     LightManagerRef mLights;
+    DebugManagerRef mDebug;
     CameraManagerRef mCameras;
+    PostProcessingManagerRef mPostManager;
     
 };

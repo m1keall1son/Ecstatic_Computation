@@ -16,11 +16,12 @@
 #include "TransformComponent.h"
 #include "FrustumCullComponent.h"
 #include "cinder/Perlin.h"
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType TunnelComponent::TYPE = 0x020;
+ec::ComponentType TunnelComponent::TYPE = ec::getHash("tunnel_component");
 
 TunnelComponentRef TunnelComponent::create( ec::Actor* context )
 {
@@ -41,20 +42,31 @@ void TunnelComponent::handleSceneChange( ec::EventDataRef )
 
 void TunnelComponent::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawShadow), DrawShadowEvent::TYPE);
     //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawGeometry), DrawGeometryEvent::TYPE);
 }
+
 void TunnelComponent::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawShadow), DrawShadowEvent::TYPE);
     //scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::update), UpdateEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawRift), DrawToRiftBufferEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelComponent::drawGeometry), DrawGeometryEvent::TYPE);
 }
 
 void TunnelComponent::update(ec::EventDataRef event )
@@ -175,6 +187,42 @@ void TunnelComponent::drawShadow( ec::EventDataRef event )
     
 }
 
+void TunnelComponent::drawRift( ec::EventDataRef event )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
+    
+    auto e = std::dynamic_pointer_cast<DrawToRiftBufferEvent>(event);
+    
+    switch (e->getStyle()) {
+        case DrawToRiftBufferEvent::TWICE:
+        {
+            draw( nullptr );
+        }
+            break;
+        case DrawToRiftBufferEvent::STEREO:
+        {
+//            mTunnel->replaceGlslProg(mTunnelRiftInstancedRender);
+//            
+//            auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+//            if(!visible) return;
+//            
+//            gl::ScopedModelMatrix model;
+//            auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+//            gl::multModelMatrix( transform->getModelMatrix() );
+//            
+//            auto glsl = mTunnel->getGlslProg();
+//            glsl->uniform("uNoiseScale", mNoiseScale);
+//            
+//            mTunnel->drawInstanced(2);
+            
+        }
+            break;
+        default:
+            break;
+    }
+    
+}
+
 void TunnelComponent::draw( ec::EventDataRef event )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
@@ -182,15 +230,27 @@ void TunnelComponent::draw( ec::EventDataRef event )
     auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
     if(!visible) return;
     
-    //gl::ScopedFaceCulling pushFace(true,GL_BACK);
-    
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
     
     auto glsl = mTunnel->getGlslProg();
     glsl->uniform("uNoiseScale", mNoiseScale);
+    mTunnel->draw();
+}
+
+void TunnelComponent::drawGeometry( ec::EventDataRef event )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
     
+    auto visible = mContext->getComponent<FrustumCullComponent>().lock()->isVisible();
+    if(!visible) return;
+    
+    gl::ScopedModelMatrix model;
+    auto transform = mContext->getComponent<ec::TransformComponent>().lock();
+    gl::multModelMatrix( transform->getModelMatrix() );
+    auto glsl = mTunnel->getGlslProg();
+    glsl->uniform("uNoiseScale", mNoiseScale);
     mTunnel->draw();
     //Draw
     
@@ -205,6 +265,13 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
         CI_LOG_E(std::string("tunnel render error: ") + e.what());
     }
     
+//    try {
+//        mTunnelGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry.vert")).fragment(loadAsset("shaders/tunnel_geometry.frag")).geometry(loadAsset("shaders/tunnel_geometry.geom")).preprocess(true) );
+//        
+//    } catch (const ci::gl::GlslProgCompileExc e) {
+//        CI_LOG_E(std::string("tunnel geometry error: ") + e.what());
+//    }
+    
     try {
         mTunnelShadowRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_shadow.vert")).fragment(loadAsset("shaders/tunnel_shadow.frag")).preprocess(true) );
         
@@ -212,63 +279,80 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
         CI_LOG_E(std::string("tunnel shadow render error: ") + e.what());
     }
     
-    
+//    try{
+//        mTunnelRiftInstancedGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry_rift.vert")).fragment(loadAsset("shaders/tunnel_geometry_rift.frag")).geometry(loadAsset("shaders/tunnel_geometry_rift.geom")).preprocess(true) );
+//        
+//    } catch (const ci::gl::GlslProgCompileExc e) {
+//        CI_LOG_E(std::string("tunnel instanced geom render error: ") + e.what());
+//    }
+//    
+    try{
+        mTunnelRiftInstancedRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_rift.vert")).fragment(loadAsset("shaders/tunnel_rift.frag")).geometry(loadAsset("shaders/tunnel_rift.geom")).preprocess(true) );
+        
+    } catch (const ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(std::string("tunnel instanced rift render error: ") + e.what());
+    }
+
+
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     mTunnelBasicRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     mTunnelBasicRender->uniform("uShadowMap", 3);
     
-    ///replace 
-    
-    if(mTunnel)
-        mTunnel->replaceGlslProg(mTunnelBasicRender);
+//    mTunnelRiftInstancedGeometryRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
+//    mTunnelRiftInstancedRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
 
-    
+    if(mTunnel){
+        mTunnel->replaceGlslProg(mTunnelBasicRender);
+    }
+
 }
 
 
 bool TunnelComponent::postInit()
 {
-    
-    handleGlslProgReload(ec::EventDataRef());
-    
-    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    
-    mFaceRadius = 18.;
-    
-    Shape2d face;
-    for( int i = 0; i < 50; i++ ){
-        float t = lmap((float)i, 0.f, 49.f, 0.f, 6.28318530718f);
-        if(i==0)face.moveTo(vec2( cos(t)*mFaceRadius, sin(t)*mFaceRadius ));
-        else face.lineTo(vec2( cos(t)*mFaceRadius, sin(t)*mFaceRadius ));
-    }
-    face.close();
-    
-    Shape2d square;
-    square.moveTo(vec2(-5.,-5.));
-    square.lineTo(vec2(-5.,5.));
-    square.lineTo(vec2(5.,5.));
-    square.lineTo(vec2(5.,-5.));
-    square.close();
-
-    Perlin p;
-    std::vector<vec3> path;
-    for( int i = 0; i < mLength; i+=mStep ){
+    if(!mInitialized){
+        handleGlslProgReload(ec::EventDataRef());
         
-        float scale = 1.+i/(mLength/2);
-        vec3 tunnelpath = vec3(mAmplitude.x*scale*sin(-i * (mFrequency.x + p.noise((i+100.)*mNoiseFrequency.x)*mNoiseAmplitude.x )), mAmplitude.y*scale*cos(-i * (mFrequency.y + p.noise(i*mNoiseFrequency.y)*mNoiseAmplitude.y )), -i); // See distance field.
-        path.push_back(tunnelpath);
+        auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
         
+        mFaceRadius = 18.;
+        
+        Shape2d face;
+        for( int i = 0; i < 10; i++ ){
+            float t = lmap((float)i, 0.f, 9.f, 0.f, 6.28318530718f);
+            if(i==0)face.moveTo(vec2( cos(t)*mFaceRadius, sin(t)*mFaceRadius ));
+            else face.lineTo(vec2( cos(t)*mFaceRadius, sin(t)*mFaceRadius ));
+        }
+        face.close();
+        
+        Shape2d square;
+        square.moveTo(vec2(-5.,-5.));
+        square.lineTo(vec2(-5.,5.));
+        square.lineTo(vec2(5.,5.));
+        square.lineTo(vec2(5.,-5.));
+        square.close();
+        
+        Perlin p;
+        std::vector<vec3> path;
+        for( int i = 0; i < mLength; i+=mStep ){
+            
+            float scale = 1.+i/(mLength/2);
+            vec3 tunnelpath = vec3(mAmplitude.x*scale*sin(-i * (mFrequency.x + p.noise((i+100.)*mNoiseFrequency.x)*mNoiseAmplitude.x )), mAmplitude.y*scale*cos(-i * (mFrequency.y + p.noise(i*mNoiseFrequency.y)*mNoiseAmplitude.y )), -i); // See distance field.
+            path.push_back(tunnelpath);
+            
+        }
+        
+        mSpline = BSpline3f( path, 3, false, true );
+        
+        auto geom = ci::geom::ExtrudeSpline( face, mSpline, 500 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
+        
+        mTunnel = ci::gl::Batch::create( geom , mTunnelBasicRender );
+        
+        mTunnelShadow = ci::gl::Batch::create( geom , mTunnelShadowRender );
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized = true;
     }
-    
-    mSpline = BSpline3f( path, 3, false, true );
-    
-    auto geom = ci::geom::ExtrudeSpline( face, mSpline, 1000 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
-    
-    mTunnel = ci::gl::Batch::create( geom , mTunnelBasicRender );
-    mTunnelShadow = ci::gl::Batch::create( geom , mTunnelShadowRender );
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
     ///this could reflect errors...
     return true;
 }
@@ -276,8 +360,6 @@ bool TunnelComponent::postInit()
 TunnelComponent::TunnelComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_bit_component" ) ),mShuttingDown(false)
 {
     
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
@@ -285,7 +367,11 @@ TunnelComponent::TunnelComponent( ec::Actor* context ):ec::ComponentBase( contex
 
 TunnelComponent::~TunnelComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
+}
+
+void TunnelComponent::cleanup()
+{
+    unregisterHandlers();
 }
 
 const ec::ComponentNameType TunnelComponent::getName() const

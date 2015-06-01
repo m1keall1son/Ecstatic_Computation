@@ -18,7 +18,7 @@
 
 using namespace ci;
 
-ec::ComponentType LightComponent::TYPE = 0x015;
+ec::ComponentType LightComponent::TYPE = ec::getHash("light_component");
 
 LightComponentRef LightComponent::create( ec::Actor* context )
 {
@@ -27,8 +27,6 @@ LightComponentRef LightComponent::create( ec::Actor* context )
 
 LightComponent::LightComponent( ec::Actor * context ): ec::ComponentBase( context ), mNeedsUpdate(true), mLight( nullptr ), mId( ec::getHash(context->getName()+"_light_component")),mShuttingDown(false)
 {
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleShutDown), ec::ShutDownEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
@@ -36,7 +34,13 @@ LightComponent::LightComponent( ec::Actor * context ): ec::ComponentBase( contex
 
 LightComponent::~LightComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
+}
+
+void LightComponent::cleanup()
+{
+    auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->triggerEvent( ComponentRegistrationEvent::create( ComponentRegistrationEvent::UNREGISTER, ComponentRegistrationEvent::RegistrationType::LIGHT, mContext->getUId(), shared_from_this()) );
+    unregisterHandlers();
 }
 
 void LightComponent::handleShutDown( ec::EventDataRef )
@@ -54,23 +58,30 @@ void LightComponent::handleSceneChange( ec::EventDataRef )
 
 void LightComponent::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightComponent::handleUpdate), UpdateEvent::TYPE);
 }
 void LightComponent::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &LightComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &LightComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &LightComponent::handleUpdate), UpdateEvent::TYPE);
 }
 
 bool LightComponent::postInit()
 {
-    
-    ///get bounding box;
-    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    geom::Cube() >> geom::Bounds( &aab_debug );
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+    if(!mInitialized){
+        ///get bounding box;
+        auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+        geom::Cube() >> geom::Bounds( &aab_debug );
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized = true;
+    }
     return true;
 }
 
@@ -271,7 +282,7 @@ static void initPointLight( const ci::PointLightRef& light, const ci::JsonTree& 
         light->enableShadows(false);
     }
     
-    light->calcRange();
+    //light->calcRange();
     light->enableModulation(false);
     //light->calcIntensity();
     
@@ -615,7 +626,11 @@ bool LightComponent::initialize( const ci::JsonTree &tree )
         CI_LOG_E("Couldn't find light tree");
     }
     
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::LIGHT, mContext->getUId(), this ) );
+    if(!mInitialized)
+    {
+        ec::Controller::get()->scene().lock()->manager()->queueEvent(  ComponentRegistrationEvent::create( ComponentRegistrationEvent::REGISTER,ComponentRegistrationEvent::RegistrationType::LIGHT, mContext->getUId(), shared_from_this() ) );
+        
+    }
     
     return true;
 }

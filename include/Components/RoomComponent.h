@@ -27,13 +27,16 @@ public:
     const ec::ComponentUId        getId() const override;
     const ec::ComponentType       getType() const override;
     void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
-
+    void                          cleanup()override;
     bool postInit()override;
     
     void drawShadow( ec::EventDataRef );
     
     void update( ec::EventDataRef );
     void draw( ec::EventDataRef );
+    void drawRift( ec::EventDataRef event );
+    
+    inline void setNoiseScale( float scale ){ mNoiseScale = scale; }
 
     ~RoomComponent();
 
@@ -50,7 +53,9 @@ private:
     bool mShuttingDown;
     ci::gl::BatchRef mRoom;
     ci::gl::BatchRef mRoomShadow;
-    float mRoomSize;
+    ci::gl::GlslProgRef mRoomRender, mRoomShadowRender;
+    float mRoomSize, mNoiseScale, mNoiseMax;
     ec::ComponentUId mId;
+    float mTime;
 
 };

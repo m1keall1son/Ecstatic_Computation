@@ -19,7 +19,7 @@
 using namespace ci;
 using namespace ci::app;
 
-ec::ComponentType BitComponent::TYPE = 0x019;
+ec::ComponentType BitComponent::TYPE = ec::getHash("bit_component");
 
 BitComponentRef BitComponent::create( ec::Actor* context )
 {
@@ -42,18 +42,26 @@ void BitComponent::registerHandlers()
 {
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+
 }
 void BitComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+
 }
 
 void BitComponent::update(ec::EventDataRef event )
@@ -66,7 +74,10 @@ void BitComponent::update(ec::EventDataRef event )
 
 bool BitComponent::initialize( const ci::JsonTree &tree )
 {
-    CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    if(!mInitialized){
+        CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+        mInitialized = true;
+    }
     return true;
 }
 
@@ -103,6 +114,28 @@ void BitComponent::draw( ec::EventDataRef event )
     
 }
 
+void BitComponent::drawRift( ec::EventDataRef event )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
+    
+    auto e = std::dynamic_pointer_cast<DrawToRiftBufferEvent>(event);
+    
+    switch (e->getStyle()) {
+        case DrawToRiftBufferEvent::TWICE:
+        {
+            draw( nullptr );
+        }
+            break;
+        case DrawToRiftBufferEvent::STEREO:
+        {
+        }
+            break;
+        default:
+            break;
+    }
+    
+}
+
 void BitComponent::handleGlslProgReload(ec::EventDataRef)
 {
     try {
@@ -120,6 +153,7 @@ void BitComponent::handleGlslProgReload(ec::EventDataRef)
     
     if(mBit)
         mBit->replaceGlslProg(mBitRender);
+    
     if(mBitShadow)
         mBitShadow->replaceGlslProg(mBitShadowRender);
     
@@ -138,7 +172,9 @@ bool BitComponent::postInit()
     
     auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     auto geom = ci::geom::Icosphere().subdivisions(3) >> geom::Bounds( &aab_debug );
+    
     mBit = ci::gl::Batch::create( geom , mBitRender );
+    
     mBitShadow = ci::gl::Batch::create( geom, mBitShadowRender );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
@@ -149,17 +185,17 @@ bool BitComponent::postInit()
 
 BitComponent::BitComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_bit_component" ) ),mShuttingDown(false)
 {
-    
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-    
+}
+
+void BitComponent::cleanup()
+{
+    unregisterHandlers();
 }
 
 BitComponent::~BitComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
 }
 
 const ec::ComponentNameType BitComponent::getName() const

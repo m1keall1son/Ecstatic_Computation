@@ -1,0 +1,182 @@
+{
+   "actors" : [
+      {
+         "active" : true,
+         "components" : [
+            {
+               "id" : 4.7517583546330061e+18,
+               "light" : {
+                  "attenuation" : [ 0, 0.0010000000474974513 ],
+                  "color" : [ 0.96262633800506592, 0.95586138963699341, 1 ],
+                  "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
+                  "enable_shadows" : false,
+                  "intensity" : 0.5,
+                  "mapping" : [ 0, 0, 1024, 1024 ],
+                  "position" : [ -3.5921053886413574, 6.9996452331542969, -36.909210205078125 ],
+                  "range" : 252.48759460449219,
+                  "type" : "point",
+                  "visible" : true
+               },
+               "type" : "light_component"
+            },
+            {
+               "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
+               "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
+               "id" : 1.2356894992178377e+19,
+               "type" : "debug_component"
+            }
+         ],
+         "create_on_scene_init" : true,
+         "id" : -8.4316518806147779e+18,
+         "name" : "follow_light",
+         "persistent" : false,
+         "type" : "light",
+         "type_qualifier" : "static"
+      },
+      {
+         "active" : true,
+         "components" : [
+            {
+               "id" : 1.2146802055423328e+19,
+               "light" : {
+                  "attenuation" : [ 0, 0.0099999997764825821 ],
+                  "color" : [ 1, 0.24313187599182129, 0 ],
+                  "direction" : [ 0, -0.044576723128557205, -0.99900603294372559 ],
+                  "enable_shadows" : true,
+                  "hotspot_angle" : 0.78539818525314331,
+                  "hotspot_ratio" : 1,
+                  "intensity" : 0.5,
+                  "mapping" : [ 0, 0, 1024, 1024 ],
+                  "position" : [ -3.5921053886413574, 5.9996452331542969, -26.909208297729492 ],
+                  "range" : 100,
+                  "spot_angle" : 0.78539818525314331,
+                  "spot_ratio" : 1,
+                  "type" : "spot",
+                  "visible" : true
+               },
+               "type" : "light_component"
+            },
+            {
+               "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
+               "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
+               "id" : 1.2811993990512546e+19,
+               "type" : "debug_component"
+            }
+         ],
+         "create_on_scene_init" : true,
+         "id" : -2.8515382939065969e+18,
+         "name" : "head_lamp",
+         "persistent" : false,
+         "type" : "light",
+         "type_qualifier" : "static"
+      },
+      {
+         "active" : true,
+         "components" : [
+            {
+               "id" : 1.1516474439029731e+19,
+               "rotation" : [ 0, 0, 0, 1 ],
+               "scale" : [ 1, 1, 1 ],
+               "translation" : [ 0, -10, 0 ],
+               "type" : "transform_component"
+            },
+            {
+               "current_visibility" : true,
+               "id" : 1.530591420476529e+19,
+               "type" : "frustum_cull_component"
+            },
+            {
+               "aa_bounding_box_max" : [ 41.830619812011719, 55.20733642578125, 0.78700482845306396 ],
+               "aa_bounding_box_min" : [ -52.973396301269531, -56.706871032714844, -4908.55078125 ],
+               "id" : 3.5507303861394874e+17,
+               "type" : "debug_component"
+            },
+            {
+               "amplitude" : [ 15, 15 ],
+               "face_diameter" : 18,
+               "frequency" : [ 0.018149999901652336, 0.055500000715255737 ],
+               "id" : 1.0013032299621347e+19,
+               "length" : 5000,
+               "noise_amplitude" : [ 0.10000000149011612, 0.10000000149011612 ],
+               "noise_frequency" : [ 0.0099999997764825821, 0.0099999997764825821 ],
+               "step" : 100,
+               "type" : "tunnel_component"
+            }
+         ],
+         "create_on_scene_init" : true,
+         "id" : 3.0054016056691497e+18,
+         "name" : "tunnel",
+         "persistent" : false,
+         "type" : "actor",
+         "type_qualifier" : "static"
+      },
+      {
+         "active" : true,
+         "components" : [
+            {
+               "id" : 2.8012696580899077e+18,
+               "rotation" : [
+                  -0.073283575475215912,
+                  0.20787391066551208,
+                  0.015619841404259205,
+                  0.97528159618377686
+               ],
+               "scale" : [ 1, 1, 1 ],
+               "translation" : [ 9.3856201171875, 16.268497467041016, -7.3124504089355469 ],
+               "type" : "transform_component"
+            },
+            {
+               "aspect" : 1.6000000238418579,
+               "far" : 100000,
+               "fov" : 60,
+               "id" : 5.9769029564452547e+18,
+               "near" : 0.10000000149011612,
+               "type" : "camera_component"
+            }
+         ],
+         "create_on_scene_init" : true,
+         "id" : 4.7392055264954849e+18,
+         "name" : "debug_camera",
+         "persistent" : false,
+         "type" : "camera",
+         "type_qualifier" : "debug"
+      },
+      {
+         "active" : true,
+         "components" : [
+            {
+               "id" : 2.3293759857552691e+18,
+               "rotation" : [ 0, 0, 0, 1 ],
+               "scale" : [ 1, 1, 1 ],
+               "translation" : [ -3.5921053886413574, 3.9996452331542969, -26.909208297729492 ],
+               "type" : "transform_component"
+            },
+            {
+               "aspect" : 1.6000000238418579,
+               "far" : 50000,
+               "fov" : 60,
+               "id" : 2.0939139236934252e+18,
+               "near" : 0.10000000149011612,
+               "type" : "camera_component"
+            },
+            {
+               "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
+               "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
+               "id" : 6.8072453625046671e+18,
+               "type" : "debug_component"
+            }
+         ],
+         "create_on_scene_init" : true,
+         "id" : 7.0529101198941645e+18,
+         "name" : "main_camera",
+         "persistent" : false,
+         "type" : "camera",
+         "type_qualifier" : "main"
+      }
+   ],
+   "id" : 3.0054016056691497e+18,
+   "name" : "tunnel",
+   "shadow_map" : {
+      "size" : 1024
+   }
+}

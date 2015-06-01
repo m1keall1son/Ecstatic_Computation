@@ -18,17 +18,23 @@ public:
     
     static TunnelSceneRef create( const std::string& name );
     
+    void initialize( const ci::JsonTree& init )override;
+
     void update() override;
     void preDraw() override;
     void draw() override;
     void postDraw() override;
     void shutDown( ec::EventDataRef )override;
+    std::vector<ec::ActorUId> shutdown()override;
     
     void postInit()override;
+    
+    ~TunnelScene();
     
 private:
     
     void initGUI( const ec::GUIManagerRef &gui_manager )override;
+    void handlePresentScene( ec::EventDataRef );
     
     TunnelScene( const std::string& name );
     
@@ -36,4 +42,6 @@ private:
     float mTunnelSamplePt;
     float mTunnelAccel;
     bool mScrubTunnel;
+    
+    
 };

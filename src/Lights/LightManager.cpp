@@ -19,6 +19,7 @@
 #include "CameraManager.h"
 #include "AppSceneBase.h"
 #include "Events.h"
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -60,7 +61,6 @@ LightManager::LightManager():mShuttingDown(false),mId(ec::getHash("light_manager
 LightManager::~LightManager()
 {
     if(!mShuttingDown){
-        ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightManager::handleLightRegistration), ec::ReturnActorCreatedEvent::TYPE);
         ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightManager::handleShutDown), ec::ShutDownEvent::TYPE);
     }
 }
@@ -71,25 +71,49 @@ void LightManager::handleShutDown(ec::EventDataRef)
     mShuttingDown = true;
 }
 
-void LightManager::initShadowMap(const ci::JsonTree &init)
-{
-    try {
-        
-        auto size = init["size"].getValue<int>();
-        mShadowMap = ShadowMap::create(size);
-        
-    } catch (const ci::JsonTree::ExcChildNotFound &e) {
-        CI_LOG_W("shadow map size not found, creating default size 1024");
-        mShadowMap = ShadowMap::create(1024);
-    }
-}
+//void LightManager::initShadowMap(const ci::JsonTree &init)
+//{
+//    try {
+//        
+//        auto size = init["size"].getValue<int>();
+//        mShadowMap = ShadowMap::create(size);
+//        
+//    } catch (const ci::JsonTree::ExcChildNotFound &e) {
+//        CI_LOG_W("shadow map size not found, creating default size 1024");
+//        mShadowMap = ShadowMap::create(1024);
+//    }
+//}
 
 void LightManager::handleLightRegistration( ec::EventDataRef event )
 {
     auto e = std::dynamic_pointer_cast<ComponentRegistrationEvent>( event );
     if( e->getType() == ComponentRegistrationEvent::RegistrationType::LIGHT ){
         CI_LOG_V("Registering light");
-        mLights.push_back( e->getActorUId() );
+        
+        switch (e->getRegistration()) {
+            case ComponentRegistrationEvent::REGISTER:
+            {
+                mLights.push_back( e->getActorUId() );
+
+            }
+                break;
+            case ComponentRegistrationEvent::UNREGISTER:
+            {
+                auto it = mLights.begin();
+                auto end = mLights.end();
+                while (it != end) {
+                    if( (*it) == e->getActorUId() ){
+                        mLights.erase( it );
+                    }
+                    ++it;
+                }
+            }
+                break;
+                
+            default:
+                break;
+        }
+        
     }
 }
 
@@ -109,9 +133,9 @@ void LightManager::update() {
                 if( light_strong->isActive() && light_component->getLight()->isVisible() ){
                     if(activeLights.size() < 24)
                         activeLights.push_back(light_component->getLight() );
-                    if( light_component->needsUpdate() ){
+                    //if( light_component->needsUpdate() ){
                         updateAll = true;
-                    }
+                   // }
                 }
             }
         }
@@ -119,19 +143,18 @@ void LightManager::update() {
     
     if( updateAll ){
         
-        auto viewMat = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() )->cameras()->getActiveCamera().getViewMatrix();
-        
         Lights lights;
         lights.numLights = activeLights.size();
-        lights.upDirection = viewMat * vec4( 0, 1, 0, 0 );
+        lights.upDirection = vec4( 0, 1, 0, 0 );
         
         for( size_t i = 0; i < activeLights.size(); ++i ) {
-            Light::Data light = activeLights[i]->getData( getElapsedSeconds(), viewMat );
+            Light::Data light = activeLights[i]->getData();
             lights.data[i] = light;
         }
         
         mLightUbo->bufferSubData( 0, sizeof( Lights ), &lights );
         
     }
+    
     
 }

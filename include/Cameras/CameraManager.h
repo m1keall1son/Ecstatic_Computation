@@ -17,10 +17,13 @@ class CameraManager {
     
 public:
     
-    const ci::CameraPersp& getCamera( const CameraComponent::CameraType& cam_type );
+    ci::CameraPersp& getCamera( const CameraComponent::CameraType& cam_type );
     const ci::CameraPersp& getActiveCamera();
     
     inline ec::IdType getId(){ return mId; }
+    
+    void keyUp( ci::app::KeyEvent & );
+    void keyDown( ci::app::KeyEvent & );
     
     ~CameraManager();
     
@@ -41,6 +44,7 @@ private:
     bool                                    mCameraSet;
     CameraComponent::CameraType             mCurrentCamera;
     ec::IdType                              mId;
+    ci::signals::Connection                 mKeyUpConnection;
     
     friend class AppSceneBase;
     

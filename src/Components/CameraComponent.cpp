@@ -33,7 +33,7 @@ std::string CameraComponent::parseCameraType( const CameraComponent::CameraType 
     else return "main";
 }
 
-ec::ComponentType CameraComponent::TYPE = 0x012;
+ec::ComponentType CameraComponent::TYPE = ec::getHash("camera_component");;
 
 CameraComponentRef CameraComponent::create( ec::Actor * context )
 {
@@ -42,16 +42,24 @@ CameraComponentRef CameraComponent::create( ec::Actor * context )
 
 CameraComponent::CameraComponent( ec::Actor* context ) : ec::ComponentBase( context ), mId(ec::getHash( context->getName() + "camera_component" )),mShuttingDown(false), mNear(.1), mFar(1000.), mFov(60)
 {
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
 
     registerHandlers();
+    
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
 }
 
 CameraComponent::~CameraComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
+    if(!mShuttingDown){
+    }
+}
+
+void CameraComponent::cleanup()
+{
+    auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->triggerEvent( ComponentRegistrationEvent::create( ComponentRegistrationEvent::UNREGISTER, ComponentRegistrationEvent::RegistrationType::CAMERA, mContext->getUId(), shared_from_this()) );
+    unregisterHandlers();
 }
 
 void CameraComponent::handleShutDown( ec::EventDataRef )
@@ -68,11 +76,15 @@ void CameraComponent::handleSceneChange( ec::EventDataRef )
 
 void CameraComponent::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &CameraComponent::update), UpdateEvent::TYPE);
 }
 void CameraComponent::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &CameraComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &CameraComponent::update), UpdateEvent::TYPE);
 }
@@ -124,7 +136,11 @@ bool CameraComponent::initialize( const ci::JsonTree &tree )
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialized");
     
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::CAMERA, mContext->getUId(), this ) );
+    if(!mInitialized){
+    
+        ec::Controller::get()->scene().lock()->manager()->queueEvent(  ComponentRegistrationEvent::create(ComponentRegistrationEvent::REGISTER,ComponentRegistrationEvent::RegistrationType::CAMERA, mContext->getUId(), shared_from_this() ) );
+        
+    }
     
     return true;
 }
@@ -146,6 +162,9 @@ ci::JsonTree CameraComponent::serialize()
 }
 bool CameraComponent::postInit()
 {
+    if(!mInitialized){
+        mInitialized = true;
+    }
     return true;
 }
 

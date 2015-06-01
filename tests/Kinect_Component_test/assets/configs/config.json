@@ -4,6 +4,27 @@
                "actors" : [
                            {
                            "active" : true,
+                           "components" : [{
+                                           "type" : "render_manager"
+                                           },
+                                           {
+                                           "type" : "gbuffer_pass"
+                                           },
+                                           {
+                                           "type" : "light_pass"
+                                           },
+                                           {
+                                           "type" : "FXAA_pass"
+                                           }
+                                           ],
+                           "create_on_scene_init" : true,
+                           "name" : "deferred_render",
+                           "persistent" : true,
+                           "type" : "render",
+                           "type_qualifier" : "deferred"
+                           },
+                           {
+                           "active" : true,
                            "components" : [
                                            {
                                            "id" : 3.4022020487226516e+18,
@@ -44,7 +65,7 @@
                                            "attenuation" : [ 0, 0.01 ],
                                            "color" : [ 0.96262633800506592, 0.95586138963699341, 1 ],
                                            "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
-                                           "enable_shadows" : true,
+                                           "enable_shadows" : false,
                                            "intensity" : 1.000000074505806,
                                            "mapping" : [ 0, 0, 1024, 1024 ],
                                            "position" : [ 0, 0, 0 ],

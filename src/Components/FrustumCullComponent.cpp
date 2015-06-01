@@ -14,7 +14,7 @@
 #include "DebugComponent.h"
 #include "Events.h"
 
-ec::ComponentType FrustumCullComponent::TYPE = 0x013;
+ec::ComponentType FrustumCullComponent::TYPE = ec::getHash("frustum_cull_component");
 
 FrustumCullComponentRef FrustumCullComponent::create(ec::Actor *context)
 {
@@ -25,8 +25,7 @@ FrustumCullComponent::FrustumCullComponent( ec::Actor * context ): ec::Component
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     registerHandlers();
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
 }
 
 FrustumCullComponent::~FrustumCullComponent()
@@ -47,11 +46,15 @@ void FrustumCullComponent::handleSceneChange( ec::EventDataRef )
 
 void FrustumCullComponent::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::cull), CullEvent::TYPE);
 }
 void FrustumCullComponent::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &FrustumCullComponent::cull), CullEvent::TYPE);
 }
