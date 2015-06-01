@@ -69,13 +69,13 @@
 		4F07086A1B1A0CE400A7A450 /* tunnel_geometry_rift.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708431B1A0CE400A7A450 /* tunnel_geometry_rift.vert */; };
 		4F07086B1B1A0CE400A7A450 /* tunnel_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */; };
 		4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */; };
-		4F0708711B1A16E400A7A450 /* DebugManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F0708701B1A16E400A7A450 /* DebugManager.cpp */; };
 		4F4FB47D1B1B7DC4000D4752 /* TransistorScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */; };
 		4F4FB47F1B1C9B81000D4752 /* room_basic.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB47E1B1C9B81000D4752 /* room_basic.vert */; };
 		4F4FB4811B1C9B8C000D4752 /* room_basic.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4801B1C9B8C000D4752 /* room_basic.geom */; };
 		4F4FB4831B1C9B9B000D4752 /* room_basic.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4821B1C9B9B000D4752 /* room_basic.frag */; };
 		4F4FB4861B1C9E43000D4752 /* room_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4841B1C9E43000D4752 /* room_shadow.frag */; };
 		4F4FB4871B1C9E43000D4752 /* room_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4851B1C9E43000D4752 /* room_shadow.vert */; };
+		4F4FB4A01B1D2947000D4752 /* DebugManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB49F1B1D2947000D4752 /* DebugManager.cpp */; };
 		4FEA35401B1A5F4E001513D8 /* ForwardPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */; };
 		4FEA35441B1A653E001513D8 /* tunnel_rift.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35411B1A653E001513D8 /* tunnel_rift.frag */; };
 		4FEA35451B1A653E001513D8 /* tunnel_rift.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35421B1A653E001513D8 /* tunnel_rift.geom */; };
@@ -198,8 +198,6 @@
 		4F0708431B1A0CE400A7A450 /* tunnel_geometry_rift.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_geometry_rift.vert; sourceTree = "<group>"; };
 		4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.frag; sourceTree = "<group>"; };
 		4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.vert; sourceTree = "<group>"; };
-		4F07086D1B1A169300A7A450 /* DebugManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DebugManager.h; path = ../../../include/DEBUG/DebugManager.h; sourceTree = "<group>"; };
-		4F0708701B1A16E400A7A450 /* DebugManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugManager.cpp; path = ../../../src/Debug/DebugManager.cpp; sourceTree = "<group>"; };
 		4F4FB47B1B1B7DB1000D4752 /* TransistorScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TransistorScene.h; path = ../../../include/Scenes/TransistorScene.h; sourceTree = "<group>"; };
 		4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransistorScene.cpp; path = ../../../src/Scenes/TransistorScene.cpp; sourceTree = "<group>"; };
 		4F4FB47E1B1C9B81000D4752 /* room_basic.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_basic.vert; sourceTree = "<group>"; };
@@ -207,6 +205,8 @@
 		4F4FB4821B1C9B9B000D4752 /* room_basic.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_basic.frag; sourceTree = "<group>"; };
 		4F4FB4841B1C9E43000D4752 /* room_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_shadow.frag; sourceTree = "<group>"; };
 		4F4FB4851B1C9E43000D4752 /* room_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_shadow.vert; sourceTree = "<group>"; };
+		4F4FB49F1B1D2947000D4752 /* DebugManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugManager.cpp; sourceTree = "<group>"; };
+		4F4FB4A21B1D2954000D4752 /* DebugManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugManager.h; sourceTree = "<group>"; };
 		4FEA353E1B1A5F39001513D8 /* ForwardPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ForwardPass.h; path = ../../../include/Rendering/ForwardPass.h; sourceTree = "<group>"; };
 		4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ForwardPass.cpp; path = ../../../src/Rendering/ForwardPass.cpp; sourceTree = "<group>"; };
 		4FEA35411B1A653E001513D8 /* tunnel_rift.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_rift.frag; sourceTree = "<group>"; };
@@ -332,7 +332,7 @@
 			isa = PBXGroup;
 			children = (
 				97C5015F84C243C983B8A836 /* AppCommon.h */,
-				4F07086E1B1A169900A7A450 /* Debug */,
+				4F4FB4A11B1D2954000D4752 /* Debugging */,
 				423A6790F4024E0A89C354A3 /* Events */,
 				D5731626F6824C1FA7396194 /* Components */,
 				5334A4F4590B45CEA2ADA5E1 /* Scenes */,
@@ -464,7 +464,7 @@
 		1AA85A46454E49B69714BAE3 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				4F07086F1B1A16B600A7A450 /* Debug */,
+				4F4FB49E1B1D2947000D4752 /* Debugging */,
 				8D93D842A086465793849CBA /* Events */,
 				2189DAD682F0449F8E996680 /* Components */,
 				CD831C86C6D0407F8BC33DB3 /* Lights */,
@@ -658,20 +658,22 @@
 			path = ../assets/shaders;
 			sourceTree = "<group>";
 		};
-		4F07086E1B1A169900A7A450 /* Debug */ = {
+		4F4FB49E1B1D2947000D4752 /* Debugging */ = {
 			isa = PBXGroup;
 			children = (
-				4F07086D1B1A169300A7A450 /* DebugManager.h */,
+				4F4FB49F1B1D2947000D4752 /* DebugManager.cpp */,
 			);
-			name = Debug;
+			name = Debugging;
+			path = ../../../src/Debugging;
 			sourceTree = "<group>";
 		};
-		4F07086F1B1A16B600A7A450 /* Debug */ = {
+		4F4FB4A11B1D2954000D4752 /* Debugging */ = {
 			isa = PBXGroup;
 			children = (
-				4F0708701B1A16E400A7A450 /* DebugManager.cpp */,
+				4F4FB4A21B1D2954000D4752 /* DebugManager.h */,
 			);
-			name = Debug;
+			name = Debugging;
+			path = ../../../include/Debugging;
 			sourceTree = "<group>";
 		};
 		4F727D0A92B14583802F85B6 /* Rendering */ = {
@@ -1003,12 +1005,12 @@
 				943FD31A91BD4272ACC8D502 /* CinderFreenect.cpp in Sources */,
 				D659BC107AD74AF1B2DF4B85 /* cameras.c in Sources */,
 				5996431E2E624B77A5BA60F7 /* core.c in Sources */,
-				4F0708711B1A16E400A7A450 /* DebugManager.cpp in Sources */,
 				AAACEA1AEB3A4D749A33DBC6 /* registration.c in Sources */,
 				25436B1F3BCF4DB69285B534 /* tilt.c in Sources */,
 				A14333D4CF50432191539804 /* usb_libusb10.c in Sources */,
 				CBC97FAAABA941D1A1C646C1 /* CinderOculus.cpp in Sources */,
 				990097E7086C4B458D84D8E1 /* Events.cpp in Sources */,
+				4F4FB4A01B1D2947000D4752 /* DebugManager.cpp in Sources */,
 				DE6C13233C0D4886A8C4BCBD /* BitComponent.cpp in Sources */,
 				8313592AD4D1495A8063D99B /* CameraComponent.cpp in Sources */,
 				42143D06FF74403EA3BD4DA7 /* Components.cpp in Sources */,
