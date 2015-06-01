@@ -5,18 +5,18 @@ layout (triangle_strip, max_vertices = 3) out;
 
 in vec4 vPosition[];
 in vec2 vTexCoord0[];
-in float vId[];
+in float vGrad[];
 
 out F_DATA{
     vec3 Normal;
     vec4 Position;
     vec2 TexCoord0;
-//    vec3 Color;
+    float Grad;
 }frag;
 
 #include "simplex_noise.glsl"
 
-uniform mat3 ciNormalMatrix;
+uniform mat4 ciModelMatrix;
 
 void main(){
     
@@ -24,16 +24,14 @@ void main(){
     vec3 d1 = vPosition[1].xyz - vPosition[0].xyz;
     vec3 d2 = vPosition[2].xyz - vPosition[0].xyz;
     
-    vec3 nrm = ciNormalMatrix * normalize( cross( d1, d2 ) );
-    
-//    vec3 color = vec3( snoise( vec3( vId[0]*.1 )*.5+.5 ) );
+    vec3 nrm = mat3(transpose(inverse(ciModelMatrix))) * normalize( cross( d1, d2 ) );
     
     for(int i=0;i<gl_in.length();i++){
         
-        frag.Normal = nrm;
+        frag.Normal = -nrm;
         frag.Position = vPosition[i];
         frag.TexCoord0 = vTexCoord0[i];
-//        frag.Color = color*.001;
+        frag.Grad = vGrad[i];
         
         gl_Position = gl_in[i].gl_Position;
         EmitVertex();

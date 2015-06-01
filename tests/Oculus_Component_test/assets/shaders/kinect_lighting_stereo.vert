@@ -4,7 +4,8 @@ in vec4 ciPosition;
 in vec2 ciTexCoord0;
 
 uniform mat4 ciModelViewProjection;
-uniform mat4 ciModelMatrix;
+uniform mat4 ciModelView;
+uniform mat3 ciNormalMatrix;
 
 out vec4 vPosition;
 out vec3 vNormal;
@@ -37,8 +38,8 @@ void main(){
     vec3 d2 = neighbor_down - pos.xyz;
     vec3 norm = normalize( cross( d2, d1 ) );
 
-    vNormal     = mat3(transpose(inverse( ciModelMatrix ))) * norm;
-    vPosition   = ciModelMatrix * pos;
+    vNormal = ciNormalMatrix * norm;
+    vPosition = ciModelView * pos;
     
     gl_Position = ciModelViewProjection * pos;
 }

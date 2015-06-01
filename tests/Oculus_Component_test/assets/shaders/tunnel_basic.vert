@@ -1,6 +1,6 @@
 #version 150
 
-uniform mat4 ciModelView;
+uniform mat4 ciModelMatrix;
 uniform mat4 ciModelViewProjection;
 
 in vec4 ciPosition;
@@ -54,7 +54,7 @@ void main(void)
     
     pos.xyz     += noiseVelocity;
     
-    vPosition = ciModelView * pos;
+    vPosition = ciModelMatrix * pos;
     
 	gl_Position = ciModelViewProjection * pos;
 }

@@ -14,13 +14,17 @@ out F_DATA{
 }frag;
 
 uniform float uTriangleCutoff;
+uniform vec2 uThresholds;
 
 void main(){
     
     if(
        length( gl_in[0].gl_Position - gl_in[1].gl_Position ) > uTriangleCutoff ||
        length( gl_in[0].gl_Position - gl_in[2].gl_Position ) > uTriangleCutoff ||
-       length( gl_in[1].gl_Position - gl_in[2].gl_Position ) > uTriangleCutoff
+       length( gl_in[1].gl_Position - gl_in[2].gl_Position ) > uTriangleCutoff ||
+       vPosition[0].z < uThresholds.x || vPosition[0].z > uThresholds.y ||
+       vPosition[1].z < uThresholds.x || vPosition[1].z > uThresholds.y ||
+       vPosition[2].z < uThresholds.x || vPosition[2].z > uThresholds.y
        ){
     }else{
         

@@ -10,6 +10,7 @@
 
 #include "AppCommon.h"
 #include "Common.h"
+#include "cinder/Timeline.h"
 #include "AppSceneBase.h"
 
 class TransistorScene : public AppSceneBase {
@@ -37,5 +38,13 @@ private:
     void handlePresentScene( ec::EventDataRef );
     
     TransistorScene( const std::string& name );
+    void moveFlash();
+    void flash();
+    
+    float mSpeed;
+    ci::Anim<float> mFlash;
+    float mFlashDuration;
+    float mSpikeSize;
+    bool mPause;
     
 };

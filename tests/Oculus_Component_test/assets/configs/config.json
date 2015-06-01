@@ -20,13 +20,13 @@
                            "type_qualifier" : "forward"
                            },
                            {
-                           "active" : false,
+                           "active" : true,
                            "components" : [
                                            {
                                            "type" : "oculus_rift_component"
                                            }
                                            ],
-                           "create_on_scene_init" : false,
+                           "create_on_scene_init" : true,
                            "name" : "rift",
                            "persistent" : true,
                            "type" : "actor",
@@ -61,39 +61,6 @@
                            "create_on_scene_init" : true,
                            "id" : 5.9182154138590904e+18,
                            "name" : "follow_light",
-                           "persistent" : false,
-                           "type" : "light",
-                           "type_qualifier" : "static"
-                           },
-                           {
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "id" : 3.4022020487226516e+18,
-                                           "light" : {
-                                           "attenuation" : [ 0, 0.001 ],
-                                           "color" : [ 0.96262633800506592, 0.95586138963699341, 1 ],
-                                           "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
-                                           "enable_shadows" : false,
-                                           "intensity" : 0.5000000074505806,
-                                           "mapping" : [ 0, 0, 1024, 1024 ],
-                                           "position" : [ 0, 0, 0 ],
-                                           "range" : 100,
-                                           "temperature" : 2400.0,
-                                           "type" : "point",
-                                           "visible" : true
-                                           },
-                                           "type" : "light_component"
-                                           },
-                                           {
-                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
-                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-                                           "id" : 6.9051827069665843e+18,
-                                           "type" : "debug_component"
-                                           }
-                                           ],
-                           "create_on_scene_init" : true,
-                           "name" : "follow_light_2",
                            "persistent" : false,
                            "type" : "light",
                            "type_qualifier" : "static"
@@ -279,7 +246,9 @@
                                           {
                                           "id" : 8.4698008755001467e+18,
                                           "size" : 25,
-                                          "type" : "room_component"
+                                          "type" : "room_component",
+                                          "noise_scale" : 0.0,
+                                          "noise_max" : 10.0
                                           },
                                           {
                                           "current_visibility" : false,
@@ -301,7 +270,7 @@
                           "type_qualifier" : "static"
                           },
                           {
-                          "active" : false,
+                          "active" : true,
                           "components" : [
                                           {
                                           "id" : 3.5142029523349601e+18,
@@ -312,10 +281,13 @@
                                           },
                                           {
                                           "id" : 6.2971770658402488e+18,
-                                          "type" : "kinect_component"
+                                          "type" : "kinect_component",
+                                          "triangle_cutoff" : 0.4,
+                                          "near_threshold" : -5.0,
+                                          "far_threshold" : 0.0
                                           }
                                           ],
-                          "create_on_scene_init" : false,
+                          "create_on_scene_init" : true,
                           "id" : 3.0054016126642842e+18,
                           "name" : "kinect",
                           "persistent" : false,
@@ -328,7 +300,7 @@
                                           {
                                           "id" : 3.3720462771684419e+18,
                                           "light" : {
-                                          "attenuation" : [ 0, 0.0099999997764825821 ],
+                                          "attenuation" : [ 0, 0.0 ],
                                           "color" : [ 1, 0.24313187599182129, 0 ],
                                           "direction" : [ 0.7071068286895752, -0.7071068286895752, 0 ],
                                           "enable_shadows" : true,

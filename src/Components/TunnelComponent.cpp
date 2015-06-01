@@ -196,8 +196,6 @@ void TunnelComponent::drawRift( ec::EventDataRef event )
     switch (e->getStyle()) {
         case DrawToRiftBufferEvent::TWICE:
         {
-            mTunnel->replaceGlslProg(mTunnelBasicRender);
-            mTunnel->getGlslProg()->uniform( "uEye", e->getEye() );
             draw( nullptr );
         }
             break;
@@ -267,18 +265,12 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
         CI_LOG_E(std::string("tunnel render error: ") + e.what());
     }
     
-    try {
-        mTunnelBasicStereoRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_basic_stereo.vert")).fragment(loadAsset("shaders/tunnel_basic_stereo.frag")).geometry(loadAsset("shaders/tunnel_basic_stereo.geom")).preprocess(true) );
-        
-    } catch (const ci::gl::GlslProgCompileExc e) {
-        CI_LOG_E(std::string("tunnel render error: ") + e.what());
-    }
-    try {
-        mTunnelGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry.vert")).fragment(loadAsset("shaders/tunnel_geometry.frag")).geometry(loadAsset("shaders/tunnel_geometry.geom")).preprocess(true) );
-        
-    } catch (const ci::gl::GlslProgCompileExc e) {
-        CI_LOG_E(std::string("tunnel geometry error: ") + e.what());
-    }
+//    try {
+//        mTunnelGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry.vert")).fragment(loadAsset("shaders/tunnel_geometry.frag")).geometry(loadAsset("shaders/tunnel_geometry.geom")).preprocess(true) );
+//        
+//    } catch (const ci::gl::GlslProgCompileExc e) {
+//        CI_LOG_E(std::string("tunnel geometry error: ") + e.what());
+//    }
     
     try {
         mTunnelShadowRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_shadow.vert")).fragment(loadAsset("shaders/tunnel_shadow.frag")).preprocess(true) );
@@ -287,13 +279,13 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
         CI_LOG_E(std::string("tunnel shadow render error: ") + e.what());
     }
     
-    try{
-        mTunnelRiftInstancedGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry_rift.vert")).fragment(loadAsset("shaders/tunnel_geometry_rift.frag")).geometry(loadAsset("shaders/tunnel_geometry_rift.geom")).preprocess(true) );
-        
-    } catch (const ci::gl::GlslProgCompileExc e) {
-        CI_LOG_E(std::string("tunnel instanced geom render error: ") + e.what());
-    }
-    
+//    try{
+//        mTunnelRiftInstancedGeometryRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_geometry_rift.vert")).fragment(loadAsset("shaders/tunnel_geometry_rift.frag")).geometry(loadAsset("shaders/tunnel_geometry_rift.geom")).preprocess(true) );
+//        
+//    } catch (const ci::gl::GlslProgCompileExc e) {
+//        CI_LOG_E(std::string("tunnel instanced geom render error: ") + e.what());
+//    }
+//    
     try{
         mTunnelRiftInstancedRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/tunnel_rift.vert")).fragment(loadAsset("shaders/tunnel_rift.frag")).geometry(loadAsset("shaders/tunnel_rift.geom")).preprocess(true) );
         
@@ -306,16 +298,11 @@ void TunnelComponent::handleGlslProgReload(ec::EventDataRef)
     mTunnelBasicRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     mTunnelBasicRender->uniform("uShadowMap", 3);
     
-    ///replace
-    
-    mTunnelRiftInstancedGeometryRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
-    mTunnelRiftInstancedRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
+//    mTunnelRiftInstancedGeometryRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
+//    mTunnelRiftInstancedRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation());
 
     if(mTunnel){
-        if( ec::Controller::isRiftEnabled() )
-            mTunnel->replaceGlslProg(mTunnelBasicStereoRender);
-        else
-            mTunnel->replaceGlslProg(mTunnelBasicRender);
+        mTunnel->replaceGlslProg(mTunnelBasicRender);
     }
 
 }
@@ -331,8 +318,8 @@ bool TunnelComponent::postInit()
         mFaceRadius = 18.;
         
         Shape2d face;
-        for( int i = 0; i < 50; i++ ){
-            float t = lmap((float)i, 0.f, 49.f, 0.f, 6.28318530718f);
+        for( int i = 0; i < 10; i++ ){
+            float t = lmap((float)i, 0.f, 9.f, 0.f, 6.28318530718f);
             if(i==0)face.moveTo(vec2( cos(t)*mFaceRadius, sin(t)*mFaceRadius ));
             else face.lineTo(vec2( cos(t)*mFaceRadius, sin(t)*mFaceRadius ));
         }
@@ -357,13 +344,9 @@ bool TunnelComponent::postInit()
         
         mSpline = BSpline3f( path, 3, false, true );
         
-        auto geom = ci::geom::ExtrudeSpline( face, mSpline, 1000 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
+        auto geom = ci::geom::ExtrudeSpline( face, mSpline, 500 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
         
-        if( ec::Controller::isRiftEnabled() )
-            mTunnel = ci::gl::Batch::create( geom , mTunnelBasicStereoRender );
-        else
-            mTunnel = ci::gl::Batch::create( geom , mTunnelBasicRender );
-        
+        mTunnel = ci::gl::Batch::create( geom , mTunnelBasicRender );
         
         mTunnelShadow = ci::gl::Batch::create( geom , mTunnelShadowRender );
         

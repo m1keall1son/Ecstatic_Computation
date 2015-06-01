@@ -4,8 +4,8 @@ in vec4 ciPosition;
 in vec2 ciTexCoord0;
 
 uniform mat4 ciModelViewProjection;
-uniform mat4 ciModelView;
-uniform mat3 ciNormalMatrix;
+uniform mat4 ciModelMatrix;
+
 uniform float ciElapsedSeconds;
 
 #include "curl_noise.glsl"
@@ -51,7 +51,8 @@ void main(){
     
     pos.xyz     += noiseVelocity;
     
-    vPosition   = ciModelView * pos;
+    vPosition   = ciModelMatrix * pos;
+    
     vDistanceFromCenter = clamp( pow(length( pos.xyz ),2.),0.,1.);
     
     gl_Position = ciModelViewProjection * pos;

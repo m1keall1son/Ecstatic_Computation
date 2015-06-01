@@ -143,48 +143,18 @@ void LightManager::update() {
     
     if( updateAll ){
         
-        if(ec::Controller::isRiftEnabled()){
-            
-            auto rift = ec::ActorManager::get()->retreiveUnique(ec::getHash("rift")).lock();
-            auto rift_component = rift->getComponent<OculusRiftComponent>().lock();
-            auto oculus = rift_component->getRift();
-            mat4 views[2];
-            for(auto & eye : oculus->getEyes()){
-                oculus->enableEye( eye, false );
-                views[(int)eye] = oculus->getViewMatrix();
-            }
-            
-            Lights lights;
-            lights.numLights = activeLights.size();
-            lights.upDirection = views[0] * vec4( 0, 1, 0, 0 );
-            
-            for( size_t i = 0; i < activeLights.size(); ++i ) {
-                Light::Data light_r = activeLights[i]->getData( getElapsedSeconds(), views[0] );
-                Light::Data light_l = activeLights[i]->getData( getElapsedSeconds(), views[1] );
-                lights.data[ i * 2 ] = light_r;
-                lights.data[ i * 2 + 1] = light_l;
-            }
-            
-            mLightUbo->bufferSubData( 0, sizeof( Lights ), &lights );
-            
-        }else{
+        Lights lights;
+        lights.numLights = activeLights.size();
+        lights.upDirection = vec4( 0, 1, 0, 0 );
         
-            auto viewMat = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() )->cameras()->getActiveCamera().getViewMatrix();
-            
-            Lights lights;
-            lights.numLights = activeLights.size();
-            lights.upDirection = viewMat * vec4( 0, 1, 0, 0 );
-            
-            for( size_t i = 0; i < activeLights.size(); ++i ) {
-                Light::Data light = activeLights[i]->getData( getElapsedSeconds(), viewMat );
-                lights.data[i] = light;
-            }
-            
-            mLightUbo->bufferSubData( 0, sizeof( Lights ), &lights );
-
+        for( size_t i = 0; i < activeLights.size(); ++i ) {
+            Light::Data light = activeLights[i]->getData();
+            lights.data[i] = light;
         }
         
+        mLightUbo->bufferSubData( 0, sizeof( Lights ), &lights );
         
     }
+    
     
 }

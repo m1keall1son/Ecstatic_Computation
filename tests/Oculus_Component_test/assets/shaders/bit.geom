@@ -14,7 +14,7 @@ out F_DATA{
     float DistanceFromCenter;
 }frag;
 
-uniform mat3 ciNormalMatrix;
+uniform mat4 ciModelMatrix;
 
 void main(){
     
@@ -22,7 +22,7 @@ void main(){
     vec3 d1 = vPosition[1].xyz - vPosition[0].xyz;
     vec3 d2 = vPosition[2].xyz - vPosition[0].xyz;
     
-    vec3 nrm = ciNormalMatrix * normalize( cross( d1, d2 ) );
+    vec3 nrm = mat3( transpose( inverse( ciModelMatrix ) ) ) * normalize( cross( d1, d2 ) );
     
     for(int i=0;i<gl_in.length();i++){
         

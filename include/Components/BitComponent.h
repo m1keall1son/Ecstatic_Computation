@@ -36,6 +36,7 @@ public:
     void draw( ec::EventDataRef event );
     void update( ec::EventDataRef );
     void drawShadow( ec::EventDataRef );
+    void drawRift( ec::EventDataRef event );
     
     ~BitComponent();
     
@@ -52,7 +53,7 @@ private:
     void unregisterHandlers();
     
     ci::gl::BatchRef mBit, mBitShadow;
-    ci::gl::GlslProgRef mBitShadowRender, mBitRender;
+    ci::gl::GlslProgRef mBitShadowRender, mBitRender, mBitStereoRender;
     ec::ComponentUId mId;
     bool             mShuttingDown;
     

@@ -76,6 +76,7 @@ void KinectComponent::registerListeners()
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawRift), DrawToRiftBufferEvent::TYPE);
 }
 void KinectComponent::unregisterListeners()
 {
@@ -87,6 +88,7 @@ void KinectComponent::unregisterListeners()
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::drawRift), DrawToRiftBufferEvent::TYPE);
 }
 
 void KinectComponent::handleReloadGlslProg(ec::EventDataRef)
@@ -107,13 +109,12 @@ void KinectComponent::handleReloadGlslProg(ec::EventDataRef)
     }catch (const gl::GlslProgLinkExc &e) {
         CI_LOG_E(e.what());
     }
-
+    
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     mKinectRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
     
     mKinectRender->uniform( "uDepthTexture", 4 );
     mKinectRender->uniform( "uColorTexture", 5 );
-    mKinectRender->uniform( "uThresholds", mThresholds );
 
     ///TODO: give shadow map a permanent location
     mKinectRender->uniform( "uShadowMap", 3 );
@@ -122,7 +123,6 @@ void KinectComponent::handleReloadGlslProg(ec::EventDataRef)
     mKinectRender->uniform( "uRef_distance", mKinect->getZeroPlaneDistance() );
     mKinectRender->uniform( "uConst_shift", mKinect->getRegistrationConstShift() );
     mKinectRender->uniform( "uDcmos_emitter_dist", mKinect->getDcmosEmitterDist() );
-    mKinectRender->uniform( "uTriangleCutoff", .2f);
     
     mKinectShadowRender->uniform( "uDepthTexture", 4 );
     mKinectShadowRender->uniform( "uThresholds", mThresholds );
@@ -130,10 +130,10 @@ void KinectComponent::handleReloadGlslProg(ec::EventDataRef)
     mKinectShadowRender->uniform( "uRef_distance", mKinect->getZeroPlaneDistance() );
     mKinectShadowRender->uniform( "uConst_shift", mKinect->getRegistrationConstShift() );
     mKinectShadowRender->uniform( "uDcmos_emitter_dist", mKinect->getDcmosEmitterDist() );
-    mKinectShadowRender->uniform( "uTriangleCutoff", .2f);
     
-    if(mKinectMesh)
+    if(mKinectMesh){
         mKinectMesh->replaceGlslProg(mKinectRender);
+    }
 }
 
 bool KinectComponent::postInit()
@@ -145,8 +145,10 @@ bool KinectComponent::postInit()
         
         handleReloadGlslProg(ec::EventDataRef());
         
-        mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)), mKinectRender );
-        
+        mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/4.f), mKinectRender );
+
+        mKinectMeshShadow = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/8.f), mKinectShadowRender );
+
         CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
         mInitialized = true;
     }
@@ -173,11 +175,12 @@ void KinectComponent::drawShadow(ec::EventDataRef)
         
     gl::ScopedTextureBind kinect( mKinectDepthTexture, 4 );
     
-    mKinectMesh->replaceGlslProg(mKinectShadowRender);
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-    mKinectMesh->draw();
+    mKinectShadowRender->uniform( "uThresholds", mThresholds );
+    mKinectShadowRender->uniform( "uTriangleCutoff", mTriangleCutoff );
+    mKinectMeshShadow->draw();
 }
 
 void KinectComponent::draw(ec::EventDataRef)
@@ -187,41 +190,52 @@ void KinectComponent::draw(ec::EventDataRef)
     gl::ScopedTextureBind kinect( mKinectDepthTexture, 4 );
     gl::ScopedTextureBind kinect_color( mKinectColorTexture, 5 );
 
-    mKinectMesh->replaceGlslProg(mKinectRender);
-
     gl::ScopedModelMatrix model;
     auto transform = mContext->getComponent<ec::TransformComponent>().lock();
     gl::multModelMatrix( transform->getModelMatrix() );
-    mKinectMesh->draw();    
+    mKinectRender->uniform( "uThresholds", mThresholds );
+    mKinectRender->uniform( "uTriangleCutoff", mTriangleCutoff );
+    mKinectMesh->draw();
+}
+
+void KinectComponent::drawRift( ec::EventDataRef event )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
+    
+    auto e = std::dynamic_pointer_cast<DrawToRiftBufferEvent>(event);
+    
+    switch (e->getStyle()) {
+        case DrawToRiftBufferEvent::TWICE:
+        {
+            draw( nullptr );
+        }
+            break;
+        case DrawToRiftBufferEvent::STEREO:
+        {
+        }
+            break;
+        default:
+            break;
+    }
+    
 }
 
 bool KinectComponent::initialize( const ci::JsonTree &tree )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
     
-//    try {
-//        auto min = tree["aa_bounding_box_min"].getChildren();
-//        auto end = min.end();
-//        ci::vec3 aab_min;
-//        int i = 0;
-//        for( auto it = min.begin(); it != end; ++it ) {
-//            aab_min[i++] = (*it).getValue<float>();
-//        }
-//        
-//        auto max = tree["aa_bounding_box_max"].getChildren();
-//        auto end2 = max.end();
-//        ci::vec3 aab_max;
-//        i = 0;
-//        for( auto it = max.begin(); it != end2; ++it ) {
-//            aab_max[i++] = (*it).getValue<float>();
-//        }
-//        
-//        mObjectBoundingBox = ci::AxisAlignedBox3f( aab_min, aab_max );
-//        
-//    } catch ( ci::JsonTree::ExcChildNotFound ex	) {
-//        CI_LOG_W("no aa_bounding_box found");
-//    }
-    
+    try {
+        auto far = tree["far_threshold"].getValue<float>();
+        auto near = tree["near_threshold"].getValue<float>();
+        auto triangle = tree["triangle_cutoff"].getValue<float>();
+        
+        mThresholds.x = near;
+        mThresholds.y = far;
+        mTriangleCutoff = triangle;
+        
+    } catch ( ci::JsonTree::ExcChildNotFound ex	) {
+        CI_LOG_W("no not cutoffs found ");
+    }
     
     return true;
 }
@@ -232,6 +246,9 @@ ci::JsonTree KinectComponent::serialize()
     auto save = ci::JsonTree();
     save.addChild( ci::JsonTree( "type", getName() ) );
     save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
+    save.addChild( ci::JsonTree( "near_threshold", mThresholds.x ) );
+    save.addChild( ci::JsonTree( "far_threshold", mThresholds.y ) );
+    save.addChild( ci::JsonTree( "triangle_cutoff", mTriangleCutoff ) );
 //    save.addChild( ci::JsonTree( "name", getName() ) );
 //    save.addChild( ci::JsonTree( "id", getId() ) );
 //    save.addChild( ci::JsonTree( "type", "debug_component" ) );
@@ -268,4 +285,7 @@ void KinectComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
     gui->addText(getName());
+    gui->addParam("triangle cutoff", &mTriangleCutoff).min(0.).max(10.);
+    gui->addParam("near thresh", &mThresholds.x);
+    gui->addParam("far threshold", &mThresholds.y);
 }

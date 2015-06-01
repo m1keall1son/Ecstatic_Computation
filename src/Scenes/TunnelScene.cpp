@@ -82,7 +82,6 @@ void TunnelScene::update()
     auto tunnel = ec::ActorManager::get()->retreiveUnique(ec::getHash("tunnel")).lock();
     auto main_camera_actor = ec::ActorManager::get()->retreiveUnique(ec::getHash("main_camera")).lock();
     auto follow_light = ec::ActorManager::get()->retreiveUnique(ec::getHash("follow_light")).lock();
-    auto follow_light_2 = ec::ActorManager::get()->retreiveUnique(ec::getHash("follow_light_2")).lock();
     auto head_lamp = ec::ActorManager::get()->retreiveUnique(ec::getHash("head_lamp")).lock();
 
     auto tunnel_transform = tunnel->getComponent<ec::TransformComponent>().lock();
@@ -117,18 +116,14 @@ void TunnelScene::update()
     tunnel_component->getNoiseScale() = .5 + sample_pt*2.;
     
     auto light = std::dynamic_pointer_cast<PointLight>(follow_light->getComponent<LightComponent>().lock()->getLight());
-    auto light2 = std::dynamic_pointer_cast<PointLight>(follow_light_2->getComponent<LightComponent>().lock()->getLight());
 
-    if( light_sample > .99){
+    if( light_sample > .998){
         light_sample = 0.;
     }
     auto light_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(light_sample);
     
     light->setPosition( light_pos + vec3( 6. * cos(light_pos.z * .04), 6. * sin(light_pos.z * .0153), 0.) );
-    light2->setPosition( light_pos + vec3( 7. * cos(light_pos.z * .01), 4. * sin(light_pos.z * .0453), 4.*cos( getElapsedSeconds() ) ) );
-    
-    light->setIntensity( light->getIntensity() + cos( light_pos.z * .03 ) * .0096 );
-    light2->setIntensity( light2->getIntensity() + sin( light_pos.z * .01 ) * .01 );
+    //light->setIntensity( light->getIntensity() + cos( light_pos.z * .03 ) * .0096 );
 
     CI_LOG_V("update components event triggered");
     mSceneManager->triggerEvent( UpdateEvent::create() );

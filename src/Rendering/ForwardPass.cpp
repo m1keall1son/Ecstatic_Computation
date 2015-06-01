@@ -16,6 +16,7 @@
 #include "ActorManager.h"
 #include "Light.h"
 #include "LightComponent.h"
+#include "GUIManager.h"
 #include "ShadowPass.h"
 #include "OculusRiftComponent.h"
 
@@ -186,6 +187,11 @@ void ForwardPass::process()
         {
             gl::ScopedViewport view( vec2(0), oculus->getFboSize() );
             scene->manager()->triggerEvent(DrawToRiftBufferEvent::create( DrawToRiftBufferEvent::Style::STEREO ));
+            
+
+            ec::Controller::get()->guiManager()->draw();
+            
+            
         }
     }
 

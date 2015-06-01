@@ -48,6 +48,8 @@ void BitComponent::registerHandlers()
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+
 }
 void BitComponent::unregisterHandlers()
 {
@@ -58,6 +60,8 @@ void BitComponent::unregisterHandlers()
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::draw), DrawToMainBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+
 }
 
 void BitComponent::update(ec::EventDataRef event )
@@ -110,6 +114,28 @@ void BitComponent::draw( ec::EventDataRef event )
     
 }
 
+void BitComponent::drawRift( ec::EventDataRef event )
+{
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
+    
+    auto e = std::dynamic_pointer_cast<DrawToRiftBufferEvent>(event);
+    
+    switch (e->getStyle()) {
+        case DrawToRiftBufferEvent::TWICE:
+        {
+            draw( nullptr );
+        }
+            break;
+        case DrawToRiftBufferEvent::STEREO:
+        {
+        }
+            break;
+        default:
+            break;
+    }
+    
+}
+
 void BitComponent::handleGlslProgReload(ec::EventDataRef)
 {
     try {
@@ -127,6 +153,7 @@ void BitComponent::handleGlslProgReload(ec::EventDataRef)
     
     if(mBit)
         mBit->replaceGlslProg(mBitRender);
+    
     if(mBitShadow)
         mBitShadow->replaceGlslProg(mBitShadowRender);
     
@@ -145,7 +172,9 @@ bool BitComponent::postInit()
     
     auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
     auto geom = ci::geom::Icosphere().subdivisions(3) >> geom::Bounds( &aab_debug );
+    
     mBit = ci::gl::Batch::create( geom , mBitRender );
+    
     mBitShadow = ci::gl::Batch::create( geom, mBitShadowRender );
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
