@@ -94,24 +94,25 @@ bool RoomComponent::initialize(const ci::JsonTree &tree)
 
 bool RoomComponent::postInit()
 {
-    
-    auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
-    
-    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    
-    glsl->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
-
-    glsl->uniform("uShadowMap", 3);
-    
-    auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
-    
-    auto flipNormals = []( const vec3& normal ) { return -normal; };
-    auto geom = ci::geom::Cube().size( vec3( mRoomSize )) >> geom::AttribFn<vec3, vec3>( geom::NORMAL, geom::NORMAL, flipNormals ) >> geom::Bounds( &aab_debug );
-    mRoom = ci::gl::Batch::create( geom, glsl );
-    mRoomShadow = gl::Batch::create( geom, gl::getStockShader(gl::ShaderDef()) );
-
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+    if(!mInitialized){
+        auto glsl = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/lighting.vert")).fragment(loadAsset("shaders/lighting.frag")).preprocess(true) );
+        
+        auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+        
+        glsl->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
+        
+        glsl->uniform("uShadowMap", 3);
+        
+        auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
+        
+        auto flipNormals = []( const vec3& normal ) { return -normal; };
+        auto geom = ci::geom::Cube().size( vec3( mRoomSize )) >> geom::AttribFn<vec3, vec3>( geom::NORMAL, geom::NORMAL, flipNormals ) >> geom::Bounds( &aab_debug );
+        mRoom = ci::gl::Batch::create( geom, glsl );
+        mRoomShadow = gl::Batch::create( geom, gl::getStockShader(gl::ShaderDef()) );
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized = true;
+    }
     ///this could reflect errors...
     return true;
 }
@@ -123,14 +124,16 @@ RoomComponent::RoomComponent( ec::Actor* context ):ec::ComponentBase( context ),
     registerListeners();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
-    //TODO this should be in initilialize with ryan's code
+        //TODO this should be in initilialize with ryan's code
 }
 
 RoomComponent::~RoomComponent()
 {
-    if(!mShuttingDown)unregisterListeners();
+}
+
+void RoomComponent::cleanup()
+{
+    unregisterListeners();
 }
 
 void RoomComponent::handleShutDown( ec::EventDataRef )
@@ -147,6 +150,9 @@ void RoomComponent::handleSceneChange( ec::EventDataRef )
 
 void RoomComponent::registerListeners()
 {
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::draw), DrawToMainBufferEvent::TYPE);
@@ -154,6 +160,9 @@ void RoomComponent::registerListeners()
 }
 void RoomComponent::unregisterListeners()
 {
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::update), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::draw), DrawToMainBufferEvent::TYPE);

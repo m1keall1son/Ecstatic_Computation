@@ -54,8 +54,15 @@ void OculusRiftComponent::handleSceneChange( ec::EventDataRef )
     if(mContext->isPersistent())registerHandlers();
 }
 
+void OculusRiftComponent::cleanup()
+{
+    unregisterHandlers();
+}
+
 void OculusRiftComponent::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleUpdate), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleSwitchCamera), SwitchCameraEvent::TYPE);
@@ -63,6 +70,8 @@ void OculusRiftComponent::registerHandlers()
 }
 void OculusRiftComponent::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleUpdate), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &OculusRiftComponent::handleSwitchCamera), SwitchCameraEvent::TYPE);
@@ -97,24 +106,27 @@ void OculusRiftComponent::handleUpdate(ec::EventDataRef)
 
 bool OculusRiftComponent::initialize( const ci::JsonTree &tree )
 {
-    CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    if(!mInitialized){
+        CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    }
     return true;
 }
 
 
 bool OculusRiftComponent::postInit()
 {
-    
-    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    auto & host = scene->cameras()->getCamera(CameraComponent::CameraType::MAIN_CAMERA);
-    host.setAspectRatio(mRift->getFboSize().x/mRift->getFboSize().y);
-    mRift->setHostCamera( host );
-    
-    mRiftUbo = ci::gl::Ubo::create( sizeof(RiftData), nullptr , GL_DYNAMIC_DRAW);
-    mRiftUbo->bindBufferBase(sRiftUboLocation);
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+    if(!mInitialized){
+        auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+        auto & host = scene->cameras()->getCamera(CameraComponent::CameraType::MAIN_CAMERA);
+        host.setAspectRatio(mRift->getFboSize().x/mRift->getFboSize().y);
+        mRift->setHostCamera( host );
+        
+        mRiftUbo = ci::gl::Ubo::create( sizeof(RiftData), nullptr , GL_DYNAMIC_DRAW);
+        mRiftUbo->bindBufferBase(sRiftUboLocation);
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized = true;
+    }
     ///this could reflect errors...
     return true;
 }
@@ -131,8 +143,7 @@ void OculusRiftComponent::handleSwitchCamera(ec::EventDataRef event)
 
 OculusRiftComponent::OculusRiftComponent( ec::Actor* context ): ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_oculus_rift_component" ) ),mShuttingDown(false)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &OculusRiftComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
     registerHandlers();
     
     auto window = ci::app::getWindow();
@@ -160,7 +171,6 @@ OculusRiftComponent::OculusRiftComponent( ec::Actor* context ): ec::ComponentBas
 
 OculusRiftComponent::~OculusRiftComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
 }
 
 const ec::ComponentNameType OculusRiftComponent::getName() const

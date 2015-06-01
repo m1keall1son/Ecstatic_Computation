@@ -52,6 +52,26 @@ ec::EventType DrawDebugEvent::getEventType() const
     return DrawDebugEvent::TYPE;
 }
 
+//DRAW DEBUG -------------------------------------------------------------/
+
+ec::EventType DrawDeferredDebugEvent::TYPE = ec::getHash("draw_deferred_debug_event");
+
+DrawDeferredDebugEventRef DrawDeferredDebugEvent::create()
+{
+    return DrawDeferredDebugEventRef( new DrawDeferredDebugEvent() );
+}
+
+DrawDeferredDebugEvent::DrawDeferredDebugEvent() : ec::EventData( cinder::app::getElapsedSeconds() ){}
+
+const char* DrawDeferredDebugEvent::getName() const
+{
+    return "draw_deferred_debug_event";
+}
+
+ec::EventType DrawDeferredDebugEvent::getEventType() const
+{
+    return DrawDeferredDebugEvent::TYPE;
+}
 
 //UPDATE -------------------------------------------------------------/
 
@@ -121,12 +141,12 @@ ec::EventType DrawToMainBufferEvent::getEventType() const
 
 ec::EventType DrawToRiftBufferEvent::TYPE = ec::getHash("draw_to_rift_buffer_event");
 
-DrawToRiftBufferEventRef DrawToRiftBufferEvent::create(const Style& style )
+DrawToRiftBufferEventRef DrawToRiftBufferEvent::create(const Style& style, int eye )
 {
-    return DrawToRiftBufferEventRef( new DrawToRiftBufferEvent(style) );
+    return DrawToRiftBufferEventRef( new DrawToRiftBufferEvent(style, eye) );
 }
 
-DrawToRiftBufferEvent::DrawToRiftBufferEvent(const Style& style ) : ec::EventData( cinder::app::getElapsedSeconds() ),mStyle(style){}
+DrawToRiftBufferEvent::DrawToRiftBufferEvent(const Style& style, int eye ) : ec::EventData( cinder::app::getElapsedSeconds() ),mStyle(style), mEye(eye){}
 
 const char* DrawToRiftBufferEvent::getName() const
 {
@@ -247,12 +267,12 @@ ec::EventType SwitchCameraEvent::getEventType() const
 
 ec::EventType ComponentRegistrationEvent::TYPE = ec::getHash("component_registration_event");
 
-ComponentRegistrationEventRef ComponentRegistrationEvent::create( const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBaseRef component  )
+ComponentRegistrationEventRef ComponentRegistrationEvent::create(  const Registration& reg, const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBaseRef component  )
 {
-    return ComponentRegistrationEventRef( new ComponentRegistrationEvent(type, actor, component) );
+    return ComponentRegistrationEventRef( new ComponentRegistrationEvent(reg, type, actor, component) );
 }
 
-ComponentRegistrationEvent::ComponentRegistrationEvent(const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBaseRef component  ) : ec::EventData( cinder::app::getElapsedSeconds() ), mType(type), mActor(actor), mComponent(component){}
+ComponentRegistrationEvent::ComponentRegistrationEvent( const Registration& reg, const ComponentRegistrationEvent::RegistrationType& type, const ec::ActorUId& actor, ec::ComponentBaseRef component  ) : ec::EventData( cinder::app::getElapsedSeconds() ),mReg(reg), mType(type), mActor(actor), mComponent(component){}
 
 const char* ComponentRegistrationEvent::getName() const
 {

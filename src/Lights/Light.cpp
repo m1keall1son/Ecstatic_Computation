@@ -125,7 +125,7 @@ void PointLight::updateMatrices() const
 		mViewMatrix[NEGATIVE_Y] = glm::lookAt( mPosition, vec3( 0, -1, 0 ), vec3( 0, 0, 1 ) );
 		mViewMatrix[POSITIVE_Z] = glm::lookAt( mPosition, vec3( 0, 0, 1 ), vec3( 0, -1, 0 ) );
 		mViewMatrix[NEGATIVE_Z] = glm::lookAt( mPosition, vec3( 0, 0, -1 ), vec3( 0, -1, 0 ) );
-		mProjectionMatrix = glm::perspective( glm::radians( 90.0f ), 1.0f, 0.1f, mRange );
+		mProjectionMatrix = glm::perspective( glm::radians( 90.0f ), mMapping.z/mMapping.w, 0.1f, mRange );
 
 		mIsDirty = false;
 	}
@@ -198,7 +198,7 @@ void SpotLight::updateMatrices() const
 		vec3  up = ( dot < 0.99f ) ? vec3( 0, 1, 0 ) : vec3( 0, 0, 1 );
 
 		mViewMatrix = glm::lookAt( mPosition, mPointAt, up );
-		mProjectionMatrix = glm::perspective( 2.0f * math<float>::atan( mSpotRatio ), 1.0f, 0.1f, mRange );
+		mProjectionMatrix = glm::perspective( 2.0f * math<float>::atan( mSpotRatio ), mMapping.z/mMapping.w, 0.1f, mRange );
 		mShadowMatrix = sBiasMatrix * mProjectionMatrix * mViewMatrix;
 
 		mIsDirty = false;

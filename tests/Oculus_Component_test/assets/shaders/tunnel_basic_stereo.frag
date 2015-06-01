@@ -9,7 +9,7 @@ in F_DATA{
 //    vec3 Color;
 }frag;
 
-//uniform int uEye;
+uniform int uEye;
 
 out vec4 FragColor;
 
@@ -22,14 +22,13 @@ void main(void)
     material.diffuse = vec3( 1.0 );
     material.specular = vec3( 0.25 );
     material.shininess = 20.0;
-    material.ambient = vec3( .02 );
 
 	// Initialize ambient, diffuse and specular colors.
 	vec3 ambient = vec3( 0 );
 	vec3 diffuse = vec3( 0 );
 	vec3 specular = vec3( 0 );
 
-    calcLighting( material, atmosphere, frag.Position, normalize(-frag.Normal), ambient, diffuse, specular );
+    calcLightingStereo( material, atmosphere, frag.Position, normalize(-frag.Normal), ambient, diffuse, specular, uEye );
     
 	// Output gamma-corrected color.
     FragColor.rgb = sqrt( ambient + diffuse + specular );

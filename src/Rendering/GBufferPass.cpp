@@ -44,12 +44,13 @@ void GBufferPass::handleSceneChange( ec::EventDataRef )
 
 void GBufferPass::registerHandlers()
 {
-    //TODO this should be in initilialize with ryan's code
-    
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 void GBufferPass::unregisterHandlers()
 {
-    
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 
 bool GBufferPass::initialize( const ci::JsonTree &tree )
@@ -61,54 +62,59 @@ bool GBufferPass::initialize( const ci::JsonTree &tree )
 
 bool GBufferPass::postInit()
 {
-
-    auto colorFmt = gl::Texture2d::Format()
-    .internalFormat( GL_RGBA32F )
-    .magFilter( GL_NEAREST )
-    .minFilter( GL_NEAREST )
-    .wrap( GL_CLAMP_TO_EDGE )
-    .dataType( GL_FLOAT );
-    
-    auto dataFmt = gl::Texture2d::Format()
-    .internalFormat( GL_RGBA16F )
-    .magFilter( GL_NEAREST )
-    .minFilter( GL_NEAREST )
-    .wrap( GL_CLAMP_TO_EDGE )
-    .dataType( GL_HALF_FLOAT );
-    
-    auto depthFmt = gl::Texture2d::Format()
-    .internalFormat( GL_DEPTH_COMPONENT32F )
-    .magFilter( GL_LINEAR )
-    .minFilter( GL_LINEAR )
-    .wrap( GL_CLAMP_TO_EDGE )
-    .dataType( GL_FLOAT );
-    
-    GBuffer::Format fmt;
-    fmt.attachment(GL_COLOR_ATTACHMENT0, colorFmt, "uAlbedo");
-    fmt.attachment(GL_COLOR_ATTACHMENT1, dataFmt, "uData");
-    fmt.depthTexture(depthFmt);
-    
-    mGBuffer = GBuffer::create( getWindowSize(), fmt);
-
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ShareGeometryDepthTextureEvent::create( mGBuffer->getDepthTexture() ) );
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+    if(!mInitialized){
+        auto colorFmt = gl::Texture2d::Format()
+        .internalFormat( GL_RGBA32F )
+        .magFilter( GL_NEAREST )
+        .minFilter( GL_NEAREST )
+        .wrap( GL_CLAMP_TO_EDGE )
+        .dataType( GL_FLOAT );
+        
+        auto dataFmt = gl::Texture2d::Format()
+        .internalFormat( GL_RGBA16F )
+        .magFilter( GL_NEAREST )
+        .minFilter( GL_NEAREST )
+        .wrap( GL_CLAMP_TO_EDGE )
+        .dataType( GL_HALF_FLOAT );
+        
+        auto depthFmt = gl::Texture2d::Format()
+        .internalFormat( GL_DEPTH_COMPONENT32F )
+        .magFilter( GL_LINEAR )
+        .minFilter( GL_LINEAR )
+        .wrap( GL_CLAMP_TO_EDGE )
+        .dataType( GL_FLOAT );
+        
+        GBuffer::Format fmt;
+        fmt.attachment(GL_COLOR_ATTACHMENT0, colorFmt, "uAlbedo");
+        fmt.attachment(GL_COLOR_ATTACHMENT1, dataFmt, "uData");
+        fmt.depthTexture(depthFmt);
+        
+        mGBuffer = GBuffer::create( getWindowSize(), fmt);
+        
+        ec::Controller::get()->scene().lock()->manager()->queueEvent( ShareGeometryDepthTextureEvent::create( mGBuffer->getDepthTexture() ) );
+        ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::REGISTER, ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        
+        mInitialized = true;
+    }
     return true;
 }
 
 GBufferPass::GBufferPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_gbuffer_pass" ) ),mShuttingDown(false),mPriority(1)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &GBufferPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
+
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
 }
 
 GBufferPass::~GBufferPass()
 {
-    if(!mShuttingDown)unregisterHandlers();
+}
+
+void GBufferPass::cleanup()
+{
+    unregisterHandlers();
 }
 
 const ec::ComponentNameType GBufferPass::getName() const

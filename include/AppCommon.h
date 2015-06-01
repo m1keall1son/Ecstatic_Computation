@@ -12,6 +12,7 @@
 
 using SceneFactoryRef = std::shared_ptr<class SceneFactory>;
 using TunnelSceneRef = std::shared_ptr<class TunnelScene>;
+using TransistorSceneRef = std::shared_ptr<class TransistorScene>;
 
 ///COMPONENTS
 using ComponentTemplateRef = std::shared_ptr<class ComponentTemplate>;
@@ -56,6 +57,7 @@ using ForwardPassRef = std::shared_ptr< class ForwardPass >;
 using CullEventRef = std::shared_ptr<class CullEvent>;
 using UpdateEventRef = std::shared_ptr<class UpdateEvent>;
 using DrawEventRef = std::shared_ptr<class DrawEvent>;
+using DrawDeferredDebugEventRef = std::shared_ptr<class DrawDeferredDebugEvent>;
 using DrawToMainBufferEventRef = std::shared_ptr<class DrawToMainBufferEvent>;
 using DrawToRiftBufferEventRef = std::shared_ptr<class DrawToRiftBufferEvent>;
 using DrawDebugEventRef = std::shared_ptr<class DrawDebugEvent>;

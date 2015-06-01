@@ -46,35 +46,48 @@ void ShadowPass::handleSceneChange( ec::EventDataRef )
 
 void ShadowPass::registerHandlers()
 {
-    
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
+
 }
 void ShadowPass::unregisterHandlers()
 {
-    
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 
 bool ShadowPass::initialize( const ci::JsonTree &tree )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    
+    try {
+        mShadowMapSize = tree["size"].getValue<int>();
+    } catch (ci::JsonTree::ExcChildNotFound e) {
+        CI_LOG_E("size not found, defaulting to 1024");
+        mShadowMapSize = 1024;
+    }
+    
     return true;
 }
 
 
 bool ShadowPass::postInit()
 {
-    
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+    if(!mInitialized){
+        
+        mShadowMap = ShadowMap::create(mShadowMapSize);
+        
+        ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::REGISTER, ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized = true;
+    }
     ///this could reflect errors...
     return true;
 }
 
 ShadowPass::ShadowPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_shadow_pass" ) ),mShuttingDown(false),mPriority(0)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ShadowPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
@@ -82,7 +95,11 @@ ShadowPass::ShadowPass( ec::Actor* context ): PassBase( context ), mId( ec::getH
 
 ShadowPass::~ShadowPass()
 {
-    if(!mShuttingDown)unregisterHandlers();
+}
+
+void ShadowPass::cleanup()
+{
+    unregisterHandlers();
 }
 
 const ec::ComponentNameType ShadowPass::getName() const
@@ -105,6 +122,9 @@ ci::JsonTree ShadowPass::serialize()
     auto save = ci::JsonTree();
     save.addChild( ci::JsonTree( "type", getName() ) );
     save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
+    auto shadow_map = ci::JsonTree::makeObject("shadowMap");
+    shadow_map.addChild( ci::JsonTree( "size", mShadowMapSize ) );
+    save.addChild(shadow_map);
     
     return save;
     

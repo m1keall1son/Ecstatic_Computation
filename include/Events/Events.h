@@ -50,6 +50,25 @@ class DrawDebugEvent : public ec::EventData {
         DrawDebugEvent();
 };
 
+class DrawDeferredDebugEvent : public ec::EventData {
+public:
+    
+    static ec::EventType TYPE;
+    
+    static DrawDeferredDebugEventRef create();
+    
+    ~DrawDeferredDebugEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+private:
+    DrawDeferredDebugEvent();
+};
+
 class CullEvent : public ec::EventData {
 public:
     
@@ -116,7 +135,7 @@ public:
     
     static ec::EventType TYPE;
     
-    static DrawToRiftBufferEventRef create( const Style& style );
+    static DrawToRiftBufferEventRef create( const Style& style, int eye = 0 );
     
     ~DrawToRiftBufferEvent(){}
     ec::EventDataRef copy(){ return ec::EventDataRef(); }
@@ -127,10 +146,12 @@ public:
     void deSerialize( const ci::Buffer &streamIn ){}
     
     inline Style getStyle(){ return mStyle; }
+    inline int getEye(){ return mEye; }
     
 private:
-    DrawToRiftBufferEvent(const Style& style );
+    DrawToRiftBufferEvent(const Style& style, int eye );
     Style mStyle;
+    int mEye;
 };
 
 
@@ -240,12 +261,13 @@ class ComponentRegistrationEvent : public ec::EventData {
 public:
     
     enum RegistrationType { CAMERA, LIGHT, PASS, DEBUG_COMPONENT };
-    
+    enum Registration { REGISTER, UNREGISTER };
+
     static ec::EventType TYPE;
     
     ///TODO: this is the only unsafe pplace for components
     
-    static ComponentRegistrationEventRef create( const RegistrationType &type, const ec::ActorUId& actor, ec::ComponentBaseRef component );
+    static ComponentRegistrationEventRef create( const Registration& reg, const RegistrationType &type, const ec::ActorUId& actor, ec::ComponentBaseRef component );
     
     ~ComponentRegistrationEvent(){}
     ec::EventDataRef copy(){ return ec::EventDataRef(); }
@@ -258,12 +280,14 @@ public:
     inline RegistrationType& getType(){ return mType; }
     inline ec::ActorUId& getActorUId(){ return mActor; }
     inline ec::ComponentBaseRef getComponentBase(){ return mComponent; }
+    inline Registration getRegistration(){ return mReg; }
 
 private:
-    ComponentRegistrationEvent( const RegistrationType &type, const ec::ActorUId& actor, ec::ComponentBaseRef component );
+    ComponentRegistrationEvent(  const Registration& reg, const RegistrationType &type, const ec::ActorUId& actor, ec::ComponentBaseRef component );
     RegistrationType mType;
     ec::ActorUId mActor;
     ec::ComponentBaseRef mComponent;
+    Registration mReg;
 };
 
 class FinishRenderEvent : public ec::EventData {

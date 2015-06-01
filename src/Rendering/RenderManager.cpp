@@ -65,11 +65,15 @@ void RenderManager::handleShutDown( ec::EventDataRef )
 void RenderManager::handleSceneChange( ec::EventDataRef )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" handle scene change");
-    if(mContext->isPersistent())registerHandlers();
+    if(mContext->isPersistent()){
+        registerHandlers();
+    }
 }
 
 void RenderManager::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &RenderManager::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &RenderManager::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &RenderManager::handleDraw), DrawEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate( this, &RenderManager::handlePassRegistration), ComponentRegistrationEvent::TYPE);
@@ -77,6 +81,8 @@ void RenderManager::registerHandlers()
 }
 void RenderManager::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &RenderManager::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &RenderManager::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &RenderManager::handleDraw), DrawEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this, &RenderManager::handlePassRegistration), ComponentRegistrationEvent::TYPE);
@@ -111,17 +117,17 @@ void RenderManager::handleDraw(ec::EventDataRef)
 
 bool RenderManager::postInit()
 {
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+    if(!mInitialized){
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized= true;
+    }
     ///this could reflect errors...
     return true;
 }
 
 RenderManager::RenderManager( ec::Actor* context ): ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_render_manager" ) ),mShuttingDown(false)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &RenderManager::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &RenderManager::handleSceneChange), ec::SceneChangeEvent::TYPE);
+  
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
@@ -129,7 +135,11 @@ RenderManager::RenderManager( ec::Actor* context ): ec::ComponentBase( context )
 
 RenderManager::~RenderManager()
 {
-    if(!mShuttingDown)unregisterHandlers();
+}
+
+void RenderManager::cleanup()
+{
+    unregisterHandlers();
 }
 
 const ec::ComponentNameType RenderManager::getName() const

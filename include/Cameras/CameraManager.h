@@ -44,6 +44,7 @@ private:
     bool                                    mCameraSet;
     CameraComponent::CameraType             mCurrentCamera;
     ec::IdType                              mId;
+    ci::signals::Connection                 mKeyUpConnection;
     
     friend class AppSceneBase;
     

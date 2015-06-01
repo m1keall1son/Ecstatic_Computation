@@ -41,13 +41,21 @@ DebugComponent::DebugComponent( ec::Actor * context ): ec::ComponentBase(context
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     registerHandlers();
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleShutDown ), ec::ShutDownEvent::TYPE );
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleSceneChange ), ec::SceneChangeEvent::TYPE );
+   
 }
 
 DebugComponent::~DebugComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
+    if(!mShuttingDown){
+  
+    }
+}
+
+void DebugComponent::cleanup()
+{
+    unregisterHandlers();
+    auto scene = ec::Controller::get()->scene().lock();
+    scene->manager()->triggerEvent( ComponentRegistrationEvent::create( ComponentRegistrationEvent::UNREGISTER, ComponentRegistrationEvent::RegistrationType::DEBUG_COMPONENT, mContext->getUId(), shared_from_this()) );
 }
 
 void DebugComponent::handleSceneChange( ec::EventDataRef )
@@ -58,12 +66,16 @@ void DebugComponent::handleSceneChange( ec::EventDataRef )
 
 void DebugComponent::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleShutDown ), ec::ShutDownEvent::TYPE );
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleSceneChange ), ec::SceneChangeEvent::TYPE );
     ///TODO: need to grab out all the geometry from context and create an aa_bounding_box
     auto scene = ec::Controller::get()->scene().lock();
    // scene->manager()->addListener(fastdelegate::MakeDelegate( this , &DebugComponent::draw), DrawDebugEvent::TYPE);
 }
 void DebugComponent::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleShutDown ), ec::ShutDownEvent::TYPE );
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate(this, &DebugComponent::handleSceneChange ), ec::SceneChangeEvent::TYPE );
     auto scene = ec::Controller::get()->scene().lock();
     //scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &DebugComponent::draw), DrawDebugEvent::TYPE);
 
@@ -77,10 +89,14 @@ void DebugComponent::handleShutDown( ec::EventDataRef )
 
 bool DebugComponent::postInit()
 {
+    if(!mInitialized){
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
 
     auto scene = ec::Controller::get()->scene().lock();
-    scene->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::DEBUG_COMPONENT, mContext->getUId(), shared_from_this()) );
+        scene->manager()->queueEvent( ComponentRegistrationEvent::create( ComponentRegistrationEvent::REGISTER, ComponentRegistrationEvent::RegistrationType::DEBUG_COMPONENT, mContext->getUId(), shared_from_this()) );
+        
+        mInitialized = true;
+    }
     return true;
 }
 

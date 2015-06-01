@@ -39,11 +39,13 @@ void FXAAPass::handleSceneChange( ec::EventDataRef )
 
 void FXAAPass::registerHandlers()
 {
-    
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &FXAAPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &FXAAPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 void FXAAPass::unregisterHandlers()
 {
-    
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &FXAAPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &FXAAPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 
 bool FXAAPass::initialize( const ci::JsonTree &tree )
@@ -55,30 +57,31 @@ bool FXAAPass::initialize( const ci::JsonTree &tree )
 
 bool FXAAPass::postInit()
 {
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
-    try {
-        mFXAARender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/pass.vert")).fragment(loadAsset("shaders/fxaa.frag")).preprocess(true) );
-    } catch (gl::GlslProgCompileExc e) {
-        CI_LOG_E(e.what());
+    if(!mInitialized){
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        
+        try {
+            mFXAARender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/pass.vert")).fragment(loadAsset("shaders/fxaa.frag")).preprocess(true) );
+        } catch (gl::GlslProgCompileExc e) {
+            CI_LOG_E(e.what());
+        }
+        
+        mFXAARender->uniform( "uSampler", 4 );
+        mFXAARender->uniform( "uPixel", vec2(1.) / vec2(getWindowSize()) );
+        
+        mScreenQuad = gl::Batch::create(geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)), mFXAARender);
+        
+        ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create( ComponentRegistrationEvent::REGISTER, ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+        
+        mInitialized = true;
     }
-    
-    mFXAARender->uniform( "uSampler", 4 );
-    mFXAARender->uniform( "uPixel", vec2(1.) / vec2(getWindowSize()) );
-    
-    mScreenQuad = gl::Batch::create(geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)), mFXAARender);
-    
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
-    
     ///this could reflect errors...
     return true;
 }
 
 FXAAPass::FXAAPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_FXAA_pass" ) ),mShuttingDown(false), mPriority(3)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &FXAAPass::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &FXAAPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
+   
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
@@ -86,7 +89,11 @@ FXAAPass::FXAAPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash(
 
 FXAAPass::~FXAAPass()
 {
-    if(!mShuttingDown)unregisterHandlers();
+}
+
+void FXAAPass::cleanup()
+{
+    unregisterHandlers();
 }
 
 const ec::ComponentNameType FXAAPass::getName() const

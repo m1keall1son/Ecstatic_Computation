@@ -35,11 +35,13 @@ void ComponentTemplate::handleSceneChange( ec::EventDataRef )
 
 void ComponentTemplate::registerHandlers()
 {
-    
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ComponentTemplate::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ComponentTemplate::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 void ComponentTemplate::unregisterHandlers()
 {
-    
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &ComponentTemplate::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &ComponentTemplate::handleSceneChange), ec::SceneChangeEvent::TYPE);
 }
 
 bool ComponentTemplate::initialize( const ci::JsonTree &tree )
@@ -48,10 +50,17 @@ bool ComponentTemplate::initialize( const ci::JsonTree &tree )
     return true;
 }
 
+void ComponentTemplate::cleanup()
+{
+    unregisterHandlers();
+}
 
 bool ComponentTemplate::postInit()
 {
-    
+    if(!mInitialized){
+        
+        mInitialized = true;
+    }
     
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
@@ -62,24 +71,14 @@ bool ComponentTemplate::postInit()
 
 ComponentTemplate::ComponentTemplate( ec::Actor* context ): ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_template" ) ),mShuttingDown(false)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &ComponentTemplate::handleShutDown), ec::ShutDownEvent::TYPE);
+  
     registerHandlers();
-    
-    auto window = ci::app::getWindow();
-    window->getSignalMouseUp().connect( std::bind( &ComponentTemplate::mouseUp, this , std::placeholders::_1 ) );
-    window->getSignalMouseDown().connect( std::bind( &ComponentTemplate::mouseDown, this , std::placeholders::_1 ) );
-    window->getSignalMouseDrag().connect( std::bind( &ComponentTemplate::mouseDrag, this , std::placeholders::_1 ) );
-    window->getSignalMouseMove().connect( std::bind( &ComponentTemplate::mouseMove, this , std::placeholders::_1 ) );
-    window->getSignalKeyDown().connect( std::bind( &ComponentTemplate::keyDown, this , std::placeholders::_1 ) );
-    window->getSignalKeyUp().connect( std::bind( &ComponentTemplate::keyUp, this , std::placeholders::_1 ) );
-    
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
 }
 
 ComponentTemplate::~ComponentTemplate()
 {
-    if(!mShuttingDown)unregisterHandlers();
 }
 
 const ec::ComponentNameType ComponentTemplate::getName() const

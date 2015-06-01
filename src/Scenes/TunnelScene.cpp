@@ -25,6 +25,7 @@
 #include "GBuffer.h"
 #include "OculusRiftComponent.h"
 #include "DebugManager.h"
+#include "cinder/Perlin.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -38,9 +39,27 @@ TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelS
 {
     //initialize stuff
     CI_LOG_V("Tunnel scene constructed");
+}
+
+std::vector<ec::ActorUId> TunnelScene::shutdown(){
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &TunnelScene::shutDown), ec::ShutDownEvent::TYPE);
+    return ec::Scene::shutdown();
+}
+
+TunnelScene::~TunnelScene()
+{
+}
+
+void TunnelScene::initialize(const ci::JsonTree &init)
+{
+    //init super
+    AppSceneBase::initialize(init);
+    
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::shutDown), ec::ShutDownEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::handlePresentScene), FinishRenderEvent::TYPE);
     
+    CI_LOG_V("Tunnel scene initialized");
+
 }
 
 void TunnelScene::shutDown(ec::EventDataRef)
@@ -63,6 +82,7 @@ void TunnelScene::update()
     auto tunnel = ec::ActorManager::get()->retreiveUnique(ec::getHash("tunnel")).lock();
     auto main_camera_actor = ec::ActorManager::get()->retreiveUnique(ec::getHash("main_camera")).lock();
     auto follow_light = ec::ActorManager::get()->retreiveUnique(ec::getHash("follow_light")).lock();
+    auto follow_light_2 = ec::ActorManager::get()->retreiveUnique(ec::getHash("follow_light_2")).lock();
     auto head_lamp = ec::ActorManager::get()->retreiveUnique(ec::getHash("head_lamp")).lock();
 
     auto tunnel_transform = tunnel->getComponent<ec::TransformComponent>().lock();
@@ -75,27 +95,41 @@ void TunnelScene::update()
         mTunnelSamplePt += mTunnelSpeed*.005;
     }
     
+    Perlin p;
+    
     static float light_sample = 0.;
     light_sample+=.001;
     
     auto sample_pt = ci::constrain( mTunnelSamplePt , 0.f, 1.f);
+    
+    if( mTunnelSamplePt > .99 ){
+        ec::Controller::get()->eventManager()->queueEvent(ec::RequestSceneChangeEvent::create());
+        return;
+    }
+    
     auto new_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(sample_pt);
     camera_transform->setTranslation( new_pos );
     
-    auto lamp = std::dynamic_pointer_cast<SpotLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
+    auto lamp = std::dynamic_pointer_cast<PointLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
     lamp->setPosition( new_pos + vec3( 0,2,0 ) );
     lamp->pointAt( main_camera_actor->getComponent<CameraComponent>().lock()->getCamera().getCenterOfInterestPoint() );
-    
+
     tunnel_component->getNoiseScale() = .5 + sample_pt*2.;
     
     auto light = std::dynamic_pointer_cast<PointLight>(follow_light->getComponent<LightComponent>().lock()->getLight());
+    auto light2 = std::dynamic_pointer_cast<PointLight>(follow_light_2->getComponent<LightComponent>().lock()->getLight());
+
     if( light_sample > .99){
         light_sample = 0.;
     }
     auto light_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(light_sample);
-    light->setPosition( light_pos + vec3( 6.*cos(light_pos.z*.04), 6.*sin(light_pos.z*.0153), 0.) );
     
+    light->setPosition( light_pos + vec3( 6. * cos(light_pos.z * .04), 6. * sin(light_pos.z * .0153), 0.) );
+    light2->setPosition( light_pos + vec3( 7. * cos(light_pos.z * .01), 4. * sin(light_pos.z * .0453), 4.*cos( getElapsedSeconds() ) ) );
     
+    light->setIntensity( light->getIntensity() + cos( light_pos.z * .03 ) * .0096 );
+    light2->setIntensity( light2->getIntensity() + sin( light_pos.z * .01 ) * .01 );
+
     CI_LOG_V("update components event triggered");
     mSceneManager->triggerEvent( UpdateEvent::create() );
     
@@ -114,7 +148,6 @@ void TunnelScene::draw()
     ///DRAW SHADOWS
     CI_LOG_V("firing draw command");
     manager()->triggerEvent(DrawEvent::create());
-    if( ec::Controller::get()->debugEnabled() )manager()->triggerEvent(DrawDebugEvent::create());
 }
 
 void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)

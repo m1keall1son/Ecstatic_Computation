@@ -35,9 +35,7 @@ KinectComponent::KinectComponent( ec::Actor * context ): ec::ComponentBase(conte
 {
     ///TODO: need to grab out all the geometry from context and create an aa_bounding_box
 
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
-    
+   
     registerListeners();
     
     auto params = Kinect::FreenectParams();
@@ -50,7 +48,11 @@ KinectComponent::KinectComponent( ec::Actor * context ): ec::ComponentBase(conte
 
 KinectComponent::~KinectComponent()
 {
-    if(!mShuttingDown)unregisterListeners();
+}
+
+void KinectComponent::cleanup()
+{
+    unregisterListeners();
 }
 
 void KinectComponent::handleShutDown( ec::EventDataRef )
@@ -66,6 +68,9 @@ void KinectComponent::handleSceneChange( ec::EventDataRef )
 
 void KinectComponent::registerListeners()
 {
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
@@ -74,6 +79,9 @@ void KinectComponent::registerListeners()
 }
 void KinectComponent::unregisterListeners()
 {
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
     auto scene = ec::Controller::get()->scene().lock();
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &KinectComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate( this , &KinectComponent::update), UpdateEvent::TYPE);
@@ -130,17 +138,18 @@ void KinectComponent::handleReloadGlslProg(ec::EventDataRef)
 
 bool KinectComponent::postInit()
 {
-    
-    mKinectColorTexture	= gl::Texture::create( mKinect->getWidth(), mKinect->getHeight(), gl::Texture::Format().internalFormat(GL_RGB).minFilter(GL_LINEAR).magFilter(GL_LINEAR) );
-    
-    mKinectDepthTexture	= gl::Texture::create( mKinect->getWidth(), mKinect->getHeight(), gl::Texture::Format().internalFormat(GL_R16UI).dataType(GL_UNSIGNED_SHORT).minFilter(GL_NEAREST).magFilter(GL_NEAREST) );
-    
-    handleReloadGlslProg(ec::EventDataRef());
-    
-    mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)), mKinectRender );
-    
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
+    if(!mInitialized){
+        mKinectColorTexture	= gl::Texture::create( mKinect->getWidth(), mKinect->getHeight(), gl::Texture::Format().internalFormat(GL_RGB).minFilter(GL_LINEAR).magFilter(GL_LINEAR) );
+        
+        mKinectDepthTexture	= gl::Texture::create( mKinect->getWidth(), mKinect->getHeight(), gl::Texture::Format().internalFormat(GL_R16UI).dataType(GL_UNSIGNED_SHORT).minFilter(GL_NEAREST).magFilter(GL_NEAREST) );
+        
+        handleReloadGlslProg(ec::EventDataRef());
+        
+        mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)), mKinectRender );
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        mInitialized = true;
+    }
     return true;
 }
 

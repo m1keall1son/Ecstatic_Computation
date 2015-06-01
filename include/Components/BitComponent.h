@@ -28,7 +28,8 @@ public:
     const ec::ComponentUId        getId() const override;
     const ec::ComponentType       getType() const override;
     void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
-
+    void                          cleanup()override;
+    
     bool postInit()override;
     
     

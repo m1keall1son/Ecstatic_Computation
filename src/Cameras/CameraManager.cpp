@@ -47,10 +47,14 @@ CameraManager::CameraManager():mShuttingDown(false),mId( ec::getHash("camera_man
     mDefaultCamera.lookAt(ci::vec3(0,0,1),ci::vec3(0));
     mUI.setCurrentCam(mDefaultCamera);
     
-    auto window = ci::app::getWindow();
     //window->getSignalKeyDown().connect( std::bind( &CameraManager::keyDown, this , std::placeholders::_1 ) );
-    window->getSignalKeyUp().connect( std::bind( &CameraManager::keyUp, this , std::placeholders::_1 ) );
+    //window->getSignalKeyUp().connect( std::bind( &CameraManager::keyUp, this , std::placeholders::_1 ) );
     
+    //TODO, find out ehy the fuck this doesn't work?
+    if( ec::Controller::isRiftEnabled() ){
+        auto window = ci::app::getWindow();
+        mKeyUpConnection = window->getSignalKeyUp().connect( 0, [this]( app::KeyEvent &event ) { keyUp( event ); } );
+    }
 }
 
 void CameraManager::handleShutDown(ec::EventDataRef)
@@ -65,6 +69,7 @@ CameraManager::~CameraManager()
     if(!mShuttingDown){
         ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &CameraManager::handleShutDown), ec::ShutDownEvent::TYPE);
     }
+    mUI.disconnect();
 }
 
 void CameraManager::updateCamera(ec::EventDataRef)
@@ -114,17 +119,44 @@ void CameraManager::handleCameraRegistration( ec::EventDataRef event )
     
     if( e->getType() == ComponentRegistrationEvent::RegistrationType::CAMERA ){
         
-        auto cam_component = std::dynamic_pointer_cast<CameraComponent>(e->getComponentBase());
-        
-        CI_LOG_V("Registering camera");
-        auto cam_type =  cam_component->getCamType();
-        mCameras.insert( std::make_pair( cam_type , e->getActorUId() ) );
-        if( cam_type == CameraComponent::CameraType::DEBUG_CAMERA && !ec::Controller::isRiftEnabled() ){
-            auto & cam = cam_component->getCamera();
-            mUI.setCurrentCam(cam);
+        switch (e->getRegistration()) {
+            case ComponentRegistrationEvent::REGISTER:
+            {
+                auto cam_component = std::dynamic_pointer_cast<CameraComponent>(e->getComponentBase());
+                
+                CI_LOG_V("Registering camera");
+                auto cam_type =  cam_component->getCamType();
+                mCameras.insert( std::make_pair( cam_type , e->getActorUId() ) );
+                if( cam_type == CameraComponent::CameraType::DEBUG_CAMERA && !ec::Controller::isRiftEnabled() ){
+                    auto & cam = cam_component->getCamera();
+                    mUI.setCurrentCam(cam);
+                }
+            }
+                break;
+                
+            case ComponentRegistrationEvent::UNREGISTER:
+            {
+                auto cam_component = std::dynamic_pointer_cast<CameraComponent>(e->getComponentBase());
+                CI_LOG_V("Unregistering camera");
+                auto it = mCameras.begin();
+                auto end = mCameras.end();
+                while( it != end ){
+                    if( it->second == e->getActorUId() ){
+                        mCameras.erase(it);
+                        break;
+                    }
+                    ++it;
+                }
+            }
+                break;
+            default:
+                break;
         }
+        
+
     }
 }
+
 
 void CameraManager::keyUp(ci::app::KeyEvent & event)
 {
@@ -134,16 +166,16 @@ void CameraManager::keyUp(ci::app::KeyEvent & event)
         auto cam = ec::ActorManager::get()->retreiveUnique(cur_cam_id).lock()->getComponent<CameraComponent>().lock()->getCamera();
         
         if(event.getCode() == KeyEvent::KEY_UP){
-            cam.setEyePoint( cam.getEyePoint() + vec3( 0.,0,-.1 ) );
+            cam.setEyePoint( cam.getEyePoint() + vec3( 0.,0,-10. ) );
         }
         else if(event.getCode() == KeyEvent::KEY_DOWN){
-            cam.setEyePoint( cam.getEyePoint() + vec3( 0.,.0,.1 ) );
+            cam.setEyePoint( cam.getEyePoint() + vec3( 0.,.0,10. ) );
         }
         else if(event.getCode() == KeyEvent::KEY_LEFT){
-            cam.setEyePoint( cam.getEyePoint() + vec3( -.1,.0,.0 ) );
+            cam.setEyePoint( cam.getEyePoint() + vec3( -10.,.0,.0 ) );
         }
         else if(event.getCode() == KeyEvent::KEY_RIGHT){
-            cam.setEyePoint( cam.getEyePoint() + vec3( .1,.0,.0 ) );
+            cam.setEyePoint( cam.getEyePoint() + vec3( 10.,.0,.0 ) );
         }
     }
 }

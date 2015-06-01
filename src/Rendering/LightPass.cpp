@@ -53,6 +53,8 @@ void LightPass::handleSceneChange( ec::EventDataRef )
 
 void LightPass::registerHandlers()
 {
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &LightPass::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
@@ -60,6 +62,8 @@ void LightPass::registerHandlers()
 }
 void LightPass::unregisterHandlers()
 {
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightPass::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener( fastdelegate::MakeDelegate( this, &LightPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &LightPass::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
 }
@@ -99,32 +103,37 @@ void LightPass::handleGlslProgReload(ec::EventDataRef)
 bool LightPass::postInit()
 {
 
-    handleGlslProgReload(ec::EventDataRef());
-    
-    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    
-    mSSLightingRender->uniformBlock("uLights", scene->lights()->getLightUboLocation());
-    mSSLightingRender->uniform("uShadowMap", 3);
-    mSSLightingRender->uniform("uGBufferDepthTexture", 10);
-    mSSLightingRender->uniform("uData", 11);
-    mSSLightingRender->uniform("uAlbedo", 12);
-    
-    mSSLightingRiftRender->uniformBlock("uLights", scene->lights()->getLightUboLocation());
-    mSSLightingRiftRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation() );
-    mSSLightingRiftRender->uniform("uShadowMap", 3);
-    mSSLightingRiftRender->uniform("uGBufferDepthTexture", 10);
-    mSSLightingRiftRender->uniform("uData", 11);
-    mSSLightingRiftRender->uniform("uAlbedo", 12);
-    
-    if(ec::Controller::isRiftEnabled())
-        mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRiftRender);
-    else
-        mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRender);
-
-
-    CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
-    
-    ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+    if(!mInitialized){
+        
+        handleGlslProgReload(ec::EventDataRef());
+        
+        auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+        
+        mSSLightingRender->uniformBlock("uLights", scene->lights()->getLightUboLocation());
+        mSSLightingRender->uniform("uShadowMap", 3);
+        mSSLightingRender->uniform("uGBufferDepthTexture", 10);
+        mSSLightingRender->uniform("uData", 11);
+        mSSLightingRender->uniform("uAlbedo", 12);
+        
+        mSSLightingRiftRender->uniformBlock("uLights", scene->lights()->getLightUboLocation());
+        mSSLightingRiftRender->uniformBlock("uRift", OculusRiftComponent::getRiftUboLocation() );
+        mSSLightingRiftRender->uniform("uShadowMap", 3);
+        mSSLightingRiftRender->uniform("uGBufferDepthTexture", 10);
+        mSSLightingRiftRender->uniform("uData", 11);
+        mSSLightingRiftRender->uniform("uAlbedo", 12);
+        
+        if(ec::Controller::isRiftEnabled())
+            mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRiftRender);
+        else
+            mScreenSpace = gl::Batch::create( geom::Plane().size(getWindowSize()).origin(vec3(getWindowCenter(),0.)).normal(vec3(0,0,1)) , mSSLightingRender);
+        
+        
+        CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
+        
+        ec::Controller::get()->scene().lock()->manager()->queueEvent( ComponentRegistrationEvent::create(ComponentRegistrationEvent::REGISTER, ComponentRegistrationEvent::RegistrationType::PASS, mContext->getUId(), shared_from_this() ) );
+        
+        mInitialized = true;
+    }
     
     ///this could reflect errors...
     return true;
@@ -132,8 +141,7 @@ bool LightPass::postInit()
 
 LightPass::LightPass( ec::Actor* context ): PassBase( context ), mId( ec::getHash( context->getName() + "_light_pass" ) ),mShuttingDown(false),mPriority(2)
 {
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightPass::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener( fastdelegate::MakeDelegate( this, &LightPass::handleSceneChange), ec::SceneChangeEvent::TYPE);
+    
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
@@ -141,7 +149,11 @@ LightPass::LightPass( ec::Actor* context ): PassBase( context ), mId( ec::getHas
 
 LightPass::~LightPass()
 {
-    if(!mShuttingDown)unregisterHandlers();
+}
+
+void LightPass::cleanup()
+{
+    unregisterHandlers();
 }
 
 const ec::ComponentNameType LightPass::getName() const

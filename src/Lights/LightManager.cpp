@@ -19,6 +19,7 @@
 #include "CameraManager.h"
 #include "AppSceneBase.h"
 #include "Events.h"
+#include "OculusRiftComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -70,25 +71,49 @@ void LightManager::handleShutDown(ec::EventDataRef)
     mShuttingDown = true;
 }
 
-void LightManager::initShadowMap(const ci::JsonTree &init)
-{
-    try {
-        
-        auto size = init["size"].getValue<int>();
-        mShadowMap = ShadowMap::create(size);
-        
-    } catch (const ci::JsonTree::ExcChildNotFound &e) {
-        CI_LOG_W("shadow map size not found, creating default size 1024");
-        mShadowMap = ShadowMap::create(1024);
-    }
-}
+//void LightManager::initShadowMap(const ci::JsonTree &init)
+//{
+//    try {
+//        
+//        auto size = init["size"].getValue<int>();
+//        mShadowMap = ShadowMap::create(size);
+//        
+//    } catch (const ci::JsonTree::ExcChildNotFound &e) {
+//        CI_LOG_W("shadow map size not found, creating default size 1024");
+//        mShadowMap = ShadowMap::create(1024);
+//    }
+//}
 
 void LightManager::handleLightRegistration( ec::EventDataRef event )
 {
     auto e = std::dynamic_pointer_cast<ComponentRegistrationEvent>( event );
     if( e->getType() == ComponentRegistrationEvent::RegistrationType::LIGHT ){
         CI_LOG_V("Registering light");
-        mLights.push_back( e->getActorUId() );
+        
+        switch (e->getRegistration()) {
+            case ComponentRegistrationEvent::REGISTER:
+            {
+                mLights.push_back( e->getActorUId() );
+
+            }
+                break;
+            case ComponentRegistrationEvent::UNREGISTER:
+            {
+                auto it = mLights.begin();
+                auto end = mLights.end();
+                while (it != end) {
+                    if( (*it) == e->getActorUId() ){
+                        mLights.erase( it );
+                    }
+                    ++it;
+                }
+            }
+                break;
+                
+            default:
+                break;
+        }
+        
     }
 }
 
@@ -118,18 +143,47 @@ void LightManager::update() {
     
     if( updateAll ){
         
-        auto viewMat = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() )->cameras()->getActiveCamera().getViewMatrix();
+        if(ec::Controller::isRiftEnabled()){
+            
+            auto rift = ec::ActorManager::get()->retreiveUnique(ec::getHash("rift")).lock();
+            auto rift_component = rift->getComponent<OculusRiftComponent>().lock();
+            auto oculus = rift_component->getRift();
+            mat4 views[2];
+            for(auto & eye : oculus->getEyes()){
+                oculus->enableEye( eye, false );
+                views[(int)eye] = oculus->getViewMatrix();
+            }
+            
+            Lights lights;
+            lights.numLights = activeLights.size();
+            lights.upDirection = views[0] * vec4( 0, 1, 0, 0 );
+            
+            for( size_t i = 0; i < activeLights.size(); ++i ) {
+                Light::Data light_r = activeLights[i]->getData( getElapsedSeconds(), views[0] );
+                Light::Data light_l = activeLights[i]->getData( getElapsedSeconds(), views[1] );
+                lights.data[ i * 2 ] = light_r;
+                lights.data[ i * 2 + 1] = light_l;
+            }
+            
+            mLightUbo->bufferSubData( 0, sizeof( Lights ), &lights );
+            
+        }else{
         
-        Lights lights;
-        lights.numLights = activeLights.size();
-        lights.upDirection = viewMat * vec4( 0, 1, 0, 0 );
-        
-        for( size_t i = 0; i < activeLights.size(); ++i ) {
-            Light::Data light = activeLights[i]->getData( getElapsedSeconds(), viewMat );
-            lights.data[i] = light;
+            auto viewMat = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() )->cameras()->getActiveCamera().getViewMatrix();
+            
+            Lights lights;
+            lights.numLights = activeLights.size();
+            lights.upDirection = viewMat * vec4( 0, 1, 0, 0 );
+            
+            for( size_t i = 0; i < activeLights.size(); ++i ) {
+                Light::Data light = activeLights[i]->getData( getElapsedSeconds(), viewMat );
+                lights.data[i] = light;
+            }
+            
+            mLightUbo->bufferSubData( 0, sizeof( Lights ), &lights );
+
         }
         
-        mLightUbo->bufferSubData( 0, sizeof( Lights ), &lights );
         
     }
     

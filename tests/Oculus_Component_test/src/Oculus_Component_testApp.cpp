@@ -86,7 +86,7 @@ void Oculus_Component_test::cleanup()
 
 void prepareSettings( App::Settings*settings )
 {
-    ec::Controller::initializeRift();
+    ec::Controller::initializeRift(false);
     
     if( ec::Controller::isRiftEnabled() ){
         settings->disableFrameRate();
@@ -94,7 +94,6 @@ void prepareSettings( App::Settings*settings )
     }else{
         settings->setFullScreen();
     }
-    
 }
 
-CINDER_APP( Oculus_Component_test, RendererGl( RendererGl::Options().msaa(0) ), prepareSettings )
+CINDER_APP( Oculus_Component_test, RendererGl( RendererGl::Options().msaa(4) ), prepareSettings )

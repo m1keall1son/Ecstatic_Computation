@@ -42,6 +42,8 @@ void BitComponent::registerHandlers()
 {
     //TODO this should be in initilialize with ryan's code
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
@@ -50,6 +52,8 @@ void BitComponent::registerHandlers()
 void BitComponent::unregisterHandlers()
 {
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::handleShutDown), ec::ShutDownEvent::TYPE);
+    ec::Controller::get()->eventManager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::handleGlslProgReload), ReloadGlslProgEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &BitComponent::update), UpdateEvent::TYPE);
@@ -66,7 +70,10 @@ void BitComponent::update(ec::EventDataRef event )
 
 bool BitComponent::initialize( const ci::JsonTree &tree )
 {
-    CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    if(!mInitialized){
+        CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+        mInitialized = true;
+    }
     return true;
 }
 
@@ -149,17 +156,17 @@ bool BitComponent::postInit()
 
 BitComponent::BitComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_bit_component" ) ),mShuttingDown(false)
 {
-    
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleShutDown), ec::ShutDownEvent::TYPE);
-    ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &BitComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
     registerHandlers();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
-    
+}
+
+void BitComponent::cleanup()
+{
+    unregisterHandlers();
 }
 
 BitComponent::~BitComponent()
 {
-    if(!mShuttingDown)unregisterHandlers();
 }
 
 const ec::ComponentNameType BitComponent::getName() const

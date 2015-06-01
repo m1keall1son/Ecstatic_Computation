@@ -70,6 +70,10 @@
 		4F07086B1B1A0CE400A7A450 /* tunnel_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */; };
 		4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */; };
 		4F0708711B1A16E400A7A450 /* DebugManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F0708701B1A16E400A7A450 /* DebugManager.cpp */; };
+		4F4FB4781B1B66BB000D4752 /* tunnel_basic_stereo.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4751B1B66BB000D4752 /* tunnel_basic_stereo.frag */; };
+		4F4FB4791B1B66BB000D4752 /* tunnel_basic_stereo.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4761B1B66BB000D4752 /* tunnel_basic_stereo.geom */; };
+		4F4FB47A1B1B66BB000D4752 /* tunnel_basic_stereo.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4771B1B66BB000D4752 /* tunnel_basic_stereo.vert */; };
+		4F4FB47D1B1B7DC4000D4752 /* TransistorScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */; };
 		4FEA35401B1A5F4E001513D8 /* ForwardPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */; };
 		4FEA35441B1A653E001513D8 /* tunnel_rift.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35411B1A653E001513D8 /* tunnel_rift.frag */; };
 		4FEA35451B1A653E001513D8 /* tunnel_rift.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35421B1A653E001513D8 /* tunnel_rift.geom */; };
@@ -194,6 +198,11 @@
 		4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.vert; sourceTree = "<group>"; };
 		4F07086D1B1A169300A7A450 /* DebugManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DebugManager.h; path = ../../../include/DEBUG/DebugManager.h; sourceTree = "<group>"; };
 		4F0708701B1A16E400A7A450 /* DebugManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugManager.cpp; path = ../../../src/Debug/DebugManager.cpp; sourceTree = "<group>"; };
+		4F4FB4751B1B66BB000D4752 /* tunnel_basic_stereo.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_basic_stereo.frag; sourceTree = "<group>"; };
+		4F4FB4761B1B66BB000D4752 /* tunnel_basic_stereo.geom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_basic_stereo.geom; sourceTree = "<group>"; };
+		4F4FB4771B1B66BB000D4752 /* tunnel_basic_stereo.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_basic_stereo.vert; sourceTree = "<group>"; };
+		4F4FB47B1B1B7DB1000D4752 /* TransistorScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TransistorScene.h; path = ../../../include/Scenes/TransistorScene.h; sourceTree = "<group>"; };
+		4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransistorScene.cpp; path = ../../../src/Scenes/TransistorScene.cpp; sourceTree = "<group>"; };
 		4FEA353E1B1A5F39001513D8 /* ForwardPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ForwardPass.h; path = ../../../include/Rendering/ForwardPass.h; sourceTree = "<group>"; };
 		4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ForwardPass.cpp; path = ../../../src/Rendering/ForwardPass.cpp; sourceTree = "<group>"; };
 		4FEA35411B1A653E001513D8 /* tunnel_rift.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_rift.frag; sourceTree = "<group>"; };
@@ -621,6 +630,9 @@
 				4F0708381B1A0CE400A7A450 /* ss_lighting.vert */,
 				4F0708391B1A0CE400A7A450 /* ss_lighting_rift.frag */,
 				4F07083A1B1A0CE400A7A450 /* ss_lighting_rift.vert */,
+				4F4FB4751B1B66BB000D4752 /* tunnel_basic_stereo.frag */,
+				4F4FB4761B1B66BB000D4752 /* tunnel_basic_stereo.geom */,
+				4F4FB4771B1B66BB000D4752 /* tunnel_basic_stereo.vert */,
 				4F07083B1B1A0CE400A7A450 /* tunnel_basic.frag */,
 				4F07083C1B1A0CE400A7A450 /* tunnel_basic.geom */,
 				4F07083D1B1A0CE400A7A450 /* tunnel_basic.vert */,
@@ -685,6 +697,7 @@
 				56124D3D56B14B039DF10F7A /* AppSceneBase.h */,
 				C194EF6CF3CB4FD483B049FC /* Scenes.h */,
 				F8C6EE40C12647469D703216 /* TunnelScene.h */,
+				4F4FB47B1B1B7DB1000D4752 /* TransistorScene.h */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -712,6 +725,7 @@
 				A12560109F764FE69871D8DC /* AppSceneBase.cpp */,
 				3B3015C0C66F4991A67B0984 /* Scenes.cpp */,
 				56E6E8690C9349BCB6FE9C54 /* TunnelScene.cpp */,
+				4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -907,6 +921,7 @@
 			files = (
 				8952152A237A42D597F19DC8 /* CinderApp.icns in Resources */,
 				4F07086A1B1A0CE400A7A450 /* tunnel_geometry_rift.vert in Resources */,
+				4F4FB4781B1B66BB000D4752 /* tunnel_basic_stereo.frag in Resources */,
 				4F07086B1B1A0CE400A7A450 /* tunnel_shadow.frag in Resources */,
 				4F0708481B1A0CE400A7A450 /* bit.geom in Resources */,
 				4F0708601B1A0CE400A7A450 /* ss_lighting_rift.frag in Resources */,
@@ -921,6 +936,7 @@
 				4F0708541B1A0CE400A7A450 /* kinect_shadow.vert in Resources */,
 				4F07084C1B1A0CE400A7A450 /* curl_noise.glsl in Resources */,
 				4F07084B1B1A0CE400A7A450 /* bit_shadow.vert in Resources */,
+				4F4FB47A1B1B66BB000D4752 /* tunnel_basic_stereo.vert in Resources */,
 				4F0708661B1A0CE400A7A450 /* tunnel_geometry.geom in Resources */,
 				4F0708561B1A0CE400A7A450 /* lighting.frag in Resources */,
 				4F0708621B1A0CE400A7A450 /* tunnel_basic.frag in Resources */,
@@ -941,6 +957,7 @@
 				4F07084A1B1A0CE400A7A450 /* bit_shadow.frag in Resources */,
 				4F07084E1B1A0CE400A7A450 /* gbuffer_util.glsl in Resources */,
 				4F0708671B1A0CE400A7A450 /* tunnel_geometry.vert in Resources */,
+				4F4FB4791B1B66BB000D4752 /* tunnel_basic_stereo.geom in Resources */,
 				4FEA35441B1A653E001513D8 /* tunnel_rift.frag in Resources */,
 				4F0708471B1A0CE400A7A450 /* bit.frag in Resources */,
 				4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */,
@@ -971,6 +988,7 @@
 				9509D232334D4E04A02D616C /* TransformComponent.cpp in Sources */,
 				C45D8E6F70D649EAB7171FD3 /* Scene.cpp in Sources */,
 				54AF49896861474198651002 /* Common.cpp in Sources */,
+				4F4FB47D1B1B7DC4000D4752 /* TransistorScene.cpp in Sources */,
 				4EEC9A949A95403FB7A440EA /* ConfigManager.cpp in Sources */,
 				110ED551206A48CBB8B8A3A7 /* Controller.cpp in Sources */,
 				2FD62C977FAC4869A5019BB3 /* GUIManager.cpp in Sources */,

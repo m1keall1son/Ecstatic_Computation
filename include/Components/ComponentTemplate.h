@@ -26,15 +26,9 @@ public:
     const ec::ComponentUId        getId() const override;
     const ec::ComponentType       getType() const override;
     void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
+    void                          cleanup()override;
     
     bool postInit()override;
-
-    void mouseUp( ci::app::MouseEvent & ){}
-    void mouseDown( ci::app::MouseEvent & ){}
-    void mouseDrag( ci::app::MouseEvent & ){}
-    void mouseMove( ci::app::MouseEvent & ){}
-    void keyUp( ci::app::KeyEvent & ){}
-    void keyDown( ci::app::KeyEvent & ){}
     
     ~ComponentTemplate();
     
@@ -50,5 +44,6 @@ private:
     
     ec::ComponentUId mId;
     bool             mShuttingDown;
+
     
 };

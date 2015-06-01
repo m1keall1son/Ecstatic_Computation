@@ -19,8 +19,8 @@ void main(){
     atmosphere.scattering = 0.025;
     
     Material material;
-    material.diffuse = vec3( 1.0 );
-    material.specular = vec3( 0.25 );
+    material.diffuse = vec3( 1.0, .1, .3 );
+    material.specular = material.diffuse * vec3( 0.5 );
     material.shininess = 200.0;
     
     vec3 ambient = vec3(0);
