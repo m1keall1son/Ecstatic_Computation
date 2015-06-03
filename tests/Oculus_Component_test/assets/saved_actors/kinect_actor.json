@@ -1,0 +1,30 @@
+{
+   "active" : true,
+   "components" : [
+      {
+         "far_threshold" : 33,
+         "id" : 6.2971770658402488e+18,
+         "near_threshold" : -15,
+         "triangle_cutoff" : 3,
+         "type" : "kinect_component"
+      },
+      {
+         "id" : 3.5142029523349601e+18,
+         "rotation" : [
+            -0.17738072574138641,
+            0.041761480271816254,
+            -0.032777711749076843,
+            0.98270934820175171
+         ],
+         "scale" : [ 1, 1, 1 ],
+         "translation" : [ 0, -3.5799999237060547, 11.520000457763672 ],
+         "type" : "transform_component"
+      }
+   ],
+   "create_on_scene_init" : true,
+   "id" : 3.0054016126642842e+18,
+   "name" : "kinect",
+   "persistent" : false,
+   "type" : "actor",
+   "type_qualifier" : "static"
+}

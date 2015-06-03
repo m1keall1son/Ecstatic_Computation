@@ -111,7 +111,7 @@ void TunnelScene::update()
     
     auto lamp = std::dynamic_pointer_cast<PointLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
     lamp->setPosition( new_pos + vec3( 0,2,0 ) );
-    lamp->pointAt( main_camera_actor->getComponent<CameraComponent>().lock()->getCamera().getCenterOfInterestPoint() );
+    //lamp->pointAt( main_camera_actor->getComponent<CameraComponent>().lock()->getCamera().getCenterOfInterestPoint() );
 
     tunnel_component->getNoiseScale() = .5 + sample_pt*2.;
     

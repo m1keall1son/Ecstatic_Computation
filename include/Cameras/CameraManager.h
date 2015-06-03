@@ -10,7 +10,7 @@
 
 #include "AppCommon.h"
 #include "Common.h"
-#include "cinder/MayaCamUI.h"
+#include "cinder/CameraUi.h"
 #include "CameraComponent.h"
 
 class CameraManager {
@@ -39,7 +39,7 @@ private:
     
     std::map< CameraComponent::CameraType, ec::ActorUId >    mCameras;
     ci::CameraPersp                         mDefaultCamera;
-    ci::MayaCamUI                           mUI;
+    ci::CameraUi                            mUI;
     bool                                    mShuttingDown;
     bool                                    mCameraSet;
     CameraComponent::CameraType             mCurrentCamera;

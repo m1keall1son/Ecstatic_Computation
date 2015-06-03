@@ -15,7 +15,7 @@ out vec4 FragColor;
 void main()
 {
     
-    vec3 kinect_color = texture( uColorTexture, frag.TexCoord0+vec2(-.03,-.04) ).rgb;
+    vec3 kinect_color = texture( uColorTexture, frag.TexCoord0+vec2(-.0,-.04) ).rgb;
     
     Atmosphere atmosphere;
     atmosphere.scattering = 0.025;

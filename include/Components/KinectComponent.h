@@ -18,6 +18,7 @@ public:
     
     static ec::ComponentType TYPE;
     
+    static void initializeKinect();
     static KinectComponentRef create( ec::Actor* context );
     
     bool                          initialize( const ci::JsonTree &tree )override;

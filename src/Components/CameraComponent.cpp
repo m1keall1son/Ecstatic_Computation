@@ -128,7 +128,7 @@ bool CameraComponent::initialize( const ci::JsonTree &tree )
             final[i++] = (*it).getValue<float>();
         }
         mInterestPoint = final;
-        mCamera.setCenterOfInterestPoint(mInterestPoint);
+        mCamera.lookAt(mInterestPoint);
         
     } catch ( const ci::JsonTree::ExcChildNotFound &ex	) {
         CI_LOG_W("didn't find point_at, using direction");

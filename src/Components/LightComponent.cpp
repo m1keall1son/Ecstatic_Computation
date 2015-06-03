@@ -695,61 +695,73 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
         case Light::Type::Point:
         {
             auto point = std::dynamic_pointer_cast<PointLight>(mLight);
-            gui->addParam("position", &point->mPosition);
-            gui->addParam("direction", &point->mDirection);
-            gui->addParam("point at", &point->mPointAt);
+            
+            std::weak_ptr< PointLight > weak_light = std::weak_ptr< PointLight >(point);
+            auto uFn = std::bind([](std::weak_ptr< PointLight >& weak_point){
+                if (auto strong_point = weak_point.lock()){
+                    strong_point->enableShadows( strong_point->mHasShadows );
+                    strong_point->mIsDirty = true;
+                    strong_point->mDirection = glm::normalize( strong_point->mPointAt -  strong_point->mPosition );
+                    strong_point->updateMatrices();
+                }
+            }, std::move(weak_light));
+            
+            gui->addParam("position", &point->mPosition).updateFn(uFn);
+            gui->addParam("point at", &point->mPointAt).updateFn(uFn);
             gui->addParam("range", &point->mRange);
             gui->addParam("attenuation linear", &point->mAttenuation.x);
             gui->addParam("attenuation quadratic", &point->mAttenuation.y);
-            
-            std::weak_ptr< PointLight > weak_light = std::weak_ptr< PointLight >(point);
-            auto enableShadows = std::bind([](std::weak_ptr< PointLight >& weak_point){
-                if (auto strong_point = weak_point.lock()) strong_point->enableShadows( strong_point->mHasShadows );
-            }, std::move(weak_light));
-            
-            gui->addParam("enable shadows", &point->mHasShadows).updateFn(enableShadows);
+            gui->addParam("enable shadows", &point->mHasShadows).updateFn(uFn);
             
         }
             break;
         case Light::Type::Spot:
         {
+         
             auto spot = std::dynamic_pointer_cast<SpotLight>(mLight);
-            gui->addParam("position", &spot->mPosition);
-            gui->addParam("direction", &spot->mDirection);
-            gui->addParam("point at", &spot->mPointAt);
+            
+            std::weak_ptr< SpotLight > weak_light = std::weak_ptr< SpotLight >(spot);
+            auto uFn = std::bind([](std::weak_ptr< SpotLight >& weak_light){
+                if (auto strong_light = weak_light.lock()){
+                    strong_light->enableShadows( strong_light->mHasShadows );
+                    strong_light->mIsDirty = true;
+                    strong_light->mDirection = glm::normalize( strong_light->mPointAt -  strong_light->mPosition );
+                    strong_light->updateMatrices();
+                }
+            }, std::move(weak_light));
+            
+            gui->addParam("position", &spot->mPosition).updateFn(uFn);
+            gui->addParam("point at", &spot->mPointAt).updateFn(uFn);
             gui->addParam("range", &spot->mRange);
             gui->addParam("attenuation linear", &spot->mAttenuation.x);
             gui->addParam("attenuation quadratic", &spot->mAttenuation.y);
             gui->addParam("enable shadows", &spot->mHasShadows);
             gui->addParam("spot ratio", &spot->mSpotRatio);
             gui->addParam("hotspot ratio", &spot->mHotspotRatio);
-            
-            std::weak_ptr< SpotLight > weak_light = std::weak_ptr< SpotLight >(spot);
-            auto enableShadows = std::bind([](std::weak_ptr< SpotLight >& weak_light){
-                if (auto strong_light = weak_light.lock()) strong_light->enableShadows( strong_light->mHasShadows );
-            }, std::move(weak_light));
-            
-            gui->addParam("enable shadows", &spot->mHasShadows).updateFn(enableShadows);
+            gui->addParam("enable shadows", &spot->mHasShadows).updateFn(uFn);
             
         }
             break;
         case Light::Type::Capsule:
         {
             auto capsule = std::dynamic_pointer_cast<CapsuleLight>(mLight);
-            gui->addParam("position", &capsule->mPosition);
-            gui->addParam("direction", &capsule->mDirection);
-            gui->addParam("point at", &capsule->mPointAt);
+            
+            std::weak_ptr< CapsuleLight > weak_light = std::weak_ptr< CapsuleLight >(capsule);
+            auto uFn = std::bind([](std::weak_ptr< CapsuleLight >& weak_light){
+                if (auto strong_light = weak_light.lock()){
+                    strong_light->enableShadows( strong_light->mHasShadows );
+                    strong_light->mIsDirty = true;
+                    strong_light->mDirection = glm::normalize( strong_light->mPointAt -  strong_light->mPosition );
+                    strong_light->updateMatrices();
+                }
+            }, std::move(weak_light));
+            
+            gui->addParam("position", &capsule->mPosition).updateFn(uFn);
+            gui->addParam("point at", &capsule->mPointAt).updateFn(uFn);
             gui->addParam("range", &capsule->mRange);
             gui->addParam("attenuation linear", &capsule->mAttenuation.x);
             gui->addParam("attenuation quadratic", &capsule->mAttenuation.y);
-            
-            std::weak_ptr< CapsuleLight > weak_light = std::weak_ptr< CapsuleLight >(capsule);
-            auto enableShadows = std::bind([](std::weak_ptr< CapsuleLight >& weak_light){
-                if (auto strong_light = weak_light.lock()) strong_light->enableShadows( strong_light->mHasShadows );
-            }, std::move(weak_light));
-            
-            gui->addParam("enable shadows", &capsule->mHasShadows).updateFn(enableShadows);
-            
+            gui->addParam("enable shadows", &capsule->mHasShadows).updateFn(uFn);
             gui->addParam("length", &capsule->mLength);
             gui->addParam("axis", &capsule->mAxis);
             
@@ -758,20 +770,23 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
         case Light::Type::Wedge:
         {
             auto wedge = std::dynamic_pointer_cast<WedgeLight>(mLight);
-            gui->addParam("position", &wedge->mPosition);
-            gui->addParam("direction", &wedge->mDirection);
-            gui->addParam("point at", &wedge->mPointAt);
+            
+            std::weak_ptr< WedgeLight > weak_light = std::weak_ptr< WedgeLight >(wedge);
+            auto uFn = std::bind([](std::weak_ptr< WedgeLight >& weak_light){
+                if (auto strong_light = weak_light.lock()){
+                    strong_light->enableShadows( strong_light->mHasShadows );
+                    strong_light->mIsDirty = true;
+                    strong_light->mDirection = glm::normalize( strong_light->mPointAt -  strong_light->mPosition );
+                    strong_light->updateMatrices();
+                }
+            }, std::move(weak_light));
+            
+            gui->addParam("position", &wedge->mPosition).updateFn(uFn);
+            gui->addParam("point at", &wedge->mPointAt).updateFn(uFn);
             gui->addParam("range", &wedge->mRange);
             gui->addParam("attenuation linear", &wedge->mAttenuation.x);
             gui->addParam("attenuation quadratic", &wedge->mAttenuation.y);
-            
-            std::weak_ptr< WedgeLight > weak_light = std::weak_ptr< WedgeLight >(wedge);
-            auto enableShadows = std::bind([](std::weak_ptr< WedgeLight >& weak_light){
-                if (auto strong_light = weak_light.lock()) strong_light->enableShadows( strong_light->mHasShadows );
-            }, std::move(weak_light));
-            
-            gui->addParam("enable shadows", &wedge->mHasShadows).updateFn(enableShadows);
-            
+            gui->addParam("enable shadows", &wedge->mHasShadows).updateFn(uFn);
             gui->addParam("spot ratio", &wedge->mSpotRatio);
             gui->addParam("hotspot ratio", &wedge->mHotspotRatio);
             gui->addParam("length", &wedge->mLength);

@@ -196,7 +196,7 @@ void SpotLight::updateMatrices() const
 		// Determine the up vector based on the current direction.
 		float dot = glm::abs( glm::dot( mDirection, vec3( 0, 1, 0 ) ) );
 		vec3  up = ( dot < 0.99f ) ? vec3( 0, 1, 0 ) : vec3( 0, 0, 1 );
-
+        
 		mViewMatrix = glm::lookAt( mPosition, mPointAt, up );
 		mProjectionMatrix = glm::perspective( 2.0f * math<float>::atan( mSpotRatio ), mMapping.z/mMapping.w, 0.1f, mRange );
 		mShadowMatrix = sBiasMatrix * mProjectionMatrix * mViewMatrix;

@@ -86,13 +86,15 @@ void Oculus_Component_test::cleanup()
 
 void prepareSettings( App::Settings*settings )
 {
-    ec::Controller::initializeRift();
+    ec::Controller::initializeRift(false);
+    ec::Controller::initializeKinect(true);
     
     if( ec::Controller::isRiftEnabled() ){
         settings->disableFrameRate();
         settings->setWindowSize( 1920, 1080 );
     }else{
         settings->setFullScreen();
+        //settings->setWindowSize(1280, 720);
     }
 }
 

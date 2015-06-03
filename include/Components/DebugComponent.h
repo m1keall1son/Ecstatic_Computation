@@ -32,7 +32,7 @@ public:
     virtual void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
     virtual void                          cleanup()override;
 
-    inline ci::AxisAlignedBox3f& getAxisAlignedBoundingBox(){ return mObjectBoundingBox; }
+    inline ci::AxisAlignedBox& getAxisAlignedBoundingBox(){ return mObjectBoundingBox; }
     
     void draw();
 
@@ -49,7 +49,7 @@ protected:
     void unregisterHandlers();
 
     ec::ComponentUId mId;
-    ci::AxisAlignedBox3f mObjectBoundingBox;
+    ci::AxisAlignedBox mObjectBoundingBox;
     bool mShuttingDown;
 
 };

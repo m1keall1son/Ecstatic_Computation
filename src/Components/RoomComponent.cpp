@@ -63,6 +63,28 @@ void RoomComponent::drawShadow(ec::EventDataRef)
     mRoomShadow->draw();
 }
 
+void RoomComponent::handleReloadGlslProg(ec::EventDataRef)
+{
+    try {
+        mRoomRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/room_basic.vert")).geometry(loadAsset("shaders/room_basic.geom")).fragment(loadAsset("shaders/room_basic.frag")).preprocess(true) );
+    } catch (ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(e.what());
+    }
+    
+    
+    try {
+        mRoomShadowRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/room_shadow.vert")).fragment(loadAsset("shaders/room_shadow.frag")).preprocess(true) );
+    } catch (ci::gl::GlslProgCompileExc e) {
+        CI_LOG_E(e.what());
+    }
+    
+    
+    auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+    
+    mRoomRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
+    mRoomRender->uniform("uShadowMap", 3);
+}
+
 void RoomComponent::draw(ec::EventDataRef event )
 {
     
@@ -148,24 +170,7 @@ bool RoomComponent::postInit()
 {
     if(!mInitialized){
         
-        try {
-              mRoomRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/room_basic.vert")).geometry(loadAsset("shaders/room_basic.geom")).fragment(loadAsset("shaders/room_basic.frag")).preprocess(true) );
-        } catch (ci::gl::GlslProgCompileExc e) {
-            CI_LOG_E(e.what());
-        }
-    
-        
-        try {
-            mRoomShadowRender = gl::GlslProg::create( gl::GlslProg::Format().vertex(loadAsset("shaders/room_shadow.vert")).fragment(loadAsset("shaders/room_shadow.frag")).preprocess(true) );
-        } catch (ci::gl::GlslProgCompileExc e) {
-            CI_LOG_E(e.what());
-        }
-        
-        
-        auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-        
-        mRoomRender->uniformBlock("uLights", scene->lights()->getLightUboLocation() );
-        mRoomRender->uniform("uShadowMap", 3);
+        handleReloadGlslProg(ec::EventDataRef());
         
         auto & aab_debug = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
         
@@ -220,10 +225,12 @@ void RoomComponent::registerListeners()
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleSceneChange), ec::SceneChangeEvent::TYPE);
 
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
-    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawShadow), DrawShadowEvent::TYPE);
+    //scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::draw), DrawToMainBufferEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
+
 }
 void RoomComponent::unregisterListeners()
 {
@@ -233,8 +240,10 @@ void RoomComponent::unregisterListeners()
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::update), UpdateEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::draw), DrawToMainBufferEvent::TYPE);
-    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawShadow), DrawShadowEvent::TYPE);
+   // scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawRift), DrawToRiftBufferEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
+
 }
 
 const ec::ComponentNameType RoomComponent::getName() const

@@ -46,5 +46,6 @@ private:
     float mFlashDuration;
     float mSpikeSize;
     bool mPause;
+    bool mRotateStuff;
     
 };

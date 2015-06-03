@@ -122,7 +122,7 @@ bool DebugComponent::initialize( const ci::JsonTree &tree )
             aab_max[i++] = (*it).getValue<float>();
         }
     
-        mObjectBoundingBox = ci::AxisAlignedBox3f( aab_min, aab_max );
+        mObjectBoundingBox = ci::AxisAlignedBox( aab_min, aab_max );
         
     } catch ( ci::JsonTree::ExcChildNotFound ex	) {
         CI_LOG_W("no aa_bounding_box found");

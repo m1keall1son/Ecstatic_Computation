@@ -21,7 +21,7 @@ out float vGrad;
 void main(void)
 {
     float noise = (snoise( ciPosition.xyz*10.+ uTime )*.5 + .5 ) * uNoiseMax * uNoiseScale;
-    float grad = pow( exp(  -pow( length( ciTexCoord0 - vec2(.5) ), 2. )), 64. ) * uNoiseScale;
+    float grad = max(pow( exp(  -pow( length( ciTexCoord0 - vec2(.5) ), 2. )), 64. ), .2) * uNoiseScale;
     
     vec4 pos = ciModelMatrix * ciPosition;
     pos.xyz += noise*grad*ciNormal;

@@ -71,7 +71,7 @@ void FrustumCullComponent::cull( ec::EventDataRef )
             if(scene){
                 auto & cam = scene->cameras()->getCamera(CameraComponent::CameraType::MAIN_CAMERA);
                 ci::Frustumf visibleWorld( cam );
-                ci::AxisAlignedBox3f worldBoundingBox;
+                ci::AxisAlignedBox worldBoundingBox;
                 auto transform = mContext->getComponent<ec::TransformComponent>().lock();
                 auto & boundingbox = mContext->getComponent<DebugComponent>().lock()->getAxisAlignedBoundingBox();
                 worldBoundingBox = boundingbox.transformed( transform->getModelMatrix() );

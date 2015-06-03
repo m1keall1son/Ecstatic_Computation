@@ -19,7 +19,7 @@ void main(void)
     Material material;
     material.diffuse = vec3( 1.0 );
     material.specular = vec3( 0.25 );
-    material.shininess = 200.0;
+    material.shininess = 20.0 + 180.0 * frag.Grad;
     
     // Initialize ambient, diffuse and specular colors.
     vec3 ambient = vec3( 0 );

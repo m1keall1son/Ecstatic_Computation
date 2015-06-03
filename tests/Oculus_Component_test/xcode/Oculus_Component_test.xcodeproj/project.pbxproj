@@ -69,6 +69,9 @@
 		4F07086A1B1A0CE400A7A450 /* tunnel_geometry_rift.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708431B1A0CE400A7A450 /* tunnel_geometry_rift.vert */; };
 		4F07086B1B1A0CE400A7A450 /* tunnel_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */; };
 		4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */; };
+		4F1BABE61B1E6AA000156CA0 /* room_particles.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F1BABE51B1E6AA000156CA0 /* room_particles.frag */; };
+		4F1BABE81B1E6AAB00156CA0 /* room_particles_update_noise.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F1BABE71B1E6AAB00156CA0 /* room_particles_update_noise.vert */; };
+		4F1BABEA1B1E6ABD00156CA0 /* room_particles_update_seek.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F1BABE91B1E6ABD00156CA0 /* room_particles_update_seek.vert */; };
 		4F4FB47D1B1B7DC4000D4752 /* TransistorScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */; };
 		4F4FB47F1B1C9B81000D4752 /* room_basic.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB47E1B1C9B81000D4752 /* room_basic.vert */; };
 		4F4FB4811B1C9B8C000D4752 /* room_basic.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4801B1C9B8C000D4752 /* room_basic.geom */; };
@@ -76,6 +79,22 @@
 		4F4FB4861B1C9E43000D4752 /* room_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4841B1C9E43000D4752 /* room_shadow.frag */; };
 		4F4FB4871B1C9E43000D4752 /* room_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4851B1C9E43000D4752 /* room_shadow.vert */; };
 		4F4FB4A01B1D2947000D4752 /* DebugManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB49F1B1D2947000D4752 /* DebugManager.cpp */; };
+		4F4FB4A51B1D5A88000D4752 /* OSCComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4A41B1D5A88000D4752 /* OSCComponent.cpp */; };
+		4F4FB5181B1D5C18000D4752 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4E01B1D5C18000D4752 /* IpEndpointName.cpp */; };
+		4F4FB5191B1D5C18000D4752 /* NetworkingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4E51B1D5C18000D4752 /* NetworkingUtils.cpp */; };
+		4F4FB51A1B1D5C18000D4752 /* UdpSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4E61B1D5C18000D4752 /* UdpSocket.cpp */; };
+		4F4FB51D1B1D5C18000D4752 /* OscOutboundPacketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4F01B1D5C18000D4752 /* OscOutboundPacketStream.cpp */; };
+		4F4FB51E1B1D5C18000D4752 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4F31B1D5C18000D4752 /* OscPrintReceivedElements.cpp */; };
+		4F4FB51F1B1D5C18000D4752 /* OscReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4F51B1D5C18000D4752 /* OscReceivedElements.cpp */; };
+		4F4FB5201B1D5C18000D4752 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4F71B1D5C18000D4752 /* OscTypes.cpp */; };
+		4F4FB5211B1D5C18000D4752 /* OscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4FA1B1D5C18000D4752 /* OscBundle.cpp */; };
+		4F4FB5221B1D5C18000D4752 /* OscListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4FC1B1D5C18000D4752 /* OscListener.cpp */; };
+		4F4FB5231B1D5C18000D4752 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB4FE1B1D5C18000D4752 /* OscMessage.cpp */; };
+		4F4FB5241B1D5C18000D4752 /* OscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB5001B1D5C18000D4752 /* OscSender.cpp */; };
+		4F4FB5331B1DEE40000D4752 /* ParticleSystemComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB5321B1DEE40000D4752 /* ParticleSystemComponent.cpp */; };
+		4F4FB53C1B1E3022000D4752 /* LandscapeComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB53B1B1E3022000D4752 /* LandscapeComponent.cpp */; };
+		4F4FB53F1B1E39F7000D4752 /* RoomParticlesComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB53E1B1E39F7000D4752 /* RoomParticlesComponent.cpp */; };
+		4FC0034F1B1EB25A00AA11E7 /* room_particles.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4FC0034E1B1EB25A00AA11E7 /* room_particles.vert */; };
 		4FEA35401B1A5F4E001513D8 /* ForwardPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */; };
 		4FEA35441B1A653E001513D8 /* tunnel_rift.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35411B1A653E001513D8 /* tunnel_rift.frag */; };
 		4FEA35451B1A653E001513D8 /* tunnel_rift.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4FEA35421B1A653E001513D8 /* tunnel_rift.geom */; };
@@ -198,6 +217,9 @@
 		4F0708431B1A0CE400A7A450 /* tunnel_geometry_rift.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_geometry_rift.vert; sourceTree = "<group>"; };
 		4F0708441B1A0CE400A7A450 /* tunnel_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.frag; sourceTree = "<group>"; };
 		4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.vert; sourceTree = "<group>"; };
+		4F1BABE51B1E6AA000156CA0 /* room_particles.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles.frag; sourceTree = "<group>"; };
+		4F1BABE71B1E6AAB00156CA0 /* room_particles_update_noise.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles_update_noise.vert; sourceTree = "<group>"; };
+		4F1BABE91B1E6ABD00156CA0 /* room_particles_update_seek.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles_update_seek.vert; sourceTree = "<group>"; };
 		4F4FB47B1B1B7DB1000D4752 /* TransistorScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TransistorScene.h; path = ../../../include/Scenes/TransistorScene.h; sourceTree = "<group>"; };
 		4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransistorScene.cpp; path = ../../../src/Scenes/TransistorScene.cpp; sourceTree = "<group>"; };
 		4F4FB47E1B1C9B81000D4752 /* room_basic.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_basic.vert; sourceTree = "<group>"; };
@@ -207,6 +229,44 @@
 		4F4FB4851B1C9E43000D4752 /* room_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_shadow.vert; sourceTree = "<group>"; };
 		4F4FB49F1B1D2947000D4752 /* DebugManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugManager.cpp; sourceTree = "<group>"; };
 		4F4FB4A21B1D2954000D4752 /* DebugManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugManager.h; sourceTree = "<group>"; };
+		4F4FB4A31B1D5A73000D4752 /* OSCComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCComponent.h; path = ../../../include/Components/OSCComponent.h; sourceTree = "<group>"; };
+		4F4FB4A41B1D5A88000D4752 /* OSCComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OSCComponent.cpp; path = ../../../src/Components/OSCComponent.cpp; sourceTree = "<group>"; };
+		4F4FB4E01B1D5C18000D4752 /* IpEndpointName.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IpEndpointName.cpp; sourceTree = "<group>"; };
+		4F4FB4E11B1D5C18000D4752 /* IpEndpointName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IpEndpointName.h; sourceTree = "<group>"; };
+		4F4FB4E21B1D5C18000D4752 /* NetworkingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingUtils.h; sourceTree = "<group>"; };
+		4F4FB4E31B1D5C18000D4752 /* PacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PacketListener.h; sourceTree = "<group>"; };
+		4F4FB4E51B1D5C18000D4752 /* NetworkingUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkingUtils.cpp; sourceTree = "<group>"; };
+		4F4FB4E61B1D5C18000D4752 /* UdpSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UdpSocket.cpp; sourceTree = "<group>"; };
+		4F4FB4E71B1D5C18000D4752 /* TimerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerListener.h; sourceTree = "<group>"; };
+		4F4FB4E81B1D5C18000D4752 /* UdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UdpSocket.h; sourceTree = "<group>"; };
+		4F4FB4ED1B1D5C18000D4752 /* MessageMappingOscPacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageMappingOscPacketListener.h; sourceTree = "<group>"; };
+		4F4FB4EE1B1D5C18000D4752 /* OscException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscException.h; sourceTree = "<group>"; };
+		4F4FB4EF1B1D5C18000D4752 /* OscHostEndianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscHostEndianness.h; sourceTree = "<group>"; };
+		4F4FB4F01B1D5C18000D4752 /* OscOutboundPacketStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscOutboundPacketStream.cpp; sourceTree = "<group>"; };
+		4F4FB4F11B1D5C18000D4752 /* OscOutboundPacketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscOutboundPacketStream.h; sourceTree = "<group>"; };
+		4F4FB4F21B1D5C18000D4752 /* OscPacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscPacketListener.h; sourceTree = "<group>"; };
+		4F4FB4F31B1D5C18000D4752 /* OscPrintReceivedElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscPrintReceivedElements.cpp; sourceTree = "<group>"; };
+		4F4FB4F41B1D5C18000D4752 /* OscPrintReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscPrintReceivedElements.h; sourceTree = "<group>"; };
+		4F4FB4F51B1D5C18000D4752 /* OscReceivedElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscReceivedElements.cpp; sourceTree = "<group>"; };
+		4F4FB4F61B1D5C18000D4752 /* OscReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscReceivedElements.h; sourceTree = "<group>"; };
+		4F4FB4F71B1D5C18000D4752 /* OscTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscTypes.cpp; sourceTree = "<group>"; };
+		4F4FB4F81B1D5C18000D4752 /* OscTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscTypes.h; sourceTree = "<group>"; };
+		4F4FB4F91B1D5C18000D4752 /* OscArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscArg.h; sourceTree = "<group>"; };
+		4F4FB4FA1B1D5C18000D4752 /* OscBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscBundle.cpp; sourceTree = "<group>"; };
+		4F4FB4FB1B1D5C18000D4752 /* OscBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscBundle.h; sourceTree = "<group>"; };
+		4F4FB4FC1B1D5C18000D4752 /* OscListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscListener.cpp; sourceTree = "<group>"; };
+		4F4FB4FD1B1D5C18000D4752 /* OscListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscListener.h; sourceTree = "<group>"; };
+		4F4FB4FE1B1D5C18000D4752 /* OscMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscMessage.cpp; sourceTree = "<group>"; };
+		4F4FB4FF1B1D5C18000D4752 /* OscMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscMessage.h; sourceTree = "<group>"; };
+		4F4FB5001B1D5C18000D4752 /* OscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscSender.cpp; sourceTree = "<group>"; };
+		4F4FB5011B1D5C18000D4752 /* OscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscSender.h; sourceTree = "<group>"; };
+		4F4FB5311B1DEE2B000D4752 /* ParticleSystemComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ParticleSystemComponent.h; path = ../../../include/Components/ParticleSystemComponent.h; sourceTree = "<group>"; };
+		4F4FB5321B1DEE40000D4752 /* ParticleSystemComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleSystemComponent.cpp; path = ../../../src/Components/ParticleSystemComponent.cpp; sourceTree = "<group>"; };
+		4F4FB53A1B1E3007000D4752 /* LandscapeComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LandscapeComponent.h; path = ../../../include/Components/LandscapeComponent.h; sourceTree = "<group>"; };
+		4F4FB53B1B1E3022000D4752 /* LandscapeComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LandscapeComponent.cpp; path = ../../../src/Components/LandscapeComponent.cpp; sourceTree = "<group>"; };
+		4F4FB53D1B1E39DE000D4752 /* RoomParticlesComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RoomParticlesComponent.h; path = ../../../include/Components/RoomParticlesComponent.h; sourceTree = "<group>"; };
+		4F4FB53E1B1E39F7000D4752 /* RoomParticlesComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoomParticlesComponent.cpp; path = ../../../src/Components/RoomParticlesComponent.cpp; sourceTree = "<group>"; };
+		4FC0034E1B1EB25A00AA11E7 /* room_particles.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles.vert; sourceTree = "<group>"; };
 		4FEA353E1B1A5F39001513D8 /* ForwardPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ForwardPass.h; path = ../../../include/Rendering/ForwardPass.h; sourceTree = "<group>"; };
 		4FEA353F1B1A5F4E001513D8 /* ForwardPass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ForwardPass.cpp; path = ../../../src/Rendering/ForwardPass.cpp; sourceTree = "<group>"; };
 		4FEA35411B1A653E001513D8 /* tunnel_rift.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_rift.frag; sourceTree = "<group>"; };
@@ -320,6 +380,7 @@
 		01B97315FEAEA392516A2CEA /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				4F4FB4A61B1D5C18000D4752 /* OSC */,
 				57DD6FD88C5248648536F76F /* Ecstatic */,
 				AABD52AA569A4C3CB4AACB81 /* Cinder-Freenect */,
 				4430595ED46A4436AABACC10 /* OculusRift */,
@@ -501,6 +562,10 @@
 				F62F709464A942DCB91746F1 /* OculusRiftComponent.cpp */,
 				FD4CBFE443F5417299361130 /* RoomComponent.cpp */,
 				91B1E5D1861543A185BC5665 /* TunnelComponent.cpp */,
+				4F4FB4A41B1D5A88000D4752 /* OSCComponent.cpp */,
+				4F4FB5321B1DEE40000D4752 /* ParticleSystemComponent.cpp */,
+				4F4FB53B1B1E3022000D4752 /* LandscapeComponent.cpp */,
+				4F4FB53E1B1E39F7000D4752 /* RoomParticlesComponent.cpp */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -653,6 +718,10 @@
 				4F4FB4821B1C9B9B000D4752 /* room_basic.frag */,
 				4F4FB4841B1C9E43000D4752 /* room_shadow.frag */,
 				4F4FB4851B1C9E43000D4752 /* room_shadow.vert */,
+				4F1BABE71B1E6AAB00156CA0 /* room_particles_update_noise.vert */,
+				4F1BABE91B1E6ABD00156CA0 /* room_particles_update_seek.vert */,
+				4FC0034E1B1EB25A00AA11E7 /* room_particles.vert */,
+				4F1BABE51B1E6AA000156CA0 /* room_particles.frag */,
 			);
 			name = shaders;
 			path = ../assets/shaders;
@@ -674,6 +743,75 @@
 			);
 			name = Debugging;
 			path = ../../../include/Debugging;
+			sourceTree = "<group>";
+		};
+		4F4FB4A61B1D5C18000D4752 /* OSC */ = {
+			isa = PBXGroup;
+			children = (
+				4F4FB4DE1B1D5C18000D4752 /* src */,
+			);
+			name = OSC;
+			path = ../../../../OSC;
+			sourceTree = "<group>";
+		};
+		4F4FB4DE1B1D5C18000D4752 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				4F4FB4DF1B1D5C18000D4752 /* ip */,
+				4F4FB4EC1B1D5C18000D4752 /* osc */,
+				4F4FB4F91B1D5C18000D4752 /* OscArg.h */,
+				4F4FB4FA1B1D5C18000D4752 /* OscBundle.cpp */,
+				4F4FB4FB1B1D5C18000D4752 /* OscBundle.h */,
+				4F4FB4FC1B1D5C18000D4752 /* OscListener.cpp */,
+				4F4FB4FD1B1D5C18000D4752 /* OscListener.h */,
+				4F4FB4FE1B1D5C18000D4752 /* OscMessage.cpp */,
+				4F4FB4FF1B1D5C18000D4752 /* OscMessage.h */,
+				4F4FB5001B1D5C18000D4752 /* OscSender.cpp */,
+				4F4FB5011B1D5C18000D4752 /* OscSender.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		4F4FB4DF1B1D5C18000D4752 /* ip */ = {
+			isa = PBXGroup;
+			children = (
+				4F4FB4E01B1D5C18000D4752 /* IpEndpointName.cpp */,
+				4F4FB4E11B1D5C18000D4752 /* IpEndpointName.h */,
+				4F4FB4E21B1D5C18000D4752 /* NetworkingUtils.h */,
+				4F4FB4E31B1D5C18000D4752 /* PacketListener.h */,
+				4F4FB4E41B1D5C18000D4752 /* posix */,
+				4F4FB4E71B1D5C18000D4752 /* TimerListener.h */,
+				4F4FB4E81B1D5C18000D4752 /* UdpSocket.h */,
+			);
+			path = ip;
+			sourceTree = "<group>";
+		};
+		4F4FB4E41B1D5C18000D4752 /* posix */ = {
+			isa = PBXGroup;
+			children = (
+				4F4FB4E51B1D5C18000D4752 /* NetworkingUtils.cpp */,
+				4F4FB4E61B1D5C18000D4752 /* UdpSocket.cpp */,
+			);
+			path = posix;
+			sourceTree = "<group>";
+		};
+		4F4FB4EC1B1D5C18000D4752 /* osc */ = {
+			isa = PBXGroup;
+			children = (
+				4F4FB4ED1B1D5C18000D4752 /* MessageMappingOscPacketListener.h */,
+				4F4FB4EE1B1D5C18000D4752 /* OscException.h */,
+				4F4FB4EF1B1D5C18000D4752 /* OscHostEndianness.h */,
+				4F4FB4F01B1D5C18000D4752 /* OscOutboundPacketStream.cpp */,
+				4F4FB4F11B1D5C18000D4752 /* OscOutboundPacketStream.h */,
+				4F4FB4F21B1D5C18000D4752 /* OscPacketListener.h */,
+				4F4FB4F31B1D5C18000D4752 /* OscPrintReceivedElements.cpp */,
+				4F4FB4F41B1D5C18000D4752 /* OscPrintReceivedElements.h */,
+				4F4FB4F51B1D5C18000D4752 /* OscReceivedElements.cpp */,
+				4F4FB4F61B1D5C18000D4752 /* OscReceivedElements.h */,
+				4F4FB4F71B1D5C18000D4752 /* OscTypes.cpp */,
+				4F4FB4F81B1D5C18000D4752 /* OscTypes.h */,
+			);
+			path = osc;
 			sourceTree = "<group>";
 		};
 		4F727D0A92B14583802F85B6 /* Rendering */ = {
@@ -819,6 +957,10 @@
 				0B76270B5BE14252B9DBD1D1 /* OculusRiftComponent.h */,
 				A133372310BE412D8DEBB923 /* RoomComponent.h */,
 				512F21E92A004A71A5B8622C /* TunnelComponent.h */,
+				4F4FB4A31B1D5A73000D4752 /* OSCComponent.h */,
+				4F4FB5311B1DEE2B000D4752 /* ParticleSystemComponent.h */,
+				4F4FB53A1B1E3007000D4752 /* LandscapeComponent.h */,
+				4F4FB53D1B1E39DE000D4752 /* RoomParticlesComponent.h */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -940,12 +1082,15 @@
 				4F4FB4871B1C9E43000D4752 /* room_shadow.vert in Resources */,
 				4F07084F1B1A0CE400A7A450 /* kinect_lighting.frag in Resources */,
 				4F0708691B1A0CE400A7A450 /* tunnel_geometry_rift.geom in Resources */,
+				4F1BABEA1B1E6ABD00156CA0 /* room_particles_update_seek.vert in Resources */,
 				4F0708511B1A0CE400A7A450 /* kinect_lighting.vert in Resources */,
 				4F0708681B1A0CE400A7A450 /* tunnel_geometry_rift.frag in Resources */,
 				4FEA35451B1A653E001513D8 /* tunnel_rift.geom in Resources */,
 				4F0708541B1A0CE400A7A450 /* kinect_shadow.vert in Resources */,
 				4F07084C1B1A0CE400A7A450 /* curl_noise.glsl in Resources */,
+				4F1BABE81B1E6AAB00156CA0 /* room_particles_update_noise.vert in Resources */,
 				4F07084B1B1A0CE400A7A450 /* bit_shadow.vert in Resources */,
+				4F1BABE61B1E6AA000156CA0 /* room_particles.frag in Resources */,
 				4F0708661B1A0CE400A7A450 /* tunnel_geometry.geom in Resources */,
 				4F0708561B1A0CE400A7A450 /* lighting.frag in Resources */,
 				4F4FB4861B1C9E43000D4752 /* room_shadow.frag in Resources */,
@@ -957,6 +1102,7 @@
 				4F07085B1B1A0CE400A7A450 /* pass.vert in Resources */,
 				4F0708521B1A0CE400A7A450 /* kinect_shadow.frag in Resources */,
 				4F07085F1B1A0CE400A7A450 /* ss_lighting.vert in Resources */,
+				4FC0034F1B1EB25A00AA11E7 /* room_particles.vert in Resources */,
 				4F0708651B1A0CE400A7A450 /* tunnel_geometry.frag in Resources */,
 				4F0708551B1A0CE400A7A450 /* kinect_util.glsl in Resources */,
 				4F0708491B1A0CE400A7A450 /* bit.vert in Resources */,
@@ -989,6 +1135,7 @@
 				1D963A97AF494C9081D8BF4A /* EventManager.cpp in Sources */,
 				2C0EC89501A747EB8BC5B5BF /* EventManagerBase.cpp in Sources */,
 				F4FF0ACE24CB447C8F9903C7 /* SystemEvents.cpp in Sources */,
+				4F4FB5181B1D5C18000D4752 /* IpEndpointName.cpp in Sources */,
 				DF12E3F6C4E945B8A22D502F /* Actor.cpp in Sources */,
 				F4DA1B3E79F942548A0D0EEA /* ActorFactory.cpp in Sources */,
 				3C0C57A8AFA04D1CB656236F /* ActorManager.cpp in Sources */,
@@ -996,10 +1143,13 @@
 				3256038CC2824FB199D62A00 /* ComponentBase.cpp in Sources */,
 				213372BC62AA44408AA1CE4C /* ComponentFactory.cpp in Sources */,
 				9509D232334D4E04A02D616C /* TransformComponent.cpp in Sources */,
+				4F4FB5231B1D5C18000D4752 /* OscMessage.cpp in Sources */,
 				C45D8E6F70D649EAB7171FD3 /* Scene.cpp in Sources */,
+				4F4FB5221B1D5C18000D4752 /* OscListener.cpp in Sources */,
 				54AF49896861474198651002 /* Common.cpp in Sources */,
 				4F4FB47D1B1B7DC4000D4752 /* TransistorScene.cpp in Sources */,
 				4EEC9A949A95403FB7A440EA /* ConfigManager.cpp in Sources */,
+				4F4FB51F1B1D5C18000D4752 /* OscReceivedElements.cpp in Sources */,
 				110ED551206A48CBB8B8A3A7 /* Controller.cpp in Sources */,
 				2FD62C977FAC4869A5019BB3 /* GUIManager.cpp in Sources */,
 				943FD31A91BD4272ACC8D502 /* CinderFreenect.cpp in Sources */,
@@ -1008,27 +1158,36 @@
 				AAACEA1AEB3A4D749A33DBC6 /* registration.c in Sources */,
 				25436B1F3BCF4DB69285B534 /* tilt.c in Sources */,
 				A14333D4CF50432191539804 /* usb_libusb10.c in Sources */,
+				4F4FB5201B1D5C18000D4752 /* OscTypes.cpp in Sources */,
+				4F4FB4A51B1D5A88000D4752 /* OSCComponent.cpp in Sources */,
 				CBC97FAAABA941D1A1C646C1 /* CinderOculus.cpp in Sources */,
 				990097E7086C4B458D84D8E1 /* Events.cpp in Sources */,
 				4F4FB4A01B1D2947000D4752 /* DebugManager.cpp in Sources */,
+				4F4FB5331B1DEE40000D4752 /* ParticleSystemComponent.cpp in Sources */,
 				DE6C13233C0D4886A8C4BCBD /* BitComponent.cpp in Sources */,
 				8313592AD4D1495A8063D99B /* CameraComponent.cpp in Sources */,
 				42143D06FF74403EA3BD4DA7 /* Components.cpp in Sources */,
 				C85EFA4548B04AABBCCEE1FB /* ComponentTemplate.cpp in Sources */,
+				4F4FB51A1B1D5C18000D4752 /* UdpSocket.cpp in Sources */,
 				7A92EB4B603E41E7B3B7D45D /* DebugComponent.cpp in Sources */,
 				EE242B55A42F49348977DEEC /* FrustumCullComponent.cpp in Sources */,
 				ADF1D214295A44E5A2C4ABFF /* GeomTeapotComponent.cpp in Sources */,
 				52BE2919EB0047808B438295 /* KinectComponent.cpp in Sources */,
 				B4B39B2755EF4A1FA0804B84 /* LightComponent.cpp in Sources */,
+				4F4FB51E1B1D5C18000D4752 /* OscPrintReceivedElements.cpp in Sources */,
 				291E3CBB5C754404B20B11C9 /* OculusRiftComponent.cpp in Sources */,
 				EB711B7018B246C387EAE70F /* RoomComponent.cpp in Sources */,
 				4FEA35401B1A5F4E001513D8 /* ForwardPass.cpp in Sources */,
 				1A5CBC22718B445A9D192FDF /* TunnelComponent.cpp in Sources */,
 				098AE3DEAF634DE5BC0BA724 /* Light.cpp in Sources */,
+				4F4FB5211B1D5C18000D4752 /* OscBundle.cpp in Sources */,
+				4F4FB53C1B1E3022000D4752 /* LandscapeComponent.cpp in Sources */,
 				15DF3EE7C003491990305F0D /* LightManager.cpp in Sources */,
+				4F4FB5191B1D5C18000D4752 /* NetworkingUtils.cpp in Sources */,
 				9B56F7A4EE3D4079BBEFCFD9 /* ShadowMap.cpp in Sources */,
 				BE81DCFE65F94852A339615E /* AppSceneBase.cpp in Sources */,
 				CA4BB5F4671C4B058CECDD61 /* Scenes.cpp in Sources */,
+				4F4FB51D1B1D5C18000D4752 /* OscOutboundPacketStream.cpp in Sources */,
 				C8D771DFF7144AA987EE11DB /* TunnelScene.cpp in Sources */,
 				831C973E70D4489BAE8B17B4 /* CameraManager.cpp in Sources */,
 				9CE14D3DBCAF4FF1A1E080C2 /* FXAAPass.cpp in Sources */,
@@ -1037,7 +1196,9 @@
 				2F0966F7449A4FABA4B3F8DE /* LightPass.cpp in Sources */,
 				89B0FDA8795C48369FD18373 /* PassBase.cpp in Sources */,
 				2B24ED6753534C9CB0069474 /* RenderManager.cpp in Sources */,
+				4F4FB53F1B1E39F7000D4752 /* RoomParticlesComponent.cpp in Sources */,
 				AF223FEA5D5D47BBACF0E9B1 /* ShadowPass.cpp in Sources */,
+				4F4FB5241B1D5C18000D4752 /* OscSender.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1060,6 +1221,10 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					"\"$(CINDER_PATH)/include\"",
+					"\"../blocks/Cinder-Freenect/src/freenect\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -1069,6 +1234,7 @@
 				);
 				PRODUCT_NAME = Oculus_Component_test;
 				SYMROOT = ./build;
+				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../blocks/Ecstatic/include \"../blocks/Cinder-Freenect/src\" ../blocks/OculusRift/include ../blocks/OculusRift/LibOVR/Include ../blocks/OculusRift/LibOVR/Src ../../../include ../../../../OSC/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1090,6 +1256,10 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					"\"$(CINDER_PATH)/include\"",
+					"\"../blocks/Cinder-Freenect/src/freenect\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -1100,6 +1270,7 @@
 				PRODUCT_NAME = Oculus_Component_test;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = ./build;
+				USER_HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\" ../include ../blocks/Ecstatic/include \"../blocks/Cinder-Freenect/src\" ../blocks/OculusRift/include ../blocks/OculusRift/LibOVR/Include ../blocks/OculusRift/LibOVR/Src ../../../include ../../../../OSC/**";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

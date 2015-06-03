@@ -1,215 +1,6 @@
 {
     "scenes": [
-               {
-               "actors" : [
-                           {
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "type" : "render_manager"
-                                           },
-                                           {
-                                           "type" : "forward_pass",
-                                           "clear_color" : [ 0.0,0.0,0.0,1.0 ]
-                                           }
-                                           ],
-                           "create_on_scene_init" : true,
-                           "name" : "forward_render",
-                           "persistent" : false,
-                           "type" : "render",
-                           "type_qualifier" : "forward"
-                           },
-                           {
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "type" : "oculus_rift_component"
-                                           }
-                                           ],
-                           "create_on_scene_init" : true,
-                           "name" : "rift",
-                           "persistent" : true,
-                           "type" : "actor",
-                           "type_qualifier" : "hardware"
-                           },
-                           {
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "id" : 3.4022020487226516e+18,
-                                           "light" : {
-                                           "attenuation" : [ 0, 0.001 ],
-                                           "color" : [ 0.96262633800506592, 0.95586138963699341, 1 ],
-                                           "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
-                                           "enable_shadows" : false,
-                                           "intensity" : 0.5000000074505806,
-                                           "mapping" : [ 0, 0, 1024, 1024 ],
-                                           "position" : [ 0, 0, 0 ],
-                                           "range" : 100,
-                                           "type" : "point",
-                                           "visible" : true
-                                           },
-                                           "type" : "light_component"
-                                           },
-                                           {
-                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
-                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-                                           "id" : 6.9051827069665843e+18,
-                                           "type" : "debug_component"
-                                           }
-                                           ],
-                           "create_on_scene_init" : true,
-                           "id" : 5.9182154138590904e+18,
-                           "name" : "follow_light",
-                           "persistent" : false,
-                           "type" : "light",
-                           "type_qualifier" : "static"
-                           },
-                           {
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "id" : 3.4022020487226516e+18,
-                                           "light" : {
-                                           "attenuation" : [ 0, 0.01 ],
-                                           "color" : [ 0.96262633800506592, 0.95586138963699341, 1 ],
-                                           "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
-                                           "enable_shadows" : false,
-                                           "intensity" : 1.000000074505806,
-                                           "mapping" : [ 0, 0, 1024, 1024 ],
-                                           "position" : [ 0, 0, 0 ],
-                                           "range" : 500,
-                                           "type" : "point",
-                                           "visible" : true,
-                                           "temperature" : 1000.0
-                                           },
-                                           "type" : "light_component"
-                                           },
-                                           {
-                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
-                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-                                           "id" : 6.9051827069665843e+18,
-                                           "type" : "debug_component"
-                                           }
-                                           ],
-                           "create_on_scene_init" : true,
-                           "id" : 5.9182154138590904e+18,
-                           "name" : "head_lamp",
-                           "persistent" : false,
-                           "type" : "light",
-                           "type_qualifier" : "static"
-                           },
-                           {
-                           
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "id" : 9.8039451169833533e+18,
-                                           "rotation" : [ 0, 0, 0, 1 ],
-                                           "scale" : [ 1, 1, 1 ],
-                                           "translation" : [ 0, -10, 0 ],
-                                           "type" : "transform_component"
-                                           },
-                                           {
-                                           "id" : 8.4698008755001467e+18,
-                                           "size" : 15,
-                                           "type" : "tunnel_component",
-                                           "length" :5000,
-                                           "step" : 100,
-                                           "amplitude" : [ 15.0, 15.0 ],
-                                           "frequency" : [ 0.01815, 0.0555 ],
-                                           "noise_amplitude" : [ 0.1, 0.1 ],
-                                           "noise_frequency" : [ 0.01, 0.01 ],
-                                           "face_diameter" : 10
-                                           
-                                           },
-                                           {
-                                           "current_visibility" : false,
-                                           "id" : 1.031388942136159e+19,
-                                           "type" : "frustum_cull_component"
-                                           },
-                                           {
-                                           "aa_bounding_box_max" : [ 7.5, 7.5, 7.5 ],
-                                           "aa_bounding_box_min" : [ -7.5, -7.5, -7.5 ],
-                                           "id" : 1.5572520709875716e+19,
-                                           "type" : "debug_component"
-                                           }
-                                           ],
-                           "create_on_scene_init" : true,
-                           "id" : 706246336274488,
-                           "name" : "tunnel",
-                           "persistent" : false,
-                           "type" : "actor",
-                           "type_qualifier" : "static"
-                           },
-                           {
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "id" : 2.3293759857552691e+18,
-                                           "rotation" : [ 0, 0, 0, 1 ],
-                                           "scale" : [ 1, 1, 1 ],
-                                           "translation" : [ 0, 0, 5 ],
-                                           "type" : "transform_component"
-                                           },
-                                           {
-                                           "aspect" : 1.6000000238418579,
-                                           "far" : 50000,
-                                           "fov" : 60,
-                                           "id" : 2.0939139236934252e+18,
-                                           "near" : 0.10000000149011612,
-                                           "interest_point" : [0,0,0],
-                                           "type" : "camera_component",
-                                           "type_qualifier" : "main"
-                                           },
-                                           {
-                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
-                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-                                           "id" : 4.9603631667621427e+18,
-                                           "type" : "debug_component"
-                                           }
-                                           
-                                           ],
-                           "create_on_scene_init" : true,
-                           "id" : 7.0529101198941645e+18,
-                           "name" : "main_camera",
-                           "persistent" : false,
-                           "type" : "camera",
-                           "type_qualifier" : "main"
-                           },
-                           {
-                           "active" : true,
-                           "components" : [
-                                           {
-                                           "id" : 2.3293759857552691e+18,
-                                           "rotation" : [ 0, 0, 0, 1 ],
-                                           "scale" : [ 1, 1, 1 ],
-                                           "translation" : [ 25, 25, 25 ],
-                                           "type" : "transform_component"
-                                           },
-                                           {
-                                           "aspect" : "window",
-                                           "far" : 100000,
-                                           "fov" : 60,
-                                           "id" : 2.0939139236934252e+18,
-                                           "near" : 0.10000000149011612,
-                                           "interest_point" : [0,0,0],
-                                           "type" : "camera_component",
-                                           "type_qualifier" : "debug"
-                                           }
-                                           ],
-                           "create_on_scene_init" : true,
-                           "id" : 7.0529101198941645e+18,
-                           "name" : "debug_camera",
-                           "persistent" : false,
-                           "type" : "camera",
-                           "type_qualifier" : "debug"
-                           }
-                           ],
-               "id" : 46082544220839792,
-               "name" : "tunnel"
-               },
-               {
+                              {
                "name" : "transistor",
                "actors" :[
                           {
@@ -273,18 +64,23 @@
                           "active" : true,
                           "components" : [
                                           {
-                                          "id" : 3.5142029523349601e+18,
-                                          "rotation" : [ 0, 0, 0, 1 ],
-                                          "scale" : [ 1, 1, 1 ],
-                                          "translation" : [ 0, 0, 5 ],
-                                          "type" : "transform_component"
+                                          "far_threshold" : 33,
+                                          "id" : 6.2971770658402488e+18,
+                                          "near_threshold" : -15,
+                                          "triangle_cutoff" : 3,
+                                          "type" : "kinect_component"
                                           },
                                           {
-                                          "id" : 6.2971770658402488e+18,
-                                          "type" : "kinect_component",
-                                          "triangle_cutoff" : 0.4,
-                                          "near_threshold" : -5.0,
-                                          "far_threshold" : 0.0
+                                          "id" : 3.5142029523349601e+18,
+                                          "rotation" : [
+                                                        -0.17738072574138641,
+                                                        0.041761480271816254,
+                                                        -0.032777711749076843,
+                                                        0.98270934820175171
+                                                        ],
+                                          "scale" : [ 1, 1, 1 ],
+                                          "translation" : [ 0, -3.5799999237060547, 11.520000457763672 ],
+                                          "type" : "transform_component"
                                           }
                                           ],
                           "create_on_scene_init" : true,
@@ -298,20 +94,20 @@
                           "active" : true,
                           "components" : [
                                           {
-                                          "id" : 3.3720462771684419e+18,
+                                          "id" : 9.6061465711664783e+18,
                                           "light" : {
-                                          "attenuation" : [ 0, 0.0 ],
+                                          "attenuation" : [ 0, 0 ],
                                           "color" : [ 1, 0.24313187599182129, 0 ],
-                                          "direction" : [ 0.7071068286895752, -0.7071068286895752, 0 ],
+                                          "direction" : [ 0.011790367774665356, 0.20343734323978424, -0.97901695966720581 ],
                                           "enable_shadows" : true,
-                                          "hotspot_angle" : 0,
-                                          "hotspot_ratio" : 0,
-                                          "intensity" : 0.50000000149011612,
+                                          "hotspot_angle" : 0.099668651819229126,
+                                          "hotspot_ratio" : 0.10000000149011612,
+                                          "intensity" : 0.5,
                                           "mapping" : [ 0, 0, 1024, 1024 ],
-                                          "position" : [ -3, 3, 0 ],
+                                          "position" : [ -0.15741619467735291, -11.976143836975098, 3.0711040496826172 ],
                                           "range" : 100,
-                                          "spot_angle" : 0.78539818525314331,
-                                          "spot_ratio" : 1,
+                                          "spot_angle" : 0.87605804204940796,
+                                          "spot_ratio" : 1.2000000476837158,
                                           "type" : "spot",
                                           "visible" : true
                                           },
@@ -320,12 +116,12 @@
                                           {
                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-                                          "id" : 6.9051827069665843e+18,
+                                          "id" : 1.1826934569403099e+19,
                                           "type" : "debug_component"
                                           }
                                           ],
                           "create_on_scene_init" : true,
-                          "id" : 5.9182154138590904e+18,
+                          "id" : -8.6354800156550195e+18,
                           "name" : "spot_light",
                           "persistent" : false,
                           "type" : "light",
@@ -380,7 +176,7 @@
                                           "enable_shadows" : false,
                                           "hotspot_angle" : 0,
                                           "hotspot_ratio" : 0,
-                                          "intensity" : 0.030000000149011612,
+                                          "intensity" : 0.046,
                                           "mapping" : [ 0, 0, 1024, 1024 ],
                                           "position" : [ 0, 0, 0 ],
                                           "spot_angle" : 0.78539818525314331,
@@ -402,6 +198,30 @@
                           "name" : "bit_light",
                           "persistent" : false,
                           "type" : "light",
+                          "type_qualifier" : "static"
+                          },
+                          {
+                          "active" : true,
+                          "components" : [
+                                          {
+                                          "id" : 1.5818044067738262e+19,
+                                          "rotation" : [ 0, 0, 0, 1 ],
+                                          "scale" : [ 1, 1, 1 ],
+                                          "translation" : [ -0.15741619467735291, -11.976143836975098, 3.0711040496826172  ],
+                                          "type" : "transform_component"
+                                          },
+                                          {
+                                          "type" : "room_particles_component",
+                                          "color" : [ 1, 0.24313187599182129, 0 ],
+                                          "max_particles" : 500,
+                                          "gl_primitive" : "GL_POINTS"
+                                          }
+                                          ],
+                          "create_on_scene_init" : true,
+                          "id" : 11093822055738,
+                          "name" : "room_particles",
+                          "persistent" : false,
+                          "type" : "actor",
                           "type_qualifier" : "static"
                           },
 
@@ -445,7 +265,7 @@
                                           "id" : 2.3293759857552691e+18,
                                           "rotation" : [ 0, 0, 0, 1 ],
                                           "scale" : [ 1, 1, 1 ],
-                                          "translation" : [ 0, 0, 10 ],
+                                          "translation" : [ 0, -8.85, 10.8 ],
                                           "type" : "transform_component"
                                           },
                                           {

@@ -25,10 +25,15 @@ using namespace ci;
 using namespace ci::app;
 
 ec::ComponentType KinectComponent::TYPE = ec::getHash("kinect_component");
+static KinectRef sKinect = nullptr;
 
 KinectComponentRef KinectComponent::create(ec::Actor *context)
 {
     return KinectComponentRef( new KinectComponent( context ) );
+}
+
+void KinectComponent::initializeKinect(){
+    sKinect = Kinect::create();
 }
 
 KinectComponent::KinectComponent( ec::Actor * context ): ec::ComponentBase(context), mId( ec::getHash( context->getName()+"_kinect_component" ) ),mShuttingDown(false)
@@ -36,11 +41,9 @@ KinectComponent::KinectComponent( ec::Actor * context ): ec::ComponentBase(conte
     ///TODO: need to grab out all the geometry from context and create an aa_bounding_box
 
    
-    registerListeners();
+   registerListeners();
     
-    auto params = Kinect::FreenectParams();
-    params.mDepthRegister = false;
-    mKinect = ci::Kinect::create( Kinect::Device( params ) );
+    mKinect = sKinect;
     
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
     
@@ -145,9 +148,9 @@ bool KinectComponent::postInit()
         
         handleReloadGlslProg(ec::EventDataRef());
         
-        mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/4.f), mKinectRender );
+        mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/3.f), mKinectRender );
 
-        mKinectMeshShadow = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/8.f), mKinectShadowRender );
+        mKinectMeshShadow = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/4.f), mKinectShadowRender );
 
         CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
         mInitialized = true;

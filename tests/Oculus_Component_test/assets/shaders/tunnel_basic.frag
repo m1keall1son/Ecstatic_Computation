@@ -1,6 +1,9 @@
-#version 150
+#version 330
 
 #include "lighting_util.glsl"
+#include "simplex_noise.glsl"
+
+uniform float ciElapsedSeconds;
 
 in F_DATA{
     vec3 Normal;
@@ -19,10 +22,10 @@ void main(void)
     atmosphere.scattering = 0.025;
     
     Material material;
-    material.diffuse = vec3( 1.0 );
-    material.specular = vec3( 0.25 );
+    material.diffuse = vec3( max(random( frag.TexCoord0.x ),.65) );
+    material.specular = material.diffuse*0.25;
     material.shininess = 20.0;
-    material.ambient = vec3( .02 );
+    material.ambient = vec3( .001 );
 
 	// Initialize ambient, diffuse and specular colors.
 	vec3 ambient = vec3( 0 );

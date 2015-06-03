@@ -37,7 +37,7 @@ TransistorSceneRef TransistorScene::create( const std::string& name )
     return TransistorSceneRef( new TransistorScene(name) );
 }
 
-TransistorScene::TransistorScene( const std::string& name ):AppSceneBase(name), mSpeed(0), mFlash(0), mFlashDuration(.1), mSpikeSize(0.),mPause(false)
+TransistorScene::TransistorScene( const std::string& name ):AppSceneBase(name), mSpeed(0), mFlash(0), mFlashDuration(.1), mSpikeSize(0.),mPause(false),mRotateStuff(false)
 {
     //initialize stuff
     CI_LOG_V("Transistor Scene constructed");
@@ -79,14 +79,14 @@ void TransistorScene::postInit()
 
 void TransistorScene::moveFlash(){
     
-    static const vec3 corners[8] = { vec3(-12,-12,-12),
-        vec3(12,-12,-12),
-        vec3(12,12,-12),
-        vec3(-12,12,-12),
-        vec3(-12,-12,12),
-        vec3(12,-12,12),
-        vec3(12,12,12),
-        vec3(-12,12,12)
+    static const vec3 corners[8] = { vec3(-10,-10,-10),
+        vec3(10,-10,-10),
+        vec3(10,10,-10),
+        vec3(-10,10,-10),
+        vec3(-10,-10,10),
+        vec3(10,-10,10),
+        vec3(10,10,10),
+        vec3(-10,10,10)
     };
     
     int r = randInt(8);
@@ -133,8 +133,10 @@ void TransistorScene::update()
     auto spot_light = std::dynamic_pointer_cast<SpotLight>( spot->getComponent<LightComponent>().lock()->getLight() );
     auto bit_light = ec::ActorManager::get()->retreiveUnique(ec::getHash("bit_light")).lock();
 
-    spot_light->setPosition(vec3( 11.*cos( getElapsedSeconds()*mSpeed ), 11.*sin( getElapsedSeconds()*.4*mSpeed ), 11.*sin(getElapsedSeconds()*mSpeed+20.) ));
-    spot_light->pointAt(vec3(0));
+    if(mRotateStuff){
+        spot_light->setPosition(vec3( 11.*cos( getElapsedSeconds()*.4*mSpeed ), 11.*sin( getElapsedSeconds()*.4*mSpeed ), 11.*sin(getElapsedSeconds()*.4*mSpeed+20.) ));
+        spot_light->pointAt(vec3(0));
+    }
     
     auto room_component = room->getComponent<RoomComponent>().lock();
     
@@ -149,12 +151,15 @@ void TransistorScene::update()
         room_component->setNoiseScale( mSpeed );
     }
     
-    //auto cam_tracking = main_cam->getComponent<ec::TransformComponent>().lock();
+    auto cam_tracking = main_cam->getComponent<ec::TransformComponent>().lock();
     auto bit_trans = bit->getComponent<ec::TransformComponent>().lock();
+    
     bit_trans->setScale(vec3(5.*mSpeed));
     
-    //cam_tracking->setTranslation(vec3( 10.*cos( getElapsedSeconds()*.2*mSpeed ), 10.*sin( getElapsedSeconds()*.1*mSpeed ), 10.*sin(getElapsedSeconds()*.2*mSpeed) ));
-    //cam_tracking->setRotation( quat( inverse(glm::lookAt(cam_tracking->getTranslation(), vec3(0), vec3(0,1,0))) ) );
+    if( mRotateStuff ){
+        cam_tracking->setTranslation(vec3( 10.*cos( getElapsedSeconds()*.2*mSpeed ), 10.*sin( getElapsedSeconds()*.1*mSpeed ), 10.*sin(getElapsedSeconds()*.2*mSpeed) ));
+        cam_tracking->setRotation( quat( inverse(glm::lookAt(cam_tracking->getTranslation(), vec3(0), vec3(0,1,0))) ) );
+    }
     
     CI_LOG_V("update components event triggered");
     mSceneManager->triggerEvent( UpdateEvent::create() );
@@ -181,6 +186,7 @@ void TransistorScene::initGUI(const ec::GUIManagerRef &gui_manager)
     AppSceneBase::initGUI(gui_manager);
     auto params = gui_manager->findGUI(getId());
     params->addParam("pause", &mPause);
+    params->addParam("rotate stuff", &mRotateStuff);
     params->addParam("speed", &mSpeed).max(1.).min(.0).step(.01);
     
 }

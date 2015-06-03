@@ -45,7 +45,7 @@ CameraManager::CameraManager():mShuttingDown(false),mId( ec::getHash("camera_man
     ///init default camera
     mDefaultCamera.setPerspective(60, ci::app::getWindowAspectRatio(), .1, 10000.);
     mDefaultCamera.lookAt(ci::vec3(0,0,1),ci::vec3(0));
-    mUI.setCurrentCam(mDefaultCamera);
+    mUI.setCamera(&mDefaultCamera);
     
     //window->getSignalKeyDown().connect( std::bind( &CameraManager::keyDown, this , std::placeholders::_1 ) );
     //window->getSignalKeyUp().connect( std::bind( &CameraManager::keyUp, this , std::placeholders::_1 ) );
@@ -81,7 +81,6 @@ void CameraManager::updateCamera(ec::EventDataRef)
             auto cur_settings = mUI.getCamera();
             transform->setTranslation(cur_settings.getEyePoint());
             transform->setRotation(cur_settings.getOrientation());
-            cur_actor->getComponent<CameraComponent>().lock()->getCamera().setCenterOfInterestPoint(cur_settings.getCenterOfInterestPoint());
         }
     }
     
@@ -101,12 +100,11 @@ void CameraManager::handleSwitchCamera(ec::EventDataRef event)
                 auto cur_settings = mUI.getCamera();
                 transform->setTranslation(cur_settings.getEyePoint());
                 transform->setRotation(cur_settings.getOrientation());
-                cur_actor->getComponent<CameraComponent>().lock()->getCamera().setCenterOfInterestPoint(cur_settings.getCenterOfInterestPoint());
             }
         }
         auto & cam_comp = actor->getComponent<CameraComponent>().lock()->getCamera();
         if( e->getType() == CameraComponent::CameraType::DEBUG_CAMERA && !ec::Controller::isRiftEnabled() ){
-            mUI.setCurrentCam( cam_comp );
+            mUI.setCamera( &cam_comp );
         }
         mCurrentCamera = e->getType();
     }
@@ -129,7 +127,7 @@ void CameraManager::handleCameraRegistration( ec::EventDataRef event )
                 mCameras.insert( std::make_pair( cam_type , e->getActorUId() ) );
                 if( cam_type == CameraComponent::CameraType::DEBUG_CAMERA && !ec::Controller::isRiftEnabled() ){
                     auto & cam = cam_component->getCamera();
-                    mUI.setCurrentCam(cam);
+                    mUI.setCamera(&cam);
                 }
             }
                 break;

@@ -26,6 +26,8 @@
 #include "LightManager.h"
 #include "ShadowMap.h"
 #include "OculusRiftComponent.h"
+#include "OSCComponent.h"
+#include "RoomParticlesComponent.h"
 
 #include "RenderManager.h"
 #include "ShadowPass.h"
@@ -139,6 +141,24 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
     {
         CI_LOG_V("parsed debug_component");
         auto debug = DebugComponent::create(context);
+        debug->initialize(init);
+        return debug;
+        
+    }
+    
+    else if (type == "osc_component")
+    {
+        CI_LOG_V("parsed osc_component");
+        auto debug = OSCComponent::create(context);
+        debug->initialize(init);
+        return debug;
+        
+    }
+    
+    else if (type == "room_particles_component")
+    {
+        CI_LOG_V("parsed osc_component");
+        auto debug = RoomParticlesComponent::create(context);
         debug->initialize(init);
         return debug;
         
