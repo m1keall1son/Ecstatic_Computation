@@ -71,7 +71,21 @@
 		4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */; };
 		4F1BABE61B1E6AA000156CA0 /* room_particles.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F1BABE51B1E6AA000156CA0 /* room_particles.frag */; };
 		4F1BABE81B1E6AAB00156CA0 /* room_particles_update_noise.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F1BABE71B1E6AAB00156CA0 /* room_particles_update_noise.vert */; };
-		4F1BABEA1B1E6ABD00156CA0 /* room_particles_update_seek.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F1BABE91B1E6ABD00156CA0 /* room_particles_update_seek.vert */; };
+		4F3DCEAF1B1EC53700596AE2 /* IntroScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F3DCEAE1B1EC53700596AE2 /* IntroScene.cpp */; };
+		4F3DCEB11B1EC8DB00596AE2 /* landscape.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEB01B1EC8DB00596AE2 /* landscape.vert */; };
+		4F3DCEB31B1EC8E400596AE2 /* landscape.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEB21B1EC8E400596AE2 /* landscape.frag */; };
+		4F3DCEB51B1ECC8C00596AE2 /* landscape.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEB41B1ECC8C00596AE2 /* landscape.geom */; };
+		4F3DCEB81B1ED2F600596AE2 /* landscape_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEB61B1ED2F600596AE2 /* landscape_shadow.frag */; };
+		4F3DCEB91B1ED2F600596AE2 /* landscape_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEB71B1ED2F600596AE2 /* landscape_shadow.vert */; };
+		4F3DCEE51B1FC4A600596AE2 /* landscape_object.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEE31B1FC4A600596AE2 /* landscape_object.frag */; };
+		4F3DCEE61B1FC4A600596AE2 /* landscape_object.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEE41B1FC4A600596AE2 /* landscape_object.vert */; };
+		4F3DCEEC1B2098E900596AE2 /* particle_mesh_shadow.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEE71B2098E900596AE2 /* particle_mesh_shadow.frag */; };
+		4F3DCEED1B2098E900596AE2 /* particle_mesh_shadow.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEE81B2098E900596AE2 /* particle_mesh_shadow.vert */; };
+		4F3DCEEE1B2098E900596AE2 /* particle_mesh.frag in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEE91B2098E900596AE2 /* particle_mesh.frag */; };
+		4F3DCEEF1B2098E900596AE2 /* particle_mesh.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEEA1B2098E900596AE2 /* particle_mesh.geom */; };
+		4F3DCEF01B2098E900596AE2 /* particle_mesh.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEEB1B2098E900596AE2 /* particle_mesh.vert */; };
+		4F3DCEF21B20BC1100596AE2 /* room_particles_update_fill.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F3DCEF11B20BC1100596AE2 /* room_particles_update_fill.vert */; };
+		4F48FCCC1B20D57200073BD2 /* particle_mesh_shadow.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F48FCCB1B20D57200073BD2 /* particle_mesh_shadow.geom */; };
 		4F4FB47D1B1B7DC4000D4752 /* TransistorScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */; };
 		4F4FB47F1B1C9B81000D4752 /* room_basic.vert in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB47E1B1C9B81000D4752 /* room_basic.vert */; };
 		4F4FB4811B1C9B8C000D4752 /* room_basic.geom in Resources */ = {isa = PBXBuildFile; fileRef = 4F4FB4801B1C9B8C000D4752 /* room_basic.geom */; };
@@ -219,7 +233,22 @@
 		4F0708451B1A0CE400A7A450 /* tunnel_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = tunnel_shadow.vert; sourceTree = "<group>"; };
 		4F1BABE51B1E6AA000156CA0 /* room_particles.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles.frag; sourceTree = "<group>"; };
 		4F1BABE71B1E6AAB00156CA0 /* room_particles_update_noise.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles_update_noise.vert; sourceTree = "<group>"; };
-		4F1BABE91B1E6ABD00156CA0 /* room_particles_update_seek.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles_update_seek.vert; sourceTree = "<group>"; };
+		4F3DCEAD1B1EC50700596AE2 /* IntroScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IntroScene.h; path = ../../../include/Scenes/IntroScene.h; sourceTree = "<group>"; };
+		4F3DCEAE1B1EC53700596AE2 /* IntroScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IntroScene.cpp; path = ../../../src/Scenes/IntroScene.cpp; sourceTree = "<group>"; };
+		4F3DCEB01B1EC8DB00596AE2 /* landscape.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = landscape.vert; sourceTree = "<group>"; };
+		4F3DCEB21B1EC8E400596AE2 /* landscape.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = landscape.frag; sourceTree = "<group>"; };
+		4F3DCEB41B1ECC8C00596AE2 /* landscape.geom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = landscape.geom; sourceTree = "<group>"; };
+		4F3DCEB61B1ED2F600596AE2 /* landscape_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = landscape_shadow.frag; sourceTree = "<group>"; };
+		4F3DCEB71B1ED2F600596AE2 /* landscape_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = landscape_shadow.vert; sourceTree = "<group>"; };
+		4F3DCEE31B1FC4A600596AE2 /* landscape_object.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = landscape_object.frag; sourceTree = "<group>"; };
+		4F3DCEE41B1FC4A600596AE2 /* landscape_object.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = landscape_object.vert; sourceTree = "<group>"; };
+		4F3DCEE71B2098E900596AE2 /* particle_mesh_shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = particle_mesh_shadow.frag; sourceTree = "<group>"; };
+		4F3DCEE81B2098E900596AE2 /* particle_mesh_shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = particle_mesh_shadow.vert; sourceTree = "<group>"; };
+		4F3DCEE91B2098E900596AE2 /* particle_mesh.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = particle_mesh.frag; sourceTree = "<group>"; };
+		4F3DCEEA1B2098E900596AE2 /* particle_mesh.geom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = particle_mesh.geom; sourceTree = "<group>"; };
+		4F3DCEEB1B2098E900596AE2 /* particle_mesh.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = particle_mesh.vert; sourceTree = "<group>"; };
+		4F3DCEF11B20BC1100596AE2 /* room_particles_update_fill.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_particles_update_fill.vert; sourceTree = "<group>"; };
+		4F48FCCB1B20D57200073BD2 /* particle_mesh_shadow.geom */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = particle_mesh_shadow.geom; sourceTree = "<group>"; };
 		4F4FB47B1B1B7DB1000D4752 /* TransistorScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TransistorScene.h; path = ../../../include/Scenes/TransistorScene.h; sourceTree = "<group>"; };
 		4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransistorScene.cpp; path = ../../../src/Scenes/TransistorScene.cpp; sourceTree = "<group>"; };
 		4F4FB47E1B1C9B81000D4752 /* room_basic.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = room_basic.vert; sourceTree = "<group>"; };
@@ -719,9 +748,22 @@
 				4F4FB4841B1C9E43000D4752 /* room_shadow.frag */,
 				4F4FB4851B1C9E43000D4752 /* room_shadow.vert */,
 				4F1BABE71B1E6AAB00156CA0 /* room_particles_update_noise.vert */,
-				4F1BABE91B1E6ABD00156CA0 /* room_particles_update_seek.vert */,
+				4F3DCEF11B20BC1100596AE2 /* room_particles_update_fill.vert */,
 				4FC0034E1B1EB25A00AA11E7 /* room_particles.vert */,
 				4F1BABE51B1E6AA000156CA0 /* room_particles.frag */,
+				4F3DCEB61B1ED2F600596AE2 /* landscape_shadow.frag */,
+				4F3DCEB71B1ED2F600596AE2 /* landscape_shadow.vert */,
+				4F3DCEB01B1EC8DB00596AE2 /* landscape.vert */,
+				4F3DCEB21B1EC8E400596AE2 /* landscape.frag */,
+				4F3DCEB41B1ECC8C00596AE2 /* landscape.geom */,
+				4F3DCEE31B1FC4A600596AE2 /* landscape_object.frag */,
+				4F3DCEE41B1FC4A600596AE2 /* landscape_object.vert */,
+				4F3DCEE71B2098E900596AE2 /* particle_mesh_shadow.frag */,
+				4F48FCCB1B20D57200073BD2 /* particle_mesh_shadow.geom */,
+				4F3DCEE81B2098E900596AE2 /* particle_mesh_shadow.vert */,
+				4F3DCEE91B2098E900596AE2 /* particle_mesh.frag */,
+				4F3DCEEA1B2098E900596AE2 /* particle_mesh.geom */,
+				4F3DCEEB1B2098E900596AE2 /* particle_mesh.vert */,
 			);
 			name = shaders;
 			path = ../assets/shaders;
@@ -844,6 +886,7 @@
 				C194EF6CF3CB4FD483B049FC /* Scenes.h */,
 				F8C6EE40C12647469D703216 /* TunnelScene.h */,
 				4F4FB47B1B1B7DB1000D4752 /* TransistorScene.h */,
+				4F3DCEAD1B1EC50700596AE2 /* IntroScene.h */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -872,6 +915,7 @@
 				3B3015C0C66F4991A67B0984 /* Scenes.cpp */,
 				56E6E8690C9349BCB6FE9C54 /* TunnelScene.cpp */,
 				4F4FB47C1B1B7DC4000D4752 /* TransistorScene.cpp */,
+				4F3DCEAE1B1EC53700596AE2 /* IntroScene.cpp */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -1071,6 +1115,7 @@
 			files = (
 				8952152A237A42D597F19DC8 /* CinderApp.icns in Resources */,
 				4F07086A1B1A0CE400A7A450 /* tunnel_geometry_rift.vert in Resources */,
+				4F3DCEE51B1FC4A600596AE2 /* landscape_object.frag in Resources */,
 				4F07086B1B1A0CE400A7A450 /* tunnel_shadow.frag in Resources */,
 				4F0708481B1A0CE400A7A450 /* bit.geom in Resources */,
 				4F0708601B1A0CE400A7A450 /* ss_lighting_rift.frag in Resources */,
@@ -1080,31 +1125,39 @@
 				4F4FB4831B1C9B9B000D4752 /* room_basic.frag in Resources */,
 				4F07085A1B1A0CE400A7A450 /* material_util.glsl in Resources */,
 				4F4FB4871B1C9E43000D4752 /* room_shadow.vert in Resources */,
+				4F3DCEB51B1ECC8C00596AE2 /* landscape.geom in Resources */,
 				4F07084F1B1A0CE400A7A450 /* kinect_lighting.frag in Resources */,
 				4F0708691B1A0CE400A7A450 /* tunnel_geometry_rift.geom in Resources */,
-				4F1BABEA1B1E6ABD00156CA0 /* room_particles_update_seek.vert in Resources */,
 				4F0708511B1A0CE400A7A450 /* kinect_lighting.vert in Resources */,
 				4F0708681B1A0CE400A7A450 /* tunnel_geometry_rift.frag in Resources */,
 				4FEA35451B1A653E001513D8 /* tunnel_rift.geom in Resources */,
 				4F0708541B1A0CE400A7A450 /* kinect_shadow.vert in Resources */,
+				4F3DCEB81B1ED2F600596AE2 /* landscape_shadow.frag in Resources */,
 				4F07084C1B1A0CE400A7A450 /* curl_noise.glsl in Resources */,
 				4F1BABE81B1E6AAB00156CA0 /* room_particles_update_noise.vert in Resources */,
 				4F07084B1B1A0CE400A7A450 /* bit_shadow.vert in Resources */,
 				4F1BABE61B1E6AA000156CA0 /* room_particles.frag in Resources */,
 				4F0708661B1A0CE400A7A450 /* tunnel_geometry.geom in Resources */,
+				4F3DCEF21B20BC1100596AE2 /* room_particles_update_fill.vert in Resources */,
 				4F0708561B1A0CE400A7A450 /* lighting.frag in Resources */,
 				4F4FB4861B1C9E43000D4752 /* room_shadow.frag in Resources */,
+				4F3DCEE61B1FC4A600596AE2 /* landscape_object.vert in Resources */,
+				4F3DCEB11B1EC8DB00596AE2 /* landscape.vert in Resources */,
 				4F0708621B1A0CE400A7A450 /* tunnel_basic.frag in Resources */,
 				4F0708591B1A0CE400A7A450 /* linear_map.glsl in Resources */,
 				4F0708501B1A0CE400A7A450 /* kinect_lighting.geom in Resources */,
 				4F0708631B1A0CE400A7A450 /* tunnel_basic.geom in Resources */,
+				4F3DCEEC1B2098E900596AE2 /* particle_mesh_shadow.frag in Resources */,
 				4F0708581B1A0CE400A7A450 /* lighting_util.glsl in Resources */,
 				4F07085B1B1A0CE400A7A450 /* pass.vert in Resources */,
 				4F0708521B1A0CE400A7A450 /* kinect_shadow.frag in Resources */,
 				4F07085F1B1A0CE400A7A450 /* ss_lighting.vert in Resources */,
 				4FC0034F1B1EB25A00AA11E7 /* room_particles.vert in Resources */,
 				4F0708651B1A0CE400A7A450 /* tunnel_geometry.frag in Resources */,
+				4F3DCEEF1B2098E900596AE2 /* particle_mesh.geom in Resources */,
+				4F48FCCC1B20D57200073BD2 /* particle_mesh_shadow.geom in Resources */,
 				4F0708551B1A0CE400A7A450 /* kinect_util.glsl in Resources */,
+				4F3DCEED1B2098E900596AE2 /* particle_mesh_shadow.vert in Resources */,
 				4F0708491B1A0CE400A7A450 /* bit.vert in Resources */,
 				4F07085C1B1A0CE400A7A450 /* rift_util.glsl in Resources */,
 				4F0708641B1A0CE400A7A450 /* tunnel_basic.vert in Resources */,
@@ -1115,8 +1168,12 @@
 				4F07084E1B1A0CE400A7A450 /* gbuffer_util.glsl in Resources */,
 				4F0708671B1A0CE400A7A450 /* tunnel_geometry.vert in Resources */,
 				4FEA35441B1A653E001513D8 /* tunnel_rift.frag in Resources */,
+				4F3DCEEE1B2098E900596AE2 /* particle_mesh.frag in Resources */,
 				4F0708471B1A0CE400A7A450 /* bit.frag in Resources */,
 				4F07086C1B1A0CE400A7A450 /* tunnel_shadow.vert in Resources */,
+				4F3DCEF01B2098E900596AE2 /* particle_mesh.vert in Resources */,
+				4F3DCEB91B1ED2F600596AE2 /* landscape_shadow.vert in Resources */,
+				4F3DCEB31B1EC8E400596AE2 /* landscape.frag in Resources */,
 				4F0708461B1A0CE400A7A450 /* config.json in Resources */,
 				4FEA35461B1A653E001513D8 /* tunnel_rift.vert in Resources */,
 				4F0708531B1A0CE400A7A450 /* kinect_shadow.geom in Resources */,
@@ -1149,6 +1206,7 @@
 				54AF49896861474198651002 /* Common.cpp in Sources */,
 				4F4FB47D1B1B7DC4000D4752 /* TransistorScene.cpp in Sources */,
 				4EEC9A949A95403FB7A440EA /* ConfigManager.cpp in Sources */,
+				4F3DCEAF1B1EC53700596AE2 /* IntroScene.cpp in Sources */,
 				4F4FB51F1B1D5C18000D4752 /* OscReceivedElements.cpp in Sources */,
 				110ED551206A48CBB8B8A3A7 /* Controller.cpp in Sources */,
 				2FD62C977FAC4869A5019BB3 /* GUIManager.cpp in Sources */,

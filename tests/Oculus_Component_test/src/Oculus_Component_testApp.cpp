@@ -66,6 +66,9 @@ void Oculus_Component_test::keyUp( KeyEvent event )
         mGUI = !mGUI;
         mController->enableGUI( mGUI );
     }
+    if( event.getChar() == KeyEvent::KEY_t ){
+        mController->eventManager()->queueEvent( ec::RestartEvent::create() );
+    }
 }
 
 void Oculus_Component_test::update()

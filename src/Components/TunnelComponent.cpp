@@ -344,7 +344,7 @@ bool TunnelComponent::postInit()
         
         mSpline = BSpline3f( path, 3, false, true );
         
-        auto geom = ci::geom::ExtrudeSpline( face, mSpline, 500 ).backCap(false).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
+        auto geom = ci::geom::ExtrudeSpline( face, mSpline, 500 ).backCap(true).frontCap(true) >> geom::Bounds( &aab_debug ) >> geom::Invert(geom::NORMAL);
         
         mTunnel = ci::gl::Batch::create( geom , mTunnelBasicRender );
         

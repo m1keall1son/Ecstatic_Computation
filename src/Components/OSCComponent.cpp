@@ -55,6 +55,14 @@ void OSCComponent::unregisterHandlers()
 bool OSCComponent::initialize( const ci::JsonTree &tree )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
+    
+    try {
+        mListenPort = tree["listen_port"].getValue<int>();
+    } catch (ci::JsonTree::ExcChildNotFound e) {
+        CI_LOG_W("listening port not found, defaulting to 12000");
+        mListenPort = 12000;
+    }
+    
     return true;
 }
 
@@ -66,7 +74,7 @@ void OSCComponent::cleanup()
 bool OSCComponent::postInit()
 {
     if(!mInitialized){
-        mListener.setup(3000);
+        mListener.setup(mListenPort);
         mInitialized = true;
     }
     
@@ -109,7 +117,7 @@ ci::JsonTree OSCComponent::serialize()
     auto save = ci::JsonTree();
     save.addChild( ci::JsonTree( "type", getName() ) );
     save.addChild( ci::JsonTree( "id", (uint64_t)getId() ) );
-    
+    save.addChild( ci::JsonTree( "listen_port", mListenPort ) );
     return save;
     
 }
@@ -118,16 +126,21 @@ void OSCComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
     gui->addText(getName());
+    
 }
 
 void OSCComponent::update(ec::EventDataRef)
 {
     while( mListener.hasWaitingMessages() ){
+        
+        auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
+        
         osc::Message message;
         mListener.getNextMessage( &message );
         
-        if( message.getAddress() == "" ){
-            
+        if( message.getAddress() == "/micVol" ){
+            auto vol = message.getArgAsFloat(0);
+            scene->manager()->triggerEvent( MicVolumeEvent::create( vol ) );
         }
         
     }

@@ -326,4 +326,25 @@ ec::EventType ShareGeometryDepthTextureEvent::getEventType() const
     return ShareGeometryDepthTextureEvent::TYPE;
 }
 
+//MIC VOLUME -------------------------------------------------------------/
+
+ec::EventType MicVolumeEvent::TYPE = ec::getHash("mic_volume_event");
+
+MicVolumeEventRef MicVolumeEvent::create(const float &vol)
+{
+    return MicVolumeEventRef( new MicVolumeEvent(vol) );
+}
+
+MicVolumeEvent::MicVolumeEvent(const float &vol) : ec::EventData( cinder::app::getElapsedSeconds() ), mVolume(vol){}
+
+const char* MicVolumeEvent::getName() const
+{
+    return "mic_volume_event";
+}
+
+ec::EventType MicVolumeEvent::getEventType() const
+{
+    return MicVolumeEvent::TYPE;
+}
+
 

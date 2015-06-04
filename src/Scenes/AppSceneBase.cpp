@@ -60,7 +60,7 @@ void AppSceneBase::initGUI(const ec::GUIManagerRef &gui_manager)
 {
     
     //add any special thing to gui for scene?
-    auto scene_params = ci::params::InterfaceGl::create(ci::app::getWindow(), "Scene: "+getName() + " GUI", ci::vec2(100,100));
+    auto scene_params = ci::params::InterfaceGl::create( "Scene: "+getName() + " GUI", ci::vec2(100,100));
     auto saveFn = [&]{ mSceneManager->triggerEvent(SaveSceneEvent::create()); };
     scene_params->addButton("Save", saveFn);
     scene_params->hide();

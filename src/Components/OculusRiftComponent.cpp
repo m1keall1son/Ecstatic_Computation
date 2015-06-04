@@ -127,6 +127,9 @@ bool OculusRiftComponent::postInit()
         CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
         mInitialized = true;
     }
+    
+    mRift->recenterPose();
+    
     ///this could reflect errors...
     return true;
 }

@@ -49,6 +49,6 @@ private:
     ec::ComponentUId mId;
     bool             mShuttingDown;
     ci::osc::Listener    mListener;
-    
+    int             mListenPort;
     
 };

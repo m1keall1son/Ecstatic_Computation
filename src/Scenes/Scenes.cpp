@@ -24,6 +24,7 @@
 #include "GUIManager.h"
 #include "TunnelScene.h"
 #include "TransistorScene.h"
+#include "IntroScene.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -50,10 +51,15 @@ ec::SceneRef SceneFactory::createScene( const ci::JsonTree& init )
         CI_LOG_V("parsed tunnel scene");
         return TunnelScene::create(name);
     }
-    if (name == "transistor")
+    else if (name == "transistor")
     {
         CI_LOG_V("parsed transistor scene");
         return TransistorScene::create(name);
+    }
+    else if (name == "intro")
+    {
+        CI_LOG_V("parsed intro scene");
+        return IntroScene::create(name);
     }
     else{
         CI_LOG_E("No scene found for name: "+name);

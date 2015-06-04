@@ -35,7 +35,7 @@ TunnelSceneRef TunnelScene::create( const std::string& name )
     return TunnelSceneRef( new TunnelScene(name) );
 }
 
-TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelSpeed(0.),mTunnelAccel(.00001),mTunnelSamplePt(0),mScrubTunnel(false)
+TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelSpeed(.0),mTunnelAccel(.00001),mTunnelSamplePt(0),mScrubTunnel(false),mLightsUp(0.)
 {
     //initialize stuff
     CI_LOG_V("Tunnel scene constructed");
@@ -94,6 +94,15 @@ void TunnelScene::update()
         mTunnelSamplePt += mTunnelSpeed*.005;
     }
     
+    auto lamp = std::dynamic_pointer_cast<PointLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
+
+    static bool lightson = false;
+    if(!lightson){
+        lamp->setIntensity(0.);
+        timeline().apply( &mLightsUp, 1.f, 15.f );
+        lightson = true;
+    }
+    
     Perlin p;
     
     static float light_sample = 0.;
@@ -109,8 +118,8 @@ void TunnelScene::update()
     auto new_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(sample_pt);
     camera_transform->setTranslation( new_pos );
     
-    auto lamp = std::dynamic_pointer_cast<PointLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
     lamp->setPosition( new_pos + vec3( 0,2,0 ) );
+    lamp->setIntensity(mLightsUp);
     //lamp->pointAt( main_camera_actor->getComponent<CameraComponent>().lock()->getCamera().getCenterOfInterestPoint() );
 
     tunnel_component->getNoiseScale() = .5 + sample_pt*2.;

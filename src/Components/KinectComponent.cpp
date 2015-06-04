@@ -150,7 +150,7 @@ bool KinectComponent::postInit()
         
         mKinectMesh = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/3.f), mKinectRender );
 
-        mKinectMeshShadow = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/4.f), mKinectShadowRender );
+        mKinectMeshShadow = gl::Batch::create( geom::Plane().size(vec2(640,480)).origin(vec3(getWindowCenter(),0)).subdivisions(vec2(640,480)/3.f), mKinectShadowRender );
 
         CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
         mInitialized = true;
@@ -203,7 +203,7 @@ void KinectComponent::draw(ec::EventDataRef)
 
 void KinectComponent::drawRift( ec::EventDataRef event )
 {
-    CI_LOG_V( mContext->getName() + " : "+getName()+" draw");
+    CI_LOG_V( mContext->getName() + " : "+getName()+" draw rift");
     
     auto e = std::dynamic_pointer_cast<DrawToRiftBufferEvent>(event);
     

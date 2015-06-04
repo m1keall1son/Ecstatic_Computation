@@ -1,191 +1,207 @@
 {
-   "actors" : [
-      {
-         "active" : true,
-         "components" : [
-            {
-               "id" : 4.7517583546330061e+18,
-               "light" : {
-                  "attenuation" : [ 0, 0.0010000000474974513 ],
-                  "color" : [ 0.96262633800506592, 0.95586138963699341, 1 ],
-                  "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
-                  "enable_shadows" : false,
-                  "intensity" : 0.5,
-                  "mapping" : [ 0, 0, 1024, 1024 ],
-                  "position" : [ -11.451807022094727, -37.525070190429688, -3930.467529296875 ],
-                  "range" : 100,
-                  "type" : "point",
-                  "visible" : true
+               "actors" : [
+                           {
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "type" : "render_manager"
+                                           },
+                                           {
+                                           "type" : "forward_pass",
+                                           "clear_color" : [ 0.0,0.0,0.0,1.0 ]
+                                           }
+                                           ],
+                           "create_on_scene_init" : true,
+                           "name" : "forward_render",
+                           "persistent" : false,
+                           "type" : "render",
+                           "type_qualifier" : "forward"
+                           },
+                           {
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "type" : "oculus_rift_component"
+                                           }
+                                           ],
+                           "create_on_scene_init" : false,
+                           "name" : "rift",
+                           "persistent" : true,
+                           "type" : "actor",
+                           "type_qualifier" : "hardware"
+                           },
+                           {
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "id" : 3.4022020487226516e+18,
+                                           "light" : {
+                                           "attenuation" : [ 0, 0.001 ],
+                                           "color" : [ 0.96262633800506592, 0.95586138963699341, 1 ],
+                                           "direction" : [ -0.7071068286895752, -0.7071068286895752, 0 ],
+                                           "enable_shadows" : false,
+                                           "intensity" : 0.5000000074505806,
+                                           "mapping" : [ 0, 0, 1024, 1024 ],
+                                           "position" : [ 0, 0, 0 ],
+                                           "range" : 100,
+                                           "type" : "point",
+                                           "visible" : true
+                                           },
+                                           "type" : "light_component"
+                                           },
+                                           {
+                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
+                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
+                                           "id" : 6.9051827069665843e+18,
+                                           "type" : "debug_component"
+                                           }
+                                           ],
+                           "create_on_scene_init" : true,
+                           "id" : 5.9182154138590904e+18,
+                           "name" : "follow_light",
+                           "persistent" : false,
+                           "type" : "light",
+                           "type_qualifier" : "static"
+                           },
+                           {
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "id" : 3.4022020487226516e+18,
+                                           "light" : {
+                                           "attenuation" : [ 0, 0.0010000000474974513 ],
+                                           "color" : [ 0.81960791349411011, 0.95686280727386475, 0.99215692281723022 ],
+                                           "direction" : [ -0.00070158473681658506, -0.044184505939483643, -0.99902313947677612 ],
+                                           "enable_shadows" : false,
+                                           "intensity" : 1.0000001192092896,
+                                           "mapping" : [ 0, 0, 1024, 1024 ],
+                                           "position" : [ 0,0,0],
+                                           "range" : 500,
+                                           "type" : "point",
+                                           "visible" : true                                           },
+                                           "type" : "light_component"
+                                           },
+                                           {
+                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
+                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
+                                           "id" : 6.9051827069665843e+18,
+                                           "type" : "debug_component"
+                                           }
+                                           ],
+                           "create_on_scene_init" : true,
+                           "id" : 5.9182154138590904e+18,
+                           "name" : "head_lamp",
+                           "persistent" : false,
+                           "type" : "light",
+                           "type_qualifier" : "static"
+                           },
+                           {
+                           
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "id" : 9.8039451169833533e+18,
+                                           "rotation" : [ 0, 0, 0, 1 ],
+                                           "scale" : [ 1, 1, 1 ],
+                                           "translation" : [ 0, -10, 0 ],
+                                           "type" : "transform_component"
+                                           },
+                                           {
+                                           "id" : 8.4698008755001467e+18,
+                                           "size" : 15,
+                                           "type" : "tunnel_component",
+                                           "length" :5000,
+                                           "step" : 100,
+                                           "amplitude" : [ 15.0, 15.0 ],
+                                           "frequency" : [ 0.01815, 0.0555 ],
+                                           "noise_amplitude" : [ 0.1, 0.1 ],
+                                           "noise_frequency" : [ 0.01, 0.01 ],
+                                           "face_diameter" : 10
+                                           
+                                           },
+                                           {
+                                           "current_visibility" : false,
+                                           "id" : 1.031388942136159e+19,
+                                           "type" : "frustum_cull_component"
+                                           },
+                                           {
+                                           "aa_bounding_box_max" : [ 7.5, 7.5, 7.5 ],
+                                           "aa_bounding_box_min" : [ -7.5, -7.5, -7.5 ],
+                                           "id" : 1.5572520709875716e+19,
+                                           "type" : "debug_component"
+                                           }
+                                           ],
+                           "create_on_scene_init" : true,
+                           "id" : 706246336274488,
+                           "name" : "tunnel",
+                           "persistent" : false,
+                           "type" : "actor",
+                           "type_qualifier" : "static"
+                           },
+                           {
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "id" : 2.3293759857552691e+18,
+                                           "rotation" : [ 0, 0, 0, 1 ],
+                                           "scale" : [ 1, 1, 1 ],
+                                           "translation" : [ 0, 0, 5 ],
+                                           "type" : "transform_component"
+                                           },
+                                           {
+                                           "aspect" : 1.6000000238418579,
+                                           "far" : 50000,
+                                           "fov" : 60,
+                                           "id" : 2.0939139236934252e+18,
+                                           "near" : 0.10000000149011612,
+                                           "interest_point" : [0,0,0],
+                                           "type" : "camera_component",
+                                           "type_qualifier" : "main"
+                                           },
+                                           {
+                                           "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
+                                           "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
+                                           "id" : 4.9603631667621427e+18,
+                                           "type" : "debug_component"
+                                           }
+                                           
+                                           ],
+                           "create_on_scene_init" : true,
+                           "id" : 7.0529101198941645e+18,
+                           "name" : "main_camera",
+                           "persistent" : false,
+                           "type" : "camera",
+                           "type_qualifier" : "main"
+                           },
+                           {
+                           "active" : true,
+                           "components" : [
+                                           {
+                                           "id" : 2.3293759857552691e+18,
+                                           "rotation" : [ 0, 0, 0, 1 ],
+                                           "scale" : [ 1, 1, 1 ],
+                                           "translation" : [ 25, 25, 25 ],
+                                           "type" : "transform_component"
+                                           },
+                                           {
+                                           "aspect" : "window",
+                                           "far" : 100000,
+                                           "fov" : 60,
+                                           "id" : 2.0939139236934252e+18,
+                                           "near" : 0.10000000149011612,
+                                           "interest_point" : [0,0,0],
+                                           "type" : "camera_component",
+                                           "type_qualifier" : "debug"
+                                           }
+                                           ],
+                           "create_on_scene_init" : true,
+                           "id" : 7.0529101198941645e+18,
+                           "name" : "debug_camera",
+                           "persistent" : false,
+                           "type" : "camera",
+                           "type_qualifier" : "debug"
+                           }
+                           ],
+               "id" : 46082544220839792,
+               "name" : "tunnel"
                },
-               "type" : "light_component"
-            },
-            {
-               "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
-               "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-               "id" : 1.2356894992178377e+19,
-               "type" : "debug_component"
-            }
-         ],
-         "create_on_scene_init" : true,
-         "id" : -8.4316518806147779e+18,
-         "name" : "follow_light",
-         "persistent" : false,
-         "type" : "light",
-         "type_qualifier" : "static"
-      },
-      {
-         "active" : true,
-         "components" : [
-            {
-               "id" : 1.2146802055423328e+19,
-               "light" : {
-                  "attenuation" : [ 0, 0.0010000000474974513 ],
-                  "color" : [ 0.37254902720451355, 0.47058826684951782, 0.82745105028152466 ],
-                  "direction" : [ 0.00046410236973315477, -0.044594205915927887, -0.99900507926940918 ],
-                  "enable_shadows" : false,
-                  "intensity" : 1,
-                  "mapping" : [ 0, 0, 1024, 1024 ],
-                  "position" : [ -3.5018789768218994, 6.0312356948852539, -26.12629508972168 ],
-                  "range" : 500,
-                  "type" : "point",
-                  "visible" : true
-               },
-               "type" : "light_component"
-            },
-            {
-               "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
-               "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-               "id" : 1.2811993990512546e+19,
-               "type" : "debug_component"
-            }
-         ],
-         "create_on_scene_init" : true,
-         "id" : -2.8515382939065969e+18,
-         "name" : "head_lamp",
-         "persistent" : false,
-         "type" : "light",
-         "type_qualifier" : "static"
-      },
-      {
-         "active" : true,
-         "components" : [
-            {
-               "amplitude" : [ 15, 15 ],
-               "face_diameter" : 18,
-               "frequency" : [ 0.018149999901652336, 0.055500000715255737 ],
-               "id" : 1.0013032299621347e+19,
-               "length" : 5000,
-               "noise_amplitude" : [ 0.10000000149011612, 0.10000000149011612 ],
-               "noise_frequency" : [ 0.0099999997764825821, 0.0099999997764825821 ],
-               "step" : 100,
-               "type" : "tunnel_component"
-            },
-            {
-               "id" : 1.1516474439029731e+19,
-               "rotation" : [ 0, 0, 0, 1 ],
-               "scale" : [ 1, 1, 1 ],
-               "translation" : [ 0, -10, 0 ],
-               "type" : "transform_component"
-            },
-            {
-               "aa_bounding_box_max" : [ 41.315898895263672, 55.049922943115234, 0.78207367658615112 ],
-               "aa_bounding_box_min" : [ -52.896469116210938, -56.328346252441406, -4908.580078125 ],
-               "id" : 3.5507303861394874e+17,
-               "type" : "debug_component"
-            },
-            {
-               "current_visibility" : true,
-               "id" : 1.530591420476529e+19,
-               "type" : "frustum_cull_component"
-            }
-         ],
-         "create_on_scene_init" : true,
-         "id" : 3.0054016056691497e+18,
-         "name" : "tunnel",
-         "persistent" : false,
-         "type" : "actor",
-         "type_qualifier" : "static"
-      },
-      {
-         "active" : true,
-         "components" : [
-            {
-               "id" : 1.6481544740289571e+19,
-               "type" : "render_manager"
-            },
-            {
-               "id" : 3.6338897488440883e+18,
-               "type" : "forward_pass"
-            }
-         ],
-         "create_on_scene_init" : true,
-         "id" : 4.1290742266175278e+18,
-         "name" : "forward_render",
-         "persistent" : false,
-         "type" : "render",
-         "type_qualifier" : "forward"
-      },
-      {
-         "active" : true,
-         "components" : [
-            {
-               "id" : 2.8012696580899077e+18,
-               "rotation" : [ 0, 0, 0, 1 ],
-               "scale" : [ 1, 1, 1 ],
-               "translation" : [ 25, 25, 25 ],
-               "type" : "transform_component"
-            },
-            {
-               "aspect" : 1.6000000238418579,
-               "far" : 100000,
-               "fov" : 60,
-               "id" : 5.9769029564452547e+18,
-               "near" : 0.10000000149011612,
-               "type" : "camera_component",
-               "type_qualifier" : "debug"
-            }
-         ],
-         "create_on_scene_init" : true,
-         "id" : 4.7392055264954849e+18,
-         "name" : "debug_camera",
-         "persistent" : false,
-         "type" : "camera",
-         "type_qualifier" : "debug"
-      },
-      {
-         "active" : true,
-         "components" : [
-            {
-               "id" : 2.3293759857552691e+18,
-               "rotation" : [ 0, 0, 0, 1 ],
-               "scale" : [ 1, 1, 1 ],
-               "translation" : [ -3.5018789768218994, 4.0312356948852539, -26.12629508972168 ],
-               "type" : "transform_component"
-            },
-            {
-               "aa_bounding_box_max" : [ 0.5, 0.5, 0.5 ],
-               "aa_bounding_box_min" : [ -0.5, -0.5, -0.5 ],
-               "id" : 6.8072453625046671e+18,
-               "type" : "debug_component"
-            },
-            {
-               "aspect" : 1.6000000238418579,
-               "far" : 50000,
-               "fov" : 60,
-               "id" : 2.0939139236934252e+18,
-               "near" : 0.10000000149011612,
-               "type" : "camera_component",
-               "type_qualifier" : "main"
-            }
-         ],
-         "create_on_scene_init" : true,
-         "id" : 7.0529101198941645e+18,
-         "name" : "main_camera",
-         "persistent" : false,
-         "type" : "camera",
-         "type_qualifier" : "main"
-      }
-   ],
-   "id" : 3.0054016056691497e+18,
-   "name" : "tunnel"
-}

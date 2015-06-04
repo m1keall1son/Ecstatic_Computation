@@ -13,6 +13,7 @@
 using SceneFactoryRef = std::shared_ptr<class SceneFactory>;
 using TunnelSceneRef = std::shared_ptr<class TunnelScene>;
 using TransistorSceneRef = std::shared_ptr<class TransistorScene>;
+using IntroSceneRef = std::shared_ptr<class IntroScene >;
 
 ///COMPONENTS
 using ComponentTemplateRef = std::shared_ptr<class ComponentTemplate>;
@@ -29,6 +30,7 @@ using OculusRiftComponentRef = std::shared_ptr< class OculusRiftComponent >;
 using OSCComponentRef = std::shared_ptr< class OSCComponent >;
 using ParticleSystemComponentRef = std::shared_ptr< class ParticleSystemComponent >;
 using RoomParticlesComponentRef = std::shared_ptr< class RoomParticlesComponent >;
+using LandscapeComponentRef = std::shared_ptr< class LandscapeComponent >;
 
 ///CAMERAS
 using CameraManagerRef = std::shared_ptr< class CameraManager >;
@@ -73,4 +75,5 @@ using LoadGUIEventRef = std::shared_ptr<class LoadGUIEvent>;
 using ComponentRegistrationEventRef = std::shared_ptr<class ComponentRegistrationEvent>;
 using FinishRenderEventRef = std::shared_ptr<class FinishRenderEvent>;
 using ShareGeometryDepthTextureEventRef = std::shared_ptr<class ShareGeometryDepthTextureEvent>;
+using MicVolumeEventRef = std::shared_ptr<class MicVolumeEvent>;
 

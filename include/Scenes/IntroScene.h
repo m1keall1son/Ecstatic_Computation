@@ -1,5 +1,5 @@
 //
-//  TunnelScene.h
+//  IntroScene.h
 //  Kinect_Component_test
 //
 //  Created by Mike Allison on 5/28/15.
@@ -11,16 +11,15 @@
 #include "AppCommon.h"
 #include "Common.h"
 #include "AppSceneBase.h"
-#include "cinder/Timeline.h"
 
-class TunnelScene : public AppSceneBase {
+class IntroScene : public AppSceneBase {
     
 public:
     
-    static TunnelSceneRef create( const std::string& name );
+    static IntroSceneRef create( const std::string& name );
     
     void initialize( const ci::JsonTree& init )override;
-
+    
     void update() override;
     void preDraw() override;
     void draw() override;
@@ -30,19 +29,15 @@ public:
     
     void postInit()override;
     
-    ~TunnelScene();
+    ~IntroScene();
     
 private:
     
     void initGUI( const ec::GUIManagerRef &gui_manager )override;
     void handlePresentScene( ec::EventDataRef );
     
-    TunnelScene( const std::string& name );
-    
-    float mTunnelSpeed;
-    float mTunnelSamplePt;
-    float mTunnelAccel;
-    bool mScrubTunnel;
-    cinder::Anim<float> mLightsUp;
-    
+    IntroScene( const std::string& name );
+    float mScale;
+    bool mEnableSinkHole;
+
 };

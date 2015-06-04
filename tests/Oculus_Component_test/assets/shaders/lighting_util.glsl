@@ -45,8 +45,11 @@ struct Material
     vec3 ambient;
 };
 
+struct FogData { float min; float max; float density; vec3 color; };
+
 struct Atmosphere
 {
+    FogData fog;
     float scattering;
 };
 

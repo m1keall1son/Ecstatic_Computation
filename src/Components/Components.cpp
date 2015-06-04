@@ -28,6 +28,7 @@
 #include "OculusRiftComponent.h"
 #include "OSCComponent.h"
 #include "RoomParticlesComponent.h"
+#include "LandscapeComponent.h"
 
 #include "RenderManager.h"
 #include "ShadowPass.h"
@@ -159,6 +160,14 @@ ec::ComponentBaseRef ComponentFactory::createComponent( ec::Actor* context, cons
     {
         CI_LOG_V("parsed osc_component");
         auto debug = RoomParticlesComponent::create(context);
+        debug->initialize(init);
+        return debug;
+        
+    }
+    else if (type == "landscape_component")
+    {
+        CI_LOG_V("parsed landscape_component");
+        auto debug = LandscapeComponent::create(context);
         debug->initialize(init);
         return debug;
         

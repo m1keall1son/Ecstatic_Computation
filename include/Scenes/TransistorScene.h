@@ -40,6 +40,7 @@ private:
     TransistorScene( const std::string& name );
     void moveFlash();
     void flash();
+    void moveCamera();
     
     float mSpeed;
     ci::Anim<float> mFlash;
@@ -47,5 +48,12 @@ private:
     float mSpikeSize;
     bool mPause;
     bool mRotateStuff;
-    
+    bool mDisintegrate;
+    bool mApplied;
+    ci::Anim<float> mBitScale;
+    ci::Anim<float> mSpotMove;
+    ci::Anim<float> mCamLerp;
+    ci::Anim<float> mDec;
+    ci::vec3        mCamPos;
+
 };

@@ -11,6 +11,7 @@
 #include "ComponentFactory.h"
 #include "ComponentBase.h"
 #include "AppCommon.h"
+#include "cinder/gl/BufferTexture.h"
 #include "ParticleSystemComponent.h"
 
 class RoomParticlesComponent : public ec::ComponentBase {
@@ -32,7 +33,13 @@ public:
     void                          cleanup()override;
     bool                          postInit()override;
     void                          drawTF( ec::EventDataRef );
+    void                          drawRift( ec::EventDataRef );
+    void                          drawShadows( ec::EventDataRef );
+    void                          sampleTexture( bool sample = true ){ mSampleTexture = true; }
+    void                          draw(ec::EventDataRef event);
 
+    inline ci::gl::BufferTextureRef getPositions(){ return mPositionsTexture[mCurrent]; }
+    
     ~RoomParticlesComponent();
     
 private:
@@ -57,16 +64,23 @@ private:
     GLenum                          mPrimitive;
     int                             mMaxParticles;
     int                             mCurrent;
+    bool                            mSampleTexture;
     
     ci::gl::VaoRef                  mVaos[2];
+    ci::gl::BufferTextureRef        mPositionsTexture[2], mVelocitiesTexture[2];
     ci::gl::TransformFeedbackObjRef mTF[2];
     
-    ci::gl::GlslProgRef mUpdateSeek;
-    ci::gl::GlslProgRef mUpdateNoise, mRender;
+    ci::gl::BatchRef    mMesh, mMeshShadow;
+    ci::gl::GlslProgRef mMeshRender,mShadowRender;
+
+    ci::gl::GlslProgRef mUpdateNoise, mFillBuffer;
     
     ci::gl::VboRef      mPositions[2];
-    ci::gl::VboRef      mData[2];
-    
+    ci::gl::VboRef      mVelocities[2];
+    ci::gl::VboRef      mTexCoords;
+
     ci::Colorf          mColor;
     
+    ci::vec3            mTarget;
+    float               mDec;
 };

@@ -36,7 +36,11 @@ public:
     void draw( ec::EventDataRef );
     void drawRift( ec::EventDataRef event );
     
-    ci::gl::Texture2dRef getKinectTexture();
+    inline ci::KinectRef        getKinect(){ return mKinect; }
+    inline ci::gl::Texture2dRef getKinectTexture(){ return mKinectDepthTexture; }
+    inline ci::gl::Texture2dRef getKinectColorTexture(){ return mKinectColorTexture; }
+    inline float getTriagleCutoff(){ return mTriangleCutoff; }
+    inline cinder::vec2 getThresholds(){ return mThresholds; }
     
     ~KinectComponent();
     

@@ -334,3 +334,25 @@ private:
     ci::gl::Texture2dRef mDepthTexture;
 };
 
+
+class MicVolumeEvent : public ec::EventData {
+public:
+    
+    static ec::EventType TYPE;
+    
+    static MicVolumeEventRef create( const float &vol );
+    
+    ~MicVolumeEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+    inline float getVolume(){ return mVolume; }
+    
+private:
+    MicVolumeEvent(const float &vol);
+    float mVolume;
+};

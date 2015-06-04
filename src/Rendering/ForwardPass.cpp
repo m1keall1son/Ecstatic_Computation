@@ -176,7 +176,7 @@ void ForwardPass::process()
         
         hmd::ScopedBind bind{ *oculus };
         
-        gl::clear();
+        gl::clear(mClearColor);
 
         for(auto & eye : oculus->getEyes()){
             gl::ScopedMatrices push;
