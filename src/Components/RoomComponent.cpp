@@ -276,7 +276,7 @@ ci::JsonTree RoomComponent::serialize()
 void RoomComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
     gui->addParam("noise scale", &mNoiseScale).min(0.).max(1.).step(.01);
     gui->addParam("noise max", &mNoiseMax);
 

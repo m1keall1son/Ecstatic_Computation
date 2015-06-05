@@ -34,7 +34,7 @@ public:
     
 private:
     
-    void initGUI( const ec::GUIManagerRef &gui_manager )override;
+    void initGUI( ec::GUIManager * gui_manager )override;
     void handlePresentScene( ec::EventDataRef );
     
     TransistorScene( const std::string& name );
@@ -50,6 +50,8 @@ private:
     bool mRotateStuff;
     bool mDisintegrate;
     bool mApplied;
+    bool mInitDisitegrate;
+    bool mFinish;
     ci::Anim<float> mBitScale;
     ci::Anim<float> mSpotMove;
     ci::Anim<float> mCamLerp;

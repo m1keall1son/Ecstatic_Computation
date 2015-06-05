@@ -39,7 +39,7 @@ TransistorSceneRef TransistorScene::create( const std::string& name )
     return TransistorSceneRef( new TransistorScene(name) );
 }
 
-TransistorScene::TransistorScene( const std::string& name ):AppSceneBase(name), mSpeed(.2),mBitScale(0.), mFlash(0), mFlashDuration(.1), mSpikeSize(0.),mPause(false),mRotateStuff(false),mDisintegrate(false),mSpotMove(0.),mDec(10.),mCamLerp(0),mApplied(false)
+TransistorScene::TransistorScene( const std::string& name ):AppSceneBase(name), mSpeed(.2),mBitScale(0.), mFlash(0), mFlashDuration(.1), mSpikeSize(0.),mPause(false),mRotateStuff(false),mDisintegrate(false),mSpotMove(0.),mDec(10.),mCamLerp(0),mApplied(false),mFinish(false),mInitDisitegrate(false)
 {
     //initialize stuff
     CI_LOG_V("Transistor Scene constructed");
@@ -147,8 +147,7 @@ void TransistorScene::update()
         if(mSpeed > 1.)mSpeed = 1.;
     }
     
-    static bool initDisintegrate = false;
-    if( mDisintegrate && !initDisintegrate ){
+    if( mDisintegrate && !mInitDisitegrate ){
         
         auto kinect = ec::ActorManager::get()->retreiveUnique(ec::getHash("kinect")).lock();
         auto k_particles = kinect->getComponent<RoomParticlesComponent>().lock();
@@ -163,7 +162,7 @@ void TransistorScene::update()
         mSceneManager->addListener(fastdelegate::MakeDelegate(k_particles.get(), &RoomParticlesComponent::drawRift), DrawToRiftBufferEvent::TYPE);
         mSceneManager->addListener(fastdelegate::MakeDelegate(k_particles.get(), &RoomParticlesComponent::draw), DrawToMainBufferEvent::TYPE);
 
-        initDisintegrate = true;
+        mInitDisitegrate = true;
     }
     
     auto room = ec::ActorManager::get()->retreiveUnique(ec::getHash("room")).lock();
@@ -185,19 +184,25 @@ void TransistorScene::update()
     
     if(!mApplied && mDisintegrate){
         
-        auto endScene =[&]{ ec::Controller::get()->eventManager()->queueEvent(ec::RestartEvent::create()); };
+        if( mFinish ){
+           ec::Controller::get()->reset( true );
+        }else{
         
-        auto camFun = [&]{
-            timeline().apply(&mDec, 0.f, 25.f).updateFn( std::bind( &TransistorScene::moveCamera, this ) ).finishFn(endScene);
-            timeline().apply(&mCamLerp, 1.f, 5.f);
-        };
-        
-        auto uFn = std::bind(  &TransistorScene::flash, this );
-        auto fFn = std::bind(  &TransistorScene::moveFlash, this );
-        timeline().apply(&mFlash, 1.f, mFlashDuration).updateFn(uFn).finishFn(fFn);
-        //after this engage scene end
-        timeline().apply(&mBitScale, 5.f, 60.f ).finishFn(camFun);
-        timeline().apply(&mSpotMove, 1.f, 5.f );
+      //  auto endScene =[&]{ ec::Controller::get()->reset( true ); };
+            auto endScene =[&]{  ec::Controller::get()->reset( true );  };
+            
+            auto camFun = [&]{
+                timeline().apply(&mDec, 0.f, 25.f).updateFn( std::bind( &TransistorScene::moveCamera, this ) ).finishFn(endScene);
+                timeline().apply(&mCamLerp, 1.f, 5.f);
+            };
+            
+            auto uFn = std::bind(  &TransistorScene::flash, this );
+            auto fFn = std::bind(  &TransistorScene::moveFlash, this );
+            timeline().apply(&mFlash, 1.f, mFlashDuration).updateFn(uFn).finishFn(fFn);
+            //after this engage scene end
+            timeline().apply(&mBitScale, 5.f, 60.f ).finishFn(camFun);
+            timeline().apply(&mSpotMove, 1.f, 5.f );
+        }
         mApplied = true;
     }
     auto bit_trans = bit->getComponent<ec::TransformComponent>().lock();
@@ -227,15 +232,20 @@ void TransistorScene::draw()
     manager()->triggerEvent(DrawEvent::create());
 }
 
-void TransistorScene::initGUI(const ec::GUIManagerRef &gui_manager)
+void TransistorScene::initGUI( ec::GUIManager* gui_manager)
 {
-    AppSceneBase::initGUI(gui_manager);
-    auto params = gui_manager->findGUI(getId());
-    params->addParam("pause", &mPause);
-    params->addParam("rotate stuff", &mRotateStuff);
-    params->addParam("disitegrate", &mDisintegrate);
-    params->addParam("speed", &mSpeed).max(1.).min(.0).step(.01);
+//    auto params = gui_manager->findGUI(getId());
+    auto gui = gui_manager->getMainGui();
+    gui->addSeparator();
+    gui->addText("Scene: "+getName());
+    gui->addParam("pause", &mPause);
+    gui->addParam("rotate stuff", &mRotateStuff);
+    gui->addParam("disitegrate", &mDisintegrate);
+    gui->addParam("speed", &mSpeed).max(1.).min(.0).step(.01);
+    gui->addParam("finish", &mFinish);
     
+    AppSceneBase::initGUI(gui_manager);
+
 }
 
 void TransistorScene::handlePresentScene(ec::EventDataRef event)

@@ -117,12 +117,16 @@ void IntroScene::draw()
     manager()->triggerEvent(DrawEvent::create());
 }
 
-void IntroScene::initGUI(const ec::GUIManagerRef &gui_manager)
+void IntroScene::initGUI( ec::GUIManager* gui_manager)
 {
+//    auto params = gui_manager->findGUI(getId());
+    auto gui = gui_manager->getMainGui();
+    gui->addSeparator();
+    gui->addText("Scene: "+getName());
+    gui->addParam("enable sinkhole", &mEnableSinkHole);
+    gui->addParam("progress", &mScale);
+    
     AppSceneBase::initGUI(gui_manager);
-    auto params = gui_manager->findGUI(getId());
-    params->addParam("enable sinkhole", &mEnableSinkHole);
-    params->addParam("progress", &mScale);
     
 }
 

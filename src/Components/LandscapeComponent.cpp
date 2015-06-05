@@ -205,23 +205,23 @@ ci::JsonTree LandscapeComponent::serialize()
 void LandscapeComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
     gui->addParam("sink hole", &mSinkHoleScale);
-    gui->addSeparator();
+    //gui->addSeparator();
     
-    auto uFun = [&]{ mHeadTransform.mUpdated = 1; mFootTransform.mUpdated = 1; mTeethTransform.mUpdated = 1; };
-    
-    gui->addParam("head translation", &mHeadTransform.mTranslation).updateFn(uFun);
-    gui->addParam("head scale", &mHeadTransform.mScale).updateFn(uFun);
-    gui->addParam("head rotation", &mHeadTransform.mRotation).updateFn(uFun);
-    gui->addSeparator();
-    gui->addParam("foot translation", &mFootTransform.mTranslation).updateFn(uFun);
-    gui->addParam("foot scale", &mFootTransform.mScale).updateFn(uFun);
-    gui->addParam("foot rotation", &mFootTransform.mRotation).updateFn(uFun);
-    gui->addSeparator();
-    gui->addParam("teeth translation", &mTeethTransform.mTranslation).updateFn(uFun);
-    gui->addParam("teeth scale", &mTeethTransform.mScale).updateFn(uFun);
-    gui->addParam("teeth rotation", &mTeethTransform.mRotation).updateFn(uFun);
+//    auto uFun = [&]{ mHeadTransform.mUpdated = 1; mFootTransform.mUpdated = 1; mTeethTransform.mUpdated = 1; };
+//    
+//    gui->addParam("head translation", &mHeadTransform.mTranslation).updateFn(uFun);
+//    gui->addParam("head scale", &mHeadTransform.mScale).updateFn(uFun);
+//    gui->addParam("head rotation", &mHeadTransform.mRotation).updateFn(uFun);
+//    gui->addSeparator();
+//    gui->addParam("foot translation", &mFootTransform.mTranslation).updateFn(uFun);
+//    gui->addParam("foot scale", &mFootTransform.mScale).updateFn(uFun);
+//    gui->addParam("foot rotation", &mFootTransform.mRotation).updateFn(uFun);
+//    gui->addSeparator();
+//    gui->addParam("teeth translation", &mTeethTransform.mTranslation).updateFn(uFun);
+//    gui->addParam("teeth scale", &mTeethTransform.mScale).updateFn(uFun);
+//    gui->addParam("teeth rotation", &mTeethTransform.mRotation).updateFn(uFun);
 }
 
 void LandscapeComponent::drawRift( ec::EventDataRef event )

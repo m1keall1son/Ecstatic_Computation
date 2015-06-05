@@ -672,23 +672,23 @@ const ec::ComponentType       LightComponent::getType() const
 void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
     
-    gui->addParam("visible", &mLight->mVisible);
-    gui->addParam("intensity", &mLight->mIntensity );
-    gui->addParam("color", &mLight->mColor );
+    gui->addParam(mContext->getName() +" : light visible", &mLight->mVisible);
+    gui->addParam(mContext->getName() +" : intensity", &mLight->mIntensity );
+    gui->addParam(mContext->getName() +" : light color", &mLight->mColor );
     gui->addText("mapping");
-    gui->addParam("mapping.x", &mLight->mMapping.x);
-    gui->addParam("mapping.y", &mLight->mMapping.y);
-    gui->addParam("mapping.w", &mLight->mMapping.z);
-    gui->addParam("mapping.h", &mLight->mMapping.w);
+    gui->addParam(mContext->getName() +" : mapping.x", &mLight->mMapping.x);
+    gui->addParam(mContext->getName() +" : mapping.y", &mLight->mMapping.y);
+    gui->addParam(mContext->getName() +" : mapping.w", &mLight->mMapping.z);
+    gui->addParam(mContext->getName() +" : mapping.h", &mLight->mMapping.w);
     
     
     switch (mLight->getType()) {
         case Light::Type::Directional:
         {
             auto directional = std::dynamic_pointer_cast<DirectionalLight>(mLight);
-            gui->addParam("direction", &directional->mDirection);
+            gui->addParam(mContext->getName() +" : direction", &directional->mDirection);
             
         }
             break;
@@ -706,12 +706,12 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
                 }
             }, std::move(weak_light));
             
-            gui->addParam("position", &point->mPosition).updateFn(uFn);
-            gui->addParam("point at", &point->mPointAt).updateFn(uFn);
-            gui->addParam("range", &point->mRange);
-            gui->addParam("attenuation linear", &point->mAttenuation.x);
-            gui->addParam("attenuation quadratic", &point->mAttenuation.y);
-            gui->addParam("enable shadows", &point->mHasShadows).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : position", &point->mPosition).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : point at", &point->mPointAt).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : range", &point->mRange);
+            gui->addParam(mContext->getName() +" : attenuation linear", &point->mAttenuation.x);
+            gui->addParam(mContext->getName() +" : attenuation quadratic", &point->mAttenuation.y);
+            gui->addParam(mContext->getName() +" : enable shadows", &point->mHasShadows).updateFn(uFn);
             
         }
             break;
@@ -730,15 +730,15 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
                 }
             }, std::move(weak_light));
             
-            gui->addParam("position", &spot->mPosition).updateFn(uFn);
-            gui->addParam("point at", &spot->mPointAt).updateFn(uFn);
-            gui->addParam("range", &spot->mRange);
-            gui->addParam("attenuation linear", &spot->mAttenuation.x);
-            gui->addParam("attenuation quadratic", &spot->mAttenuation.y);
-            gui->addParam("enable shadows", &spot->mHasShadows);
-            gui->addParam("spot ratio", &spot->mSpotRatio);
-            gui->addParam("hotspot ratio", &spot->mHotspotRatio);
-            gui->addParam("enable shadows", &spot->mHasShadows).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : position", &spot->mPosition).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : point at", &spot->mPointAt).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : range", &spot->mRange);
+            gui->addParam(mContext->getName() +" : attenuation linear", &spot->mAttenuation.x);
+            gui->addParam(mContext->getName() +" : attenuation quadratic", &spot->mAttenuation.y);
+            gui->addParam(mContext->getName() +" : enable shadows", &spot->mHasShadows);
+            gui->addParam(mContext->getName() +" : spot ratio", &spot->mSpotRatio);
+            gui->addParam(mContext->getName() +" : hotspot ratio", &spot->mHotspotRatio);
+            gui->addParam(mContext->getName() +" : enable shadows", &spot->mHasShadows).updateFn(uFn);
             
         }
             break;
@@ -756,14 +756,14 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
                 }
             }, std::move(weak_light));
             
-            gui->addParam("position", &capsule->mPosition).updateFn(uFn);
-            gui->addParam("point at", &capsule->mPointAt).updateFn(uFn);
-            gui->addParam("range", &capsule->mRange);
-            gui->addParam("attenuation linear", &capsule->mAttenuation.x);
-            gui->addParam("attenuation quadratic", &capsule->mAttenuation.y);
-            gui->addParam("enable shadows", &capsule->mHasShadows).updateFn(uFn);
-            gui->addParam("length", &capsule->mLength);
-            gui->addParam("axis", &capsule->mAxis);
+            gui->addParam(mContext->getName() +" : position", &capsule->mPosition).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : point at", &capsule->mPointAt).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : range", &capsule->mRange);
+            gui->addParam(mContext->getName() +" : attenuation linear", &capsule->mAttenuation.x);
+            gui->addParam(mContext->getName() +" : attenuation quadratic", &capsule->mAttenuation.y);
+            gui->addParam(mContext->getName() +" : enable shadows", &capsule->mHasShadows).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : length", &capsule->mLength);
+            gui->addParam(mContext->getName() +" : axis", &capsule->mAxis);
             
         }
             break;
@@ -781,16 +781,16 @@ void LightComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
                 }
             }, std::move(weak_light));
             
-            gui->addParam("position", &wedge->mPosition).updateFn(uFn);
-            gui->addParam("point at", &wedge->mPointAt).updateFn(uFn);
-            gui->addParam("range", &wedge->mRange);
-            gui->addParam("attenuation linear", &wedge->mAttenuation.x);
-            gui->addParam("attenuation quadratic", &wedge->mAttenuation.y);
-            gui->addParam("enable shadows", &wedge->mHasShadows).updateFn(uFn);
-            gui->addParam("spot ratio", &wedge->mSpotRatio);
-            gui->addParam("hotspot ratio", &wedge->mHotspotRatio);
-            gui->addParam("length", &wedge->mLength);
-            gui->addParam("axis", &wedge->mAxis);
+            gui->addParam(mContext->getName() +" : position", &wedge->mPosition).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : point at", &wedge->mPointAt).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : range", &wedge->mRange);
+            gui->addParam(mContext->getName() +" : attenuation linear", &wedge->mAttenuation.x);
+            gui->addParam(mContext->getName() +" : attenuation quadratic", &wedge->mAttenuation.y);
+            gui->addParam(mContext->getName() +" : enable shadows", &wedge->mHasShadows).updateFn(uFn);
+            gui->addParam(mContext->getName() +" : spot ratio", &wedge->mSpotRatio);
+            gui->addParam(mContext->getName() +" : hotspot ratio", &wedge->mHotspotRatio);
+            gui->addParam(mContext->getName() +" : length", &wedge->mLength);
+            gui->addParam(mContext->getName() +" : axis", &wedge->mAxis);
         }
             break;
             

@@ -170,7 +170,7 @@ ci::JsonTree RenderManager::serialize()
 void RenderManager::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
 }
 
 void RenderManager::handlePassRegistration(ec::EventDataRef event)

@@ -206,12 +206,12 @@ void CameraComponent::updateCameraParams()
 void CameraComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
     auto updateFn = std::bind(&CameraComponent::updateCameraParams, this);
-    gui->addParam("FOV", &mFov).updateFn(updateFn);
-    gui->addParam("Far", &mFar).updateFn(updateFn);
-    gui->addParam("Near", &mNear).updateFn(updateFn);
-    gui->addParam("Interest Point", &mInterestPoint);
+    gui->addParam( mContext->getName() +" : FOV", &mFov).updateFn(updateFn);
+    gui->addParam( mContext->getName() +" : Far", &mFar).updateFn(updateFn);
+    gui->addParam( mContext->getName() +" : Near", &mNear).updateFn(updateFn);
+    gui->addParam( mContext->getName() +" : Interest Point", &mInterestPoint);
 
 }
 

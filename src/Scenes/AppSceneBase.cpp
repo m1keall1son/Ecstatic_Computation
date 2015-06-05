@@ -56,21 +56,22 @@ void AppSceneBase::update()
     ec::Scene::update();
 }
 
-void AppSceneBase::initGUI(const ec::GUIManagerRef &gui_manager)
+void AppSceneBase::initGUI( ec::GUIManager* gui_manager)
 {
     
     //add any special thing to gui for scene?
-    auto scene_params = ci::params::InterfaceGl::create( "Scene: "+getName() + " GUI", ci::vec2(100,100));
+    auto gui = gui_manager->getMainGui();
     auto saveFn = [&]{ mSceneManager->triggerEvent(SaveSceneEvent::create()); };
-    scene_params->addButton("Save", saveFn);
-    scene_params->hide();
+    gui->addButton("Save", saveFn);
+    gui->hide();
     
-    gui_manager->instertGUI(getId(), scene_params);
+//    gui_manager->instertGUI(getId(), scene_params);
     
     //tell everyone else to load up
     for( auto & actor : mActors ){
         if(auto actor_strong = actor.second.lock()){
-            gui_manager->instertGUI(actor_strong->getId(), actor_strong->initGUI());
+            //gui_manager->instertGUI(actor_strong->getId(), );
+            actor_strong->initGUI( gui_manager );
         }
     }
 }

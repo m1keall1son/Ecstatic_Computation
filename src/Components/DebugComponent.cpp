@@ -229,7 +229,7 @@ void DebugComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
     
     
 }

@@ -109,8 +109,8 @@ void FrustumCullComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
     auto updateFn = [&]{ mEnableCull = mIsVisible; };
-    gui->addParam("visible", &mIsVisible).updateFn(updateFn);
+    gui->addParam(mContext->getName() +" : visible", &mIsVisible).updateFn(updateFn);
     
 }

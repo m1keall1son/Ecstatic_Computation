@@ -142,8 +142,8 @@ ci::JsonTree ForwardPass::serialize()
 void ForwardPass::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
-    gui->addParam("clear", &mClearColor);
+    gui->addText( mContext->getName() +" : "+ getName());
+    gui->addParam( mContext->getName() +" : clear color", &mClearColor);
 }
 
 void ForwardPass::process()

@@ -133,7 +133,7 @@ ci::JsonTree ShadowPass::serialize()
 void ShadowPass::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText(mContext->getName()+": "+ getName());
 }
 
 ci::gl::Texture2dRef ShadowPass::getShadowTexture(){ return mShadowMap->getTexture(); }

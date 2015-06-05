@@ -287,7 +287,7 @@ const ec::ComponentType KinectComponent::getType() const
 void KinectComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
+    gui->addText( mContext->getName() +" : "+ getName());
     gui->addParam("triangle cutoff", &mTriangleCutoff).min(0.).max(10.);
     gui->addParam("near thresh", &mThresholds.x);
     gui->addParam("far threshold", &mThresholds.y);

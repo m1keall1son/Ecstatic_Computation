@@ -34,7 +34,7 @@ public:
     
 private:
     
-    void initGUI( const ec::GUIManagerRef &gui_manager )override;
+    void initGUI( ec::GUIManager* gui_manager )override;
     void handlePresentScene( ec::EventDataRef );
     
     TunnelScene( const std::string& name );
@@ -43,6 +43,8 @@ private:
     float mTunnelSamplePt;
     float mTunnelAccel;
     bool mScrubTunnel;
+    bool mLightsOn;
+    float mLightSample;
     cinder::Anim<float> mLightsUp;
     
 };

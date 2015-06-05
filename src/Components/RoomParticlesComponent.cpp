@@ -224,19 +224,27 @@ void RoomParticlesComponent::initTF()
     for( int i  = 0; i < 2; i++ ){
         
         mVaos[i] = gl::Vao::create();
-        mVaos[i]->bind();
+        gl::ScopedVao vao(mVaos[i]);
         
-        mPositions[i]->bind();
-        gl::vertexAttribPointer(POSITION_LOC, 4, GL_FLOAT, GL_FALSE, 0, 0);
-        gl::enableVertexAttribArray(POSITION_LOC);
+        {
+            gl::ScopedBuffer vbo(mPositions[i]);
+            gl::vertexAttribPointer(POSITION_LOC, 4, GL_FLOAT, GL_FALSE, 0, 0);
+            gl::enableVertexAttribArray(POSITION_LOC);
+        }
         
-        mVelocities[i]->bind();
-        gl::vertexAttribPointer(DATA_LOC, 4, GL_FLOAT, GL_FALSE, 0, 0);
-        gl::enableVertexAttribArray(DATA_LOC);
         
-        mTexCoords->bind();
-        gl::vertexAttribPointer(TEXCOORD_LOC, 2, GL_FLOAT, GL_FALSE, 0, 0);
-        gl::enableVertexAttribArray(TEXCOORD_LOC);
+        {
+            gl::ScopedBuffer vbo(mVelocities[i]);
+            gl::vertexAttribPointer(DATA_LOC, 4, GL_FLOAT, GL_FALSE, 0, 0);
+            gl::enableVertexAttribArray(DATA_LOC);
+        }
+        
+        
+        {
+            gl::ScopedBuffer vbo(mTexCoords);
+            gl::vertexAttribPointer(TEXCOORD_LOC, 2, GL_FLOAT, GL_FALSE, 0, 0);
+            gl::enableVertexAttribArray(TEXCOORD_LOC);
+        }
         
         mTF[i] = gl::TransformFeedbackObj::create();
         
@@ -367,8 +375,7 @@ ci::JsonTree RoomParticlesComponent::serialize()
 void RoomParticlesComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
 {
     gui->addSeparator();
-    gui->addText(getName());
-    gui->addParam("color", &mColor);
+    gui->addText( mContext->getName() +" : "+ getName());
     gui->addButton("reload glsl", std::bind(&RoomParticlesComponent::reloadGlslProg, this));
 }
 
@@ -403,6 +410,8 @@ void RoomParticlesComponent::drawTF(ec::EventDataRef event )
             
             ci::gl::endTransformFeedback();
             
+            mTF[ 1 - mCurrent ]->unbind();
+            
             mSampleTexture = false;
             
 
@@ -412,9 +421,9 @@ void RoomParticlesComponent::drawTF(ec::EventDataRef event )
             
             Perlin p;
             
-            auto circle = p.noise(getElapsedSeconds()*.1)*.1;
+            auto circle = 0.;//p.noise(getElapsedSeconds()*.1)*.1;
             
-            mTarget = vec3( mDec*cos( getElapsedSeconds()*(1.-circle) ), mDec*sin(getElapsedSeconds()*( 1 - p.noise(getElapsedSeconds()*.2)*.2 ) ), mDec*cos(getElapsedSeconds()*(1.-circle)) );
+            mTarget = vec3( mDec*cos( getElapsedSeconds()*(1.-circle) ), mDec*sin(getElapsedSeconds()*( 1 - p.noise(getElapsedSeconds()*.05)*.1 ) ), mDec*cos(getElapsedSeconds()*(1.-circle)) );
             
             gl::ScopedGlslProg glsl(mUpdateNoise);
             mUpdateNoise->uniform( "uDeltaTime", (float)ec::getFrameTimeStep() );
@@ -436,6 +445,8 @@ void RoomParticlesComponent::drawTF(ec::EventDataRef event )
             ci::gl::beginTransformFeedback( GL_POINTS );
             ci::gl::drawArrays( GL_POINTS, 0, mMaxParticles );
             ci::gl::endTransformFeedback();
+            
+            mTF[1 - mCurrent]->unbind();
 
         }
         

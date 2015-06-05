@@ -33,7 +33,7 @@ public:
     
 private:
     
-    void initGUI( const ec::GUIManagerRef &gui_manager )override;
+    void initGUI( ec::GUIManager* gui_manager )override;
     void handlePresentScene( ec::EventDataRef );
     
     IntroScene( const std::string& name );

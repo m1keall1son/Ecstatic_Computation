@@ -35,7 +35,7 @@ TunnelSceneRef TunnelScene::create( const std::string& name )
     return TunnelSceneRef( new TunnelScene(name) );
 }
 
-TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelSpeed(.0),mTunnelAccel(.00001),mTunnelSamplePt(0),mScrubTunnel(false),mLightsUp(0.)
+TunnelScene::TunnelScene( const std::string& name ):AppSceneBase(name), mTunnelSpeed(.0),mTunnelAccel(.00001),mTunnelSamplePt(0),mScrubTunnel(false),mLightsUp(0.),mLightsOn(false),mLightSample(0)
 {
     //initialize stuff
     CI_LOG_V("Tunnel scene constructed");
@@ -96,17 +96,15 @@ void TunnelScene::update()
     
     auto lamp = std::dynamic_pointer_cast<PointLight>(head_lamp->getComponent<LightComponent>().lock()->getLight());
 
-    static bool lightson = false;
-    if(!lightson){
+    if(!mLightsOn){
         lamp->setIntensity(0.);
         timeline().apply( &mLightsUp, 1.f, 15.f );
-        lightson = true;
+        mLightsOn = true;
     }
     
     Perlin p;
     
-    static float light_sample = 0.;
-    light_sample+=.001;
+    mLightSample+=.001;
     
     auto sample_pt = ci::constrain( mTunnelSamplePt , 0.f, 1.f);
     
@@ -126,10 +124,10 @@ void TunnelScene::update()
     
     auto light = std::dynamic_pointer_cast<PointLight>(follow_light->getComponent<LightComponent>().lock()->getLight());
 
-    if( light_sample > .998){
-        light_sample = 0.;
+    if( mLightSample > .998){
+        mLightSample = 0.;
     }
-    auto light_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(light_sample);
+    auto light_pos = tunnel_transform->getTranslation() + tunnel_component->getSpline().getPosition(mLightSample);
     
     light->setPosition( light_pos + vec3( 6. * cos(light_pos.z * .04), 6. * sin(light_pos.z * .0153), 0.) );
     //light->setIntensity( light->getIntensity() + cos( light_pos.z * .03 ) * .0096 );
@@ -154,13 +152,17 @@ void TunnelScene::draw()
     manager()->triggerEvent(DrawEvent::create());
 }
 
-void TunnelScene::initGUI(const ec::GUIManagerRef &gui_manager)
+void TunnelScene::initGUI( ec::GUIManager* gui_manager)
 {
-    AppSceneBase::initGUI(gui_manager);
-    auto params = gui_manager->findGUI(getId());
-    params->addParam("scrub tunnel", &mScrubTunnel);
-    params->addParam("tunnel position", &mTunnelSamplePt).max(1.).min(0.).step(.001);
+//    auto params = gui_manager->findGUI(getId());
+    auto gui = gui_manager->getMainGui();
+    gui->addSeparator();
+    gui->addText("Scene: "+getName());
+    gui->addParam("scrub tunnel", &mScrubTunnel);
+    gui->addParam("tunnel position", &mTunnelSamplePt).max(1.).min(0.).step(.001);
     
+    AppSceneBase::initGUI(gui_manager);
+
 }
 
 void TunnelScene::handlePresentScene(ec::EventDataRef event)
