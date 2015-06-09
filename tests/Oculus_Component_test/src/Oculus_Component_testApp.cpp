@@ -47,7 +47,7 @@ void Oculus_Component_test::mouseDown( MouseEvent event )
 void Oculus_Component_test::keyUp( KeyEvent event )
 {
     
-    if(event.getChar() == KeyEvent::KEY_d){
+    if(event.getChar() == 'D'){
         mDebug = !mDebug;
         mController->enableDebug( mDebug );
         if(mDebug)
@@ -56,17 +56,17 @@ void Oculus_Component_test::keyUp( KeyEvent event )
             mController->scene().lock()->manager()->queueEvent( SwitchCameraEvent::create( CameraComponent::CameraType::MAIN_CAMERA ) );
     }
     else if( event.getChar() == KeyEvent::KEY_r ){
-        mController->scene().lock()->manager()->queueEvent( ReloadGlslProgEvent::create() );
+       // mController->scene().lock()->manager()->queueEvent( ReloadGlslProgEvent::create() );
         
     }
-    else if( event.getChar() == KeyEvent::KEY_s ){
-        mController->scene().lock()->manager()->queueEvent( SaveSceneEvent::create() );
+    else if( event.getChar() == 'W' ){
+        mController->scene().lock()->manager()->queueEvent( AdvanceEvent::create() );
     }
-    else if( event.getChar() == KeyEvent::KEY_g ){
+    else if( event.getChar() == 'G' ){
         mGUI = !mGUI;
         mController->enableGUI( mGUI );
     }
-    if( event.getChar() == KeyEvent::KEY_t ){
+    if( event.getChar() == 'T'){
         mController->eventManager()->queueEvent( ec::RestartEvent::create() );
     }
 }

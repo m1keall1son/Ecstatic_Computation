@@ -82,6 +82,7 @@ void OculusRiftComponent::handleUpdate(ec::EventDataRef)
     
     auto scene = std::dynamic_pointer_cast<AppSceneBase>( ec::Controller::get()->scene().lock() );
     auto & host = scene->cameras()->getActiveCamera();
+    
     mRift->setHostCamera( host );
     
     RiftData data;
@@ -126,6 +127,7 @@ bool OculusRiftComponent::postInit()
         
         CI_LOG_V( mContext->getName() + " : "+getName()+" post init");
         mInitialized = true;
+        mRift->enablePositionalTracking( true );
     }
     
     mRift->recenterPose();

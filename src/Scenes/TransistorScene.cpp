@@ -30,6 +30,7 @@
 #include "RoomComponent.h"
 #include "RoomParticlesComponent.h"
 #include "KinectComponent.h"
+#include "OSCComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -39,7 +40,7 @@ TransistorSceneRef TransistorScene::create( const std::string& name )
     return TransistorSceneRef( new TransistorScene(name) );
 }
 
-TransistorScene::TransistorScene( const std::string& name ):AppSceneBase(name), mSpeed(.2),mBitScale(0.), mFlash(0), mFlashDuration(.1), mSpikeSize(0.),mPause(false),mRotateStuff(false),mDisintegrate(false),mSpotMove(0.),mDec(10.),mCamLerp(0),mApplied(false),mFinish(false),mInitDisitegrate(false)
+TransistorScene::TransistorScene( const std::string& name ):AppSceneBase(name), mSpeed(.2),mBitScale(0.), mFlash(0), mFlashDuration(.1), mSpikeSize(0.),mPause(false),mRotateStuff(false),mDisintegrate(false),mSpotMove(0.),mDec(10.),mCamLerp(0),mApplied(false),mFinish(false),mInitDisitegrate(false),mAllowAdvance(true)
 {
     //initialize stuff
     CI_LOG_V("Transistor Scene constructed");
@@ -62,7 +63,8 @@ void TransistorScene::initialize(const ci::JsonTree &init)
     
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TransistorScene::shutDown), ec::ShutDownEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TransistorScene::handlePresentScene), FinishRenderEvent::TYPE);
-    
+    mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TransistorScene::handleAdvance), AdvanceEvent::TYPE);
+
     CI_LOG_V("Tunnel scene initialized");
     
 }
@@ -75,7 +77,41 @@ void TransistorScene::shutDown(ec::EventDataRef)
 void TransistorScene::postInit()
 {
     ///like setup
- 
+    auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+    auto osc_component = osc->getComponent<OSCComponent>().lock();
+    if( osc_component ){
+        osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 1.);
+    }
+}
+
+void TransistorScene::handleAdvance(ec::EventDataRef){
+    
+    if( mAllowAdvance ){
+        
+        if( mDisintegrate ){
+            
+            auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+            auto osc_component = osc->getComponent<OSCComponent>().lock();
+            if( osc_component ){
+                osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 0.);
+                auto osc_id = ec::getHash("audio");
+                osc_component->sendFloat(osc_id, "/noteoff", 0.f);
+            }
+            mAllowAdvance = false;
+  
+            ec::Controller::get()->reset( true );
+            
+        }else{
+            mDisintegrate = true;
+            auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+            auto osc_component = osc->getComponent<OSCComponent>().lock();
+            if( osc_component ){
+                osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 0.);
+            }
+            mAllowAdvance = false;
+        }
+        
+    }
     
 }
 
@@ -95,6 +131,7 @@ void TransistorScene::moveFlash(){
     auto flashing_light = std::dynamic_pointer_cast<PointLight>(ec::ActorManager::get()->retreiveUnique(ec::getHash("flashing")).lock()->getComponent<LightComponent>().lock()->getLight() );
     flashing_light->setPosition(corners[r]);
     
+
     if( auto scene = ec::Controller::get()->scene().lock()){
         auto scene_trans=  std::dynamic_pointer_cast<TransistorScene>(scene);
         scene_trans->mFlashDuration = randFloat(.1, .3);
@@ -162,6 +199,16 @@ void TransistorScene::update()
         mSceneManager->addListener(fastdelegate::MakeDelegate(k_particles.get(), &RoomParticlesComponent::drawRift), DrawToRiftBufferEvent::TYPE);
         mSceneManager->addListener(fastdelegate::MakeDelegate(k_particles.get(), &RoomParticlesComponent::draw), DrawToMainBufferEvent::TYPE);
 
+        auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+        if(osc){
+            if(auto osc_component = osc->getComponent<OSCComponent>().lock()){
+                
+                auto osc_id = ec::getHash("audio");
+                
+                osc_component->sendFloat(osc_id, "/noteon", 1.f);
+            }
+        }
+        
         mInitDisitegrate = true;
     }
     
@@ -189,7 +236,14 @@ void TransistorScene::update()
         }else{
         
       //  auto endScene =[&]{ ec::Controller::get()->reset( true ); };
-            auto endScene =[&]{  ec::Controller::get()->reset( true );  };
+            auto endScene =[&]{
+                auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+                auto osc_component = osc->getComponent<OSCComponent>().lock();
+                if( osc_component ){
+                    osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 1.);
+                }
+                std::dynamic_pointer_cast<TransistorScene>( ec::Controller::get()->scene().lock() )->allowAdvance();
+            };
             
             auto camFun = [&]{
                 timeline().apply(&mDec, 0.f, 25.f).updateFn( std::bind( &TransistorScene::moveCamera, this ) ).finishFn(endScene);

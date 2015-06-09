@@ -30,12 +30,15 @@ public:
     
     void postInit()override;
     
+    void allowAdvance(){ mAllowAdvance = true; }
+    
     ~TransistorScene();
     
 private:
     
     void initGUI( ec::GUIManager * gui_manager )override;
     void handlePresentScene( ec::EventDataRef );
+    void handleAdvance( ec::EventDataRef );
     
     TransistorScene( const std::string& name );
     void moveFlash();
@@ -57,5 +60,6 @@ private:
     ci::Anim<float> mCamLerp;
     ci::Anim<float> mDec;
     ci::vec3        mCamPos;
+    bool            mAllowAdvance;
 
 };

@@ -36,7 +36,7 @@ public:
     void draw( ec::EventDataRef );
     void drawRift( ec::EventDataRef event );
     
-    inline void setNoiseScale( float scale ){ mNoiseScale = scale; }
+    inline void setNoiseScale( float scale ){ mInc = scale; }
 
     ~RoomComponent();
 
@@ -47,7 +47,8 @@ private:
     void handleShutDown( ec::EventDataRef );
     void handleSceneChange( ec::EventDataRef );
     void handleReloadGlslProg( ec::EventDataRef );
-    
+    void handleNoiseVolume( ec::EventDataRef );
+
     void registerListeners();
     void unregisterListeners();
     
@@ -55,7 +56,7 @@ private:
     ci::gl::BatchRef mRoom;
     ci::gl::BatchRef mRoomShadow;
     ci::gl::GlslProgRef mRoomRender, mRoomShadowRender;
-    float mRoomSize, mNoiseScale, mNoiseMax;
+    float mRoomSize, mNoiseScale, mNoiseMax, mVolScale, mInc;
     ec::ComponentUId mId;
     float mTime;
 

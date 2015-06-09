@@ -27,6 +27,7 @@
 #include "DebugManager.h"
 #include "LandscapeComponent.h"
 #include "cinder/Perlin.h"
+#include "OSCComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -36,7 +37,7 @@ IntroSceneRef IntroScene::create( const std::string& name )
     return IntroSceneRef( new IntroScene(name) );
 }
 
-IntroScene::IntroScene( const std::string& name ):AppSceneBase(name),mScale(0.),mEnableSinkHole(false)
+IntroScene::IntroScene( const std::string& name ):AppSceneBase(name),mScale(0.),mEnableSinkHole(false),mAllowAdvance(true),mAdvanceRecieved(false)
 {
     //initialize stuff
     CI_LOG_V("Intro scene constructed");
@@ -58,6 +59,8 @@ void IntroScene::initialize(const ci::JsonTree &init)
     
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &IntroScene::shutDown), ec::ShutDownEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(this, &IntroScene::handlePresentScene), FinishRenderEvent::TYPE);
+    mSceneManager->addListener(fastdelegate::MakeDelegate(this, &IntroScene::handleAdvance), AdvanceEvent::TYPE);
+
     
     CI_LOG_V("Intro scene initialized");
     
@@ -71,8 +74,37 @@ void IntroScene::shutDown(ec::EventDataRef)
 void IntroScene::postInit()
 {
     ///like setup
+    auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+    auto osc_component = osc->getComponent<OSCComponent>().lock();
+    if( osc_component ){
+        osc_component->sendFloat( ec::getHash("touchosc"), "/1/ready", 1.);
+    }
     
-    
+}
+
+void IntroScene::handleAdvance(ec::EventDataRef)
+{
+    if( mAllowAdvance ){
+        
+        if( !mEnableSinkHole ){
+            mEnableSinkHole = true;
+            auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+            auto osc_component = osc->getComponent<OSCComponent>().lock();
+            if( osc_component ){
+                osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 0.);
+            }
+            mAllowAdvance = false;
+        }else{
+            auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+            auto osc_component = osc->getComponent<OSCComponent>().lock();
+            if( osc_component ){
+                osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 0.);
+            }
+            mAllowAdvance = false;
+            ec::Controller::get()->eventManager()->queueEvent(ec::RequestSceneChangeEvent::create());
+        }
+        
+    }
 }
 
 void IntroScene::update()
@@ -82,19 +114,25 @@ void IntroScene::update()
     
     if( mEnableSinkHole )
     {
-        mScale += .1;
         
         if(mScale > 200.){
-            ec::Controller::get()->eventManager()->queueEvent(ec::RequestSceneChangeEvent::create());
-            return;
+            mAllowAdvance = true;
+            auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+            auto osc_component = osc->getComponent<OSCComponent>().lock();
+            if( osc_component ){
+                osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 1.);
+            }
+            mScale = 200.;
+        }else{
+            mScale += .1;
         }
     
         auto main_cam = ec::ActorManager::get()->retreiveUnique( ec::getHash("main_camera") ).lock();
         auto cam_transform = main_cam->getComponent<ec::TransformComponent>().lock();
         auto landscape =  ec::ActorManager::get()->retreiveUnique( ec::getHash("landscape") ).lock();
         auto l_component = landscape->getComponent<LandscapeComponent>().lock();
-        l_component->setSinkHoleScale( mScale );
-        cam_transform->setTranslation(  vec3(0,-l_component->getSinkHoleScale()*10. + 40.f,0 ) );
+        l_component->setSinkHoleScale( mScale*2. );
+        cam_transform->setTranslation(  vec3(0,-mScale*10. + 40.f,0 ) );
         
     }
     CI_LOG_V("update components event triggered");

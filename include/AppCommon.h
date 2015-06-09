@@ -76,4 +76,5 @@ using ComponentRegistrationEventRef = std::shared_ptr<class ComponentRegistratio
 using FinishRenderEventRef = std::shared_ptr<class FinishRenderEvent>;
 using ShareGeometryDepthTextureEventRef = std::shared_ptr<class ShareGeometryDepthTextureEvent>;
 using MicVolumeEventRef = std::shared_ptr<class MicVolumeEvent>;
+using AdvanceEventRef = std::shared_ptr<class AdvanceEvent>;
 
