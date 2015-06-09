@@ -30,6 +30,8 @@ public:
     void                          loadGUI( const ci::params::InterfaceGlRef &gui )override;
     void                          cleanup()override;
     
+    void                          sendFloat( const ec::IdType &name, const std::string &route, float val );
+    
     bool postInit()override;
     
     void update( ec::EventDataRef );
@@ -48,7 +50,14 @@ private:
     
     ec::ComponentUId mId;
     bool             mShuttingDown;
-    ci::osc::Listener    mListener;
-    int             mListenPort;
+    
+    
+    ci::osc::Listener                        mListener;
+    int                                      mListenPort;
+    
+    std::map<ec::IdType, ci::osc::Sender>    mSenders;
+    std::map< ec::IdType, int >              mSenderPorts;
+    std::map< ec::IdType, std::string >      mSenderIps;
+    
     
 };

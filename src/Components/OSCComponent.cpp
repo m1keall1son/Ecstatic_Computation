@@ -11,6 +11,7 @@
 #include "Scene.h"
 #include "Controller.h"
 #include "Events.h"
+#include "ConfigManager.h"
 #include "AppSceneBase.h"
 
 using namespace ci;
@@ -52,6 +53,14 @@ void OSCComponent::unregisterHandlers()
 
 }
 
+void OSCComponent::sendFloat(const ec::IdType &name, const std::string &route, float val)
+{
+    osc::Message m;
+    m.setAddress(route);
+    m.addFloatArg(val);
+    mSenders.find(name)->second.sendMessage(m);
+}
+
 bool OSCComponent::initialize( const ci::JsonTree &tree )
 {
     CI_LOG_V( mContext->getName() + " : "+getName()+" initialize");
@@ -61,6 +70,40 @@ bool OSCComponent::initialize( const ci::JsonTree &tree )
     } catch (ci::JsonTree::ExcChildNotFound e) {
         CI_LOG_W("listening port not found, defaulting to 12000");
         mListenPort = 12000;
+    }
+    
+    try {
+       
+        auto & senders = tree["senders"].getChildren();
+        
+        for( auto & sender : senders ){
+            auto name = sender["name"].getValue();
+            auto ip = sender["ip"].getValue();
+            auto port = sender["port"].getValue<int>();
+            auto hash = ec::getHash( name );
+            mSenderIps.insert( std::make_pair( hash , ip ) );
+            mSenderPorts.insert( std::make_pair( hash , port ) );
+        }
+        
+    } catch (ci::JsonTree::ExcChildNotFound e) {
+        CI_LOG_W("senders not found port not found, adding default localhost:9000");
+        auto hash = ec::getHash( "127.0.0.1" );
+        mSenderIps.insert( std::make_pair( hash, "127.0.0.1" ) );
+        mSenderPorts.insert( std::make_pair( hash , 9000 ) );
+    }
+    
+    mListener.setup(mListenPort);
+    
+    auto ip_it = mSenderIps.begin();
+    auto ip_end = mSenderIps.end();
+    auto port_it = mSenderPorts.begin();
+    
+    while( ip_it != ip_end ){
+        auto sender = osc::Sender();
+        sender.setup(ip_it->second, port_it->second);
+        mSenders.insert( std::make_pair( ip_it->first, sender ) );
+        ip_it++;
+        port_it++;
     }
     
     return true;
@@ -74,7 +117,7 @@ void OSCComponent::cleanup()
 bool OSCComponent::postInit()
 {
     if(!mInitialized){
-        mListener.setup(mListenPort);
+       
         mInitialized = true;
     }
     
@@ -127,8 +170,20 @@ void OSCComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
     gui->addSeparator();
     gui->addText( mContext->getName() +" : "+ getName());
     auto updateFn = [&]{ mListener.setup(mListenPort); };
-    gui->addParam("port", &mListenPort).updateFn(updateFn);
+    gui->addParam("listen port", &mListenPort).updateFn(updateFn);
     
+    ///TODO:: change osc sender gui update
+    
+//    auto loadFn = [&]{
+//        auto tree = ec::ConfigManager::get()->retreiveComponent(ec::Controller::get()->scene().lock()->getName(), mContext->getName(), getName() );
+//        auto ip = tree["send_ip"].getValue();
+//        auto port = tree["send_port"].getValue<int>();
+//        mSendPort = port;
+//        mSendIp = ip;
+//        mSender.setup(mSendIp, mSendPort);
+//    };
+//    gui->addButton("reload osc sender", loadFn );
+
 }
 
 void OSCComponent::update(ec::EventDataRef)
@@ -143,6 +198,19 @@ void OSCComponent::update(ec::EventDataRef)
         if( message.getAddress() == "/micVol" ){
             auto vol = message.getArgAsFloat(0);
             scene->manager()->triggerEvent( MicVolumeEvent::create( vol ) );
+        }
+        
+        if( message.getAddress() == "/noiseTrack" ){
+            auto vol = message.getArgAsFloat(0);
+            scene->manager()->triggerEvent( MicVolumeEvent::create( vol ) );
+        }
+        
+        if( message.getAddress() == "/1/Advance" ){
+            scene->manager()->triggerEvent( AdvanceEvent::create() );
+        }
+        
+        if( message.getAddress() == "/2/reset" ){
+            ec::Controller::get()->eventManager()->triggerEvent( ec::RestartEvent::create() );
         }
         
     }

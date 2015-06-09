@@ -35,9 +35,11 @@ private:
     
     void initGUI( ec::GUIManager* gui_manager )override;
     void handlePresentScene( ec::EventDataRef );
+    void handleAdvance( ec::EventDataRef );
     
     IntroScene( const std::string& name );
     float mScale;
     bool mEnableSinkHole;
-
+    bool mAllowAdvance;
+    bool mAdvanceRecieved;
 };

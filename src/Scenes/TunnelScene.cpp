@@ -26,6 +26,7 @@
 #include "OculusRiftComponent.h"
 #include "DebugManager.h"
 #include "cinder/Perlin.h"
+#include "OSCComponent.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -57,7 +58,7 @@ void TunnelScene::initialize(const ci::JsonTree &init)
     
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::shutDown), ec::ShutDownEvent::TYPE);
     mSceneManager->addListener(fastdelegate::MakeDelegate(this, &TunnelScene::handlePresentScene), FinishRenderEvent::TYPE);
-    
+
     CI_LOG_V("Tunnel scene initialized");
 
 }
@@ -70,8 +71,11 @@ void TunnelScene::shutDown(ec::EventDataRef)
 void TunnelScene::postInit()
 {
     ///like setup
-    
-    
+    auto osc = ec::ActorManager::get()->retreiveUnique(ec::getHash("OSC")).lock();
+    auto osc_component = osc->getComponent<OSCComponent>().lock();
+    if( osc_component ){
+        osc_component->sendFloat(ec::getHash("touchosc"),"/1/ready", 1.);
+    }
 }
 
 void TunnelScene::update()

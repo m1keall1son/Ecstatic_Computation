@@ -140,7 +140,7 @@ bool LandscapeComponent::postInit()
         mLandscape = gl::Batch::create( geom , mLandscapeRender);
         mLandscapeShadow = gl::Batch::create( geom, mLandscapeShadowRender);
         
-        auto foot = ObjLoader( loadAsset("foot.obj") ) >> geom::Transform(  scale(vec3(200)) * toMat4(quat( .27, -.58, -.72, -.28)) * translate( vec3( 4.36, 3.68, -2.36 ) ) );
+        auto foot = ObjLoader( loadAsset("MBP.obj") ) >> geom::Transform(  scale(vec3(1.)) * toMat4(quat( .51, -.01, -.56, -.66)) * translate( vec3( -100.36, -700, -10.36 ) ) );
 
         mFoot = gl::Batch::create( foot, mObjectRender);
         mFootShadow = gl::Batch::create( foot, gl::getStockShader(gl::ShaderDef()));
@@ -209,16 +209,16 @@ void LandscapeComponent::loadGUI(const ci::params::InterfaceGlRef &gui)
     gui->addParam("sink hole", &mSinkHoleScale);
     //gui->addSeparator();
     
-//    auto uFun = [&]{ mHeadTransform.mUpdated = 1; mFootTransform.mUpdated = 1; mTeethTransform.mUpdated = 1; };
+    auto uFun = [&]{ mHeadTransform.mUpdated = 1; mFootTransform.mUpdated = 1; mTeethTransform.mUpdated = 1; };
 //    
 //    gui->addParam("head translation", &mHeadTransform.mTranslation).updateFn(uFun);
 //    gui->addParam("head scale", &mHeadTransform.mScale).updateFn(uFun);
 //    gui->addParam("head rotation", &mHeadTransform.mRotation).updateFn(uFun);
 //    gui->addSeparator();
-//    gui->addParam("foot translation", &mFootTransform.mTranslation).updateFn(uFun);
-//    gui->addParam("foot scale", &mFootTransform.mScale).updateFn(uFun);
-//    gui->addParam("foot rotation", &mFootTransform.mRotation).updateFn(uFun);
-//    gui->addSeparator();
+    gui->addParam("foot translation", &mFootTransform.mTranslation).updateFn(uFun);
+    gui->addParam("foot scale", &mFootTransform.mScale).updateFn(uFun);
+    gui->addParam("foot rotation", &mFootTransform.mRotation).updateFn(uFun);
+    gui->addSeparator();
 //    gui->addParam("teeth translation", &mTeethTransform.mTranslation).updateFn(uFun);
 //    gui->addParam("teeth scale", &mTeethTransform.mScale).updateFn(uFun);
 //    gui->addParam("teeth rotation", &mTeethTransform.mRotation).updateFn(uFun);
@@ -275,7 +275,7 @@ void LandscapeComponent::draw(ec::EventDataRef)
     {
         gl::ScopedModelMatrix model;
         gl::multModelMatrix( mFootTransform.getModelMatrix() );
-        mFoot->draw();
+      //  mFoot->draw();
     }
     }
 }
@@ -305,7 +305,7 @@ void LandscapeComponent::drawShadow(ec::EventDataRef)
     {
         gl::ScopedModelMatrix model;
         gl::multModelMatrix( mFootTransform.getModelMatrix() );
-        mFootShadow->draw();
+       // mFootShadow->draw();
     }
     }
 }

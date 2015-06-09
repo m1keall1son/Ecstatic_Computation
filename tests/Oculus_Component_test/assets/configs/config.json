@@ -47,7 +47,19 @@
                           "components": [
                                          {
                                          "type": "osc_component",
-                                         "listen_port" : 12000
+                                         "listen_port" : 12000,
+                                         "senders" : [
+                                                      {
+                                                      "name" : "touchosc",
+                                                      "ip" : "169.254.43.63",
+                                                      "port" : 9000
+                                                      },
+                                                      {
+                                                      "name" : "audio",
+                                                      "ip" : "127.0.0.1",
+                                                      "port" : 9000
+                                                      }
+                                                      ]
                                          }
                                          ],
                           "create_on_scene_init": true,
@@ -282,7 +294,19 @@
                            "components": [
                                           {
                                           "type": "osc_component",
-                                          "listen_port" : 12000
+                                          "listen_port" : 12000,
+                                          "senders" : [
+                                                       {
+                                                       "name" : "touchosc",
+                                                       "ip" : "169.254.43.63",
+                                                       "port" : 9000
+                                                       },
+                                                       {
+                                                       "name" : "audio",
+                                                       "ip" : "127.0.0.1",
+                                                       "port" : 9000
+                                                       }
+                                                       ]
                                           }
                                           ],
                            "create_on_scene_init": true,
@@ -491,7 +515,19 @@
                           "components": [
                                          {
                                          "type": "osc_component",
-                                         "listen_port" : 12000
+                                         "listen_port" : 12000,
+                                         "senders" : [
+                                                      {
+                                                      "name" : "touchosc",
+                                                      "ip" : "169.254.43.63",
+                                                      "port" : 9000
+                                                      },
+                                                      {
+                                                      "name" : "audio",
+                                                      "ip" : "127.0.0.1",
+                                                      "port" : 9000
+                                                      }
+                                                      ]
                                          }
                                          ],
                           "create_on_scene_init": true,
@@ -742,7 +778,7 @@
                           "components" : [
                                           {
                                           "id" : 2.3293759857552691e+18,
-                                          "rotation" : [ 0, 0, 0, 1 ],
+                                          "rotation" : [ 0.28, 0.04, -0.01, 0.96 ],
                                           "scale" : [ 1, 1, 1 ],
                                           "translation" : [ 0, -8.85, 10.8 ],
                                           "type" : "transform_component"

@@ -40,6 +40,7 @@ void RoomComponent::update(ec::EventDataRef event )
     CI_LOG_V( mContext->getName() + " : "+getName()+" update");
     mTime = getElapsedSeconds();
 
+    mNoiseScale = mInc;//lerp(mVolScale, mInc, .5);
 }
 
 void RoomComponent::drawShadow(ec::EventDataRef)
@@ -190,7 +191,7 @@ bool RoomComponent::postInit()
 
 
 
-RoomComponent::RoomComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_room_component" ) ),mShuttingDown(false)
+RoomComponent::RoomComponent( ec::Actor* context ):ec::ComponentBase( context ), mId( ec::getHash( context->getName() + "_room_component" ) ),mShuttingDown(false),mVolScale(0.),mInc(0.)
 {
     registerListeners();
     CI_LOG_V( mContext->getName() + " : "+getName()+" constructed");
@@ -219,6 +220,11 @@ void RoomComponent::handleSceneChange( ec::EventDataRef )
     if(mContext->isPersistent())registerListeners();
 }
 
+void RoomComponent::handleNoiseVolume( ec::EventDataRef event ){
+    auto e = std::dynamic_pointer_cast<MicVolumeEvent>(event);
+    mVolScale = e->getVolume();
+}
+
 void RoomComponent::registerListeners()
 {
     ec::Controller::get()->eventManager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleShutDown), ec::ShutDownEvent::TYPE);
@@ -230,6 +236,7 @@ void RoomComponent::registerListeners()
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::update), UpdateEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawRift), DrawToRiftBufferEvent::TYPE);
     scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
+    scene->manager()->addListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleNoiseVolume), MicVolumeEvent::TYPE);
 
 }
 void RoomComponent::unregisterListeners()
@@ -243,6 +250,7 @@ void RoomComponent::unregisterListeners()
    // scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawShadow), DrawShadowEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::drawRift), DrawToRiftBufferEvent::TYPE);
     scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleReloadGlslProg), ReloadGlslProgEvent::TYPE);
+    scene->manager()->removeListener(fastdelegate::MakeDelegate(this, &RoomComponent::handleNoiseVolume), MicVolumeEvent::TYPE);
 
 }
 

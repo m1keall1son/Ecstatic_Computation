@@ -356,3 +356,23 @@ private:
     MicVolumeEvent(const float &vol);
     float mVolume;
 };
+
+class AdvanceEvent : public ec::EventData {
+public:
+    
+    static ec::EventType TYPE;
+    
+    static AdvanceEventRef create();
+    
+    ~AdvanceEvent(){}
+    ec::EventDataRef copy(){ return ec::EventDataRef(); }
+    const char* getName() const;
+    ec::EventType getEventType() const;
+    
+    void serialize( ci::Buffer &streamOut ){}
+    void deSerialize( const ci::Buffer &streamIn ){}
+    
+    
+private:
+    AdvanceEvent();
+};

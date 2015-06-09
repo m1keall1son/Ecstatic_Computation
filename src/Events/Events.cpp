@@ -347,4 +347,24 @@ ec::EventType MicVolumeEvent::getEventType() const
     return MicVolumeEvent::TYPE;
 }
 
+//ADVANCE EVENT -------------------------------------------------------------/
+
+ec::EventType AdvanceEvent::TYPE = ec::getHash("advance_event");
+
+AdvanceEventRef AdvanceEvent::create()
+{
+    return AdvanceEventRef( new AdvanceEvent() );
+}
+
+AdvanceEvent::AdvanceEvent() : ec::EventData( cinder::app::getElapsedSeconds() ){}
+
+const char* AdvanceEvent::getName() const
+{
+    return "advance_event";
+}
+
+ec::EventType AdvanceEvent::getEventType() const
+{
+    return AdvanceEvent::TYPE;
+}
 
